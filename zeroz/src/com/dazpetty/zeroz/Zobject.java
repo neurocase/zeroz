@@ -1,0 +1,18 @@
+package com.dazpetty.zeroz;
+
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
+
+public class Zobject {
+
+	public Vector2 position = new Vector2(0,0);
+	public Vector2 velocity = new Vector2(0,0); 
+	Texture texture;
+	public int height = 2;
+	public TextureRegion textureRegion;
+	
+	
+	
+	
+}

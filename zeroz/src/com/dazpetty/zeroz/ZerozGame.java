@@ -108,7 +108,7 @@ public class ZerozGame implements ApplicationListener {
 		dpadsprite.setOrigin(dpadsprite.getWidth()/2, dpadsprite.getHeight()/2);
 		dpadsprite.setPosition(0f,0f);//-sprite.getWidth()/2, -sprite.getHeight()/2);
 		
-		playersprite = new Sprite(zplayer.actorTexReg);
+		playersprite = new Sprite(zplayer.textureRegion);
 		playersprite.setSize(1f,2f);//0.9f, 0.9f * sprite.getHeight() / sprite.getWidth());
 		playersprite.setOrigin(playersprite.getWidth()/2, playersprite.getHeight()/2);
 		playersprite.setPosition(2f,1f);//-sprite.getWidth()/2, -sprite.getHeight()/2);
@@ -158,14 +158,14 @@ public class ZerozGame implements ApplicationListener {
 		
 		zplayer.doPhysics();
 		
-		playersprite.setPosition(zplayer.actorpos.x,zplayer.actorpos.y);
+		playersprite.setPosition(zplayer.position.x,zplayer.position.y);
 		
 		renderer.setView(camera);
 		camera.update();
 		
 		renderer.render();
 		
-		camera.position.set(zplayer.actorpos.x,zplayer.actorpos.y,0);
+		camera.position.set(zplayer.position.x,zplayer.position.y,0);
 		
 		batch.begin();
 		dpadsprite.draw(batch);
