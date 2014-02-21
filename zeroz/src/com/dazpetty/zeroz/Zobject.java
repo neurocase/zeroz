@@ -9,7 +9,8 @@ public class Zobject {
 	public Vector2 position = new Vector2(0,0);
 	public Vector2 velocity = new Vector2(0,0); 
 	Texture texture;
-	public int height = 2;
+	public float height = 2;
+	public float width = 1.25f;
 	public TextureRegion textureRegion;
 	
 	

@@ -34,21 +34,22 @@ public class ZerozGame implements ApplicationListener {
 	private TiledMapRenderer renderer;
 	public TiledMapTileLayer collisionLayer;
 	private Vector2 playerstart = new Vector2(4,4);
+	private Zphysics physics;
 	
 	
-	private static final int        FRAME_COLS = 4;         // #1
+	/*private static final int        FRAME_COLS = 4;         // #1
 	private static final int        FRAME_ROWS = 6;         // #2
 	  
 	Animation                       walkAnimation;          // #3
 	Texture                         walkSheet;              // #4
 	TextureRegion[]                 walkFrames;             // #5
 	SpriteBatch                     spriteBatch;            // #6
-	TextureRegion                   currentFrame;           // #7
+	TextureRegion                   currentFrame;           // #7*/
 	float stateTime;
 	
 	//Array<Vector3> waypoints;
 	//Vector<Vector3f>
-	private Zactor zplayer;// = new Zactor();
+	private Zplayer zplayer;// = new Zactor();
 	Vector3 camVector = new Vector3(0,0,0);
 
 	
@@ -56,7 +57,7 @@ public class ZerozGame implements ApplicationListener {
 	public void create() {	
 		
 		
-		walkSheet = new Texture(Gdx.files.internal("data/gfx/punk/run.png"));     // #9
+	/*	walkSheet = new Texture(Gdx.files.internal("data/gfx/punk/run.png"));     // #9
 		   TextureRegion[][] tmp = TextureRegion.split(walkSheet, walkSheet.getWidth() / 
 				   FRAME_COLS, walkSheet.getHeight() / FRAME_ROWS);                                // #10
        walkFrames = new TextureRegion[FRAME_COLS * FRAME_ROWS];
@@ -65,10 +66,10 @@ public class ZerozGame implements ApplicationListener {
                for (int j = 0; j < FRAME_COLS; j++) {
                        walkFrames[index++] = tmp[i][j];
                }
-       }
-       walkAnimation = new Animation(0.025f, walkFrames);              // #11
+       }*/
+   /*    walkAnimation = new Animation(0.025f, walkFrames);              // #11
        spriteBatch = new SpriteBatch();                                // #12
-       stateTime = 0f;                                                 // #13
+       stateTime = 0f;                                                 // #13*/
 		
        
        
@@ -76,8 +77,10 @@ public class ZerozGame implements ApplicationListener {
 		
 		collisionLayer = (TiledMapTileLayer) map.getLayers().get("Layer 0");
 		
-		zplayer = new Zactor();
-		zplayer.initActor(collisionLayer, playerstart, Gdx.files.internal("data/player.png"));
+		zplayer = new Zplayer();
+		physics = new Zphysics();
+		zplayer.initActor(collisionLayer, playerstart);//, Gdx.files.internal("data/player.png"));
+		zplayer.create();
 		
 		//worldController = new WorldController();
 		//zplayer.Velx = 0;
@@ -108,10 +111,10 @@ public class ZerozGame implements ApplicationListener {
 		dpadsprite.setOrigin(dpadsprite.getWidth()/2, dpadsprite.getHeight()/2);
 		dpadsprite.setPosition(0f,0f);//-sprite.getWidth()/2, -sprite.getHeight()/2);
 		
-		playersprite = new Sprite(zplayer.textureRegion);
+		/*playersprite = new Sprite(zplayer.currentFrame);
 		playersprite.setSize(1f,2f);//0.9f, 0.9f * sprite.getHeight() / sprite.getWidth());
 		playersprite.setOrigin(playersprite.getWidth()/2, playersprite.getHeight()/2);
-		playersprite.setPosition(2f,1f);//-sprite.getWidth()/2, -sprite.getHeight()/2);
+		playersprite.setPosition(2f,1f);//-sprite.getWidth()/2, -sprite.getHeight()/2);*/
 		
 		//map = TiledLoader.createMap(Gdx.files.internal("tiles/tiles.tmx"));
 	//    atlas = new SimpleTileAtlas(map, Gdx.files.internal("tiles/"));
@@ -132,11 +135,8 @@ public class ZerozGame implements ApplicationListener {
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		
 		
-		stateTime += Gdx.graphics.getDeltaTime();                       // #15
-        currentFrame = walkAnimation.getKeyFrame(stateTime, true);      // #16
-        spriteBatch.begin();
-        spriteBatch.draw(currentFrame, 50, 50);                         // #17
-        spriteBatch.end();
+		
+        
         
         
 		batch.setProjectionMatrix(camera.combined);
@@ -156,9 +156,9 @@ public class ZerozGame implements ApplicationListener {
 			zplayer.goJump();
 	     }
 		
-		zplayer.doPhysics();
+		physics.doPhysics(zplayer);
 		
-		playersprite.setPosition(zplayer.position.x,zplayer.position.y);
+	//	playersprite.setPosition(zplayer.position.x,zplayer.position.y);
 		
 		renderer.setView(camera);
 		camera.update();
@@ -169,8 +169,9 @@ public class ZerozGame implements ApplicationListener {
 		
 		batch.begin();
 		dpadsprite.draw(batch);
-		playersprite.draw(batch);
+	//	playersprite.draw(batch);
 		batch.end();
+		zplayer.draw(1,1);
 	}
 
 	@Override

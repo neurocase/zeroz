@@ -8,8 +8,8 @@ public class Main {
 		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
 		cfg.title = "zeroz";
 		cfg.useGL20 = false;
-		cfg.width = 480;
-		cfg.height = 320;
+		cfg.width = 756;
+		cfg.height = 480;
 		
 		new LwjglApplication(new ZerozGame(), cfg);
 	}

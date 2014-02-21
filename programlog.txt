@@ -1,0 +1,11 @@
+This log is to keep track of whats happening
+
+20th Feb
+
+Zobject is the parent of Zactor and Zplayer is Zactor's child.
+Zactor is the base for enemies, the player and ai. It includes a few movement, size and health functions.
+Zplayer is the player.
+
+21st Feb
+
+Collision seems to be working right now
