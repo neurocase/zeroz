@@ -33,7 +33,7 @@ public class ZerozGame implements ApplicationListener {
 	private TiledMap map;
 	private TiledMapRenderer renderer;
 	public TiledMapTileLayer collisionLayer;
-	private Vector2 playerstart = new Vector2(4,4);
+	private Vector2 playerstart = new Vector2(7,7);
 	private Zphysics physics;
 	
 	
@@ -73,9 +73,9 @@ public class ZerozGame implements ApplicationListener {
 		
        
        
-		map = new TmxMapLoader().load("data/testmap.tmx");	
+		map = new TmxMapLoader().load("data/testmap2.tmx");	
 		
-		collisionLayer = (TiledMapTileLayer) map.getLayers().get("Layer 0");
+		collisionLayer = (TiledMapTileLayer) map.getLayers().get("collision");
 		
 		zplayer = new Zplayer();
 		physics = new Zphysics();

@@ -68,7 +68,7 @@ public class Zphysics {
 			boolean blocked = false;
 			
 			for (int i = 0; i < (int)zact.height; i++){
-			if (zact.isCellBlocked(newposition.x, zact.position.y+0.1f+i)){//||!zact.isCellBlocked(newposition.x+1, newposition.y+0.1f+i)){
+			if (zact.velocity.y <= 0 && zact.isCellBlocked(newposition.x, zact.position.y+0.1f+i)){//||!zact.isCellBlocked(newposition.x+1, newposition.y+0.1f+i)){
 				
 				zact.velocity.x = 0;
 				blocked = true;
@@ -82,6 +82,8 @@ public class Zphysics {
 				zact.position.y = newposition.y;
 			}else{
 				zact.isGrounded = true;
+				if(zact.velocity.y <= 0 && !zact.isCellBlocked(zact.position.x, (int)(zact.position.y)))
+				zact.position.y =  (int)(zact.position.y);
 				blocked = true;
 				zact.velocity.y = 0;
 			}

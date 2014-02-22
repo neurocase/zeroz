@@ -28,30 +28,30 @@ public class Zplayer extends Zactor {
 	public void create(){
 	height = 2;
 	width = 1.25f;
+	
+	/*
+	 *   WHAT IF, I Create a Sprite sheet for all animations, each on a line
+	 *   and can use TextureRegion[][] tmp = TextureRegion.split(walkSheet, walkSheet.getWidth() / 
+	 *	 FRAME_COLS, walkSheet.getHeight() / FRAME_ROWS);                                // #10
+	 *
+	 *   
+	 * 
+	 */
 	walkSheet = new Texture(Gdx.files.internal("data/gfx/enforcer/run.png"));     // #9
-	///home/case/Dropbox/android/workspace/zeroz/zeroz-desktop/bin/
 	   TextureRegion[][] tmp = TextureRegion.split(walkSheet, walkSheet.getWidth() / 
 			   FRAME_COLS, walkSheet.getHeight() / FRAME_ROWS);                                // #10
 	   
-	//   walkSheet.
 	walkFrames = new TextureRegion[FRAME_COLS * FRAME_ROWS];
 	int index = 0;
 	for (int i = 0; i < FRAME_ROWS; i++) {
 	        for (int j = 0; j < FRAME_COLS; j++) {
-	        	//if (i != FRAME_ROWS && j != FRAME_COLS){
-	                walkFrames[index++] = tmp[i][j];
-	        	//}
+	        	walkFrames[index++] = tmp[i][j];
 	        }
 		}
-	walkAnimation = new Animation(0.025f, walkFrames);              // #11
-	//walkAnimation.
-	//walkAnimation = new Animation              // #11
-    spriteBatch = new SpriteBatch();                                // #12
-    stateTime = 0f;   
-    
-  //  spriteBatch.setSize(1f,2f);//0.9f, 0.9f * sprite.getHeight() / sprite.getWidth());
-  //  spriteBatch.setOrigin(playersprite.getWidth()/2, playersprite.getHeight()/2);
-   // spriteBatch.setPosition(2f,1f);//-sprite.getWidth()/2, -sprite.getHeight()/2)
+	walkAnimation = new Animation(0.025f, walkFrames);              
+    spriteBatch = new SpriteBatch();
+    stateTime = 0f;
+    //walkFrames[walkFrames.length -1] = null;
 	}
 	
 	@Override
@@ -59,14 +59,12 @@ public class Zplayer extends Zactor {
 		position = actorstart;
 		collisionLayer = cLayer;
 		initialized = true;
-		//texture = new Texture(newtexture);//Gdx.files.internal("data/player.png"));
-		//texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		//textureRegion = new TextureRegion(texture, 0, 0, 64, 128);
 	}
 	
 	public void draw(float x, float y){
 		stateTime += Gdx.graphics.getDeltaTime();                       // #15
-        currentFrame = walkAnimation.getKeyFrame(stateTime, true);       
+        currentFrame = walkAnimation.getKeyFrame(stateTime, true);      
+        
         if(!isGoRight && currentFrame.isFlipX()){
         	currentFrame.flip(true,false);// #16
         }

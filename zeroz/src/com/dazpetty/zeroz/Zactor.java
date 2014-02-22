@@ -24,13 +24,13 @@ public class Zactor extends Zobject{
 	public boolean isAlive = true;
 	public boolean isGrounded = true;
 	
-	public float jumpSpeed = 10;
+	public float jumpSpeed = 17;
 	public float moveSpeed = 2;
 	public int health = 100;
 	public float rotdir = 0;
-	public float gravMass = 0.25f;
+	public float gravMass = 0.45f;
 	public float deceleration = 0.25f;
-	public String blockedKey = "solid";
+	public String blockedKey = "collision";
 	public boolean initialized = false;
 	public Vector2 position = new Vector2(0,0);
 	public Vector2 velocity = new Vector2(0,0);
