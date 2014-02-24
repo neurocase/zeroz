@@ -38,12 +38,14 @@ public class ZerozGame implements ApplicationListener {
 	private TiledMap map;
 	private TiledMapRenderer renderer;
 	public TiledMapTileLayer collisionLayer;
+	public TiledMapTileLayer npcLayer;
 	private Vector2 playerstart = new Vector2(7,7);
 	private Zphysics physics;
 	public Vector2 aimVec = new Vector2(0,0);
 	Set<Zbullet> bullets= new LinkedHashSet<Zbullet>();
 	Iterator<Zbullet> itzbullet = bullets.iterator();
 	private Vector2 playerpos = new Vector2(0,0); 
+	private String npcKey = "npc";
 	
 	
 	/*private static final int        FRAME_COLS = 4;         // #1
@@ -68,6 +70,27 @@ public class ZerozGame implements ApplicationListener {
 		map = new TmxMapLoader().load("data/testmap2.tmx");	
 		
 		collisionLayer = (TiledMapTileLayer) map.getLayers().get("collision");
+		
+		npcLayer = (TiledMapTileLayer) map.getLayers().get("npcLayer");
+	/*	
+	 * 
+	 *  this code doesn't work for some reason
+	 *  
+	 *  
+		int lh = 0;
+		int lw = 0;
+		
+		lh = npcLayer.getHeight();
+		lw = npcLayer.getWidth();
+		
+		for (int i = 0; i < lw; i++){
+			for (int j = 0; i < lh; j++){
+				Cell cell = npcLayer.getCell((int) (i), (int) (j));		
+				if (cell != null && cell.getTile() != null && cell.getTile().getProperties().containsKey(npcKey)){
+						
+				}
+			}
+		}*/
 		
 		zplayer = new Zplayer();
 		physics = new Zphysics();
@@ -199,7 +222,7 @@ public class ZerozGame implements ApplicationListener {
 	    for (Zbullet zb : bullets){
 	    	zb.update();
 		}
-	    /*while(itzbullet.hasNext()){
+	  /*  while(itzbullet.hasNext()){
 	    	Zbullet ib = itzbullet.next();
 	    	if(ib.distance > 0){
 	    		itzbullet.remove();
