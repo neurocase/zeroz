@@ -143,7 +143,7 @@ public class ZerozGame implements ApplicationListener {
 		if(Gdx.input.isKeyPressed(Input.Keys.DOWN)){
 			//aimVec.x = (Gdx.input.getX() * 0.1f + (Gdx.graphics.getWidth()/2));// - zplayer.position.x;
 			//aimVec.y = (Gdx.input.getY() * 0.1f + (Gdx.graphics.getHeight()/2));// - zplayer.position.y;
-			zplayer.shoot(aimVec);
+			zplayer.shoot(aimVec.angle());
 			
 			//Gdx.graphics.getWidth()/2-width*32,Gdx.graphics.getHeight()/2
 	     }
@@ -154,6 +154,8 @@ public class ZerozGame implements ApplicationListener {
 			System.out.print("    Y:");
 			System.out.print(-(Gdx.input.getY() - Gdx.graphics.getHeight()/2+zplayer.height*32));
 			aimVec.y = (-(Gdx.input.getY() - Gdx.graphics.getHeight()/2+zplayer.height*32));
+			System.out.print(" Angle:");
+			System.out.print(aimVec.angle());
 			//if (aimVec.x == 0){
 				//a
 				

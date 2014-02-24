@@ -59,10 +59,10 @@ public class Zplayer extends Zactor {
 		initialized = true;
 	}
 	
-	public void shoot(Vector2 aimVec){
+	public void shoot(float angle){
 		Zbullet bullet = new Zbullet();
 		bullets.add(bullet);
-		bullet.create(collisionLayer, position, aimVec);
+		bullet.create(collisionLayer, position, angle);
 	/*	System.out.print(aimVec.x);
 		System.out.print(",");
 		System.out.print(aimVec.y);
@@ -88,7 +88,7 @@ public class Zplayer extends Zactor {
         }
         
         for (Zbullet zb : bullets){
-
+        //		zb.update();
 		}
         
         spriteBatch.begin();
