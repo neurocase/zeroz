@@ -88,7 +88,7 @@ public class Zplayer extends Zactor {
         }
         
         for (Zbullet zb : bullets){
-        //		zb.update();
+        		zb.update();
 		}
         
         spriteBatch.begin();
