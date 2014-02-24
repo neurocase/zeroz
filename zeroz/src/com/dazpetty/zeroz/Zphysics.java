@@ -87,18 +87,24 @@ public class Zphysics {
 			if (!zact.isCellBlocked(zact.position.x, newposition.y) && !zact.isGrounded){//||!zact.isCellBlocked(newposition.x+1, newposition.y+0.1f+i)){
 				zact.position.y = newposition.y;
 			}else{
-				zact.isGrounded = true;
-				if(!zact.isCellBlocked(zact.position.x, (int)(zact.position.y)))
+				//zact.isGrounded = true;
+				if(!zact.isCellBlocked(zact.position.x, (int)(zact.position.y))){
 				zact.position.y =  (int)(zact.position.y);
-				blocked = true;
+				blocked = true; 
 				zact.velocity.y = 0;
+				if(!zact.isCellBlocked(zact.position.x, (int)(zact.position.y+1))){// ||  !zact.isCellBlocked(zact.position.x, (int)(zact.position.y+2))){
+					zact.isGrounded = true;
+				}else{
+					System.out.println("Donk!");
+				}
+				}
 			}
 			if (!Gdx.input.isKeyPressed(Input.Keys.UP) && !zact.isCellBlocked(zact.position.x, zact.position.y-0.1f) && !zact.isCellPlatform(zact.position.x, zact.position.y-0.1f)){
 				zact.isGrounded = false;
 			}
 			
-			if (blocked){
-			/*	System.out.print("blocked new:");
+	/*	if (blocked){
+				/System.out.print("blocked new:");
 				System.out.print( newposition.x);
 				System.out.print(",");
 				System.out.print( newposition.y);
@@ -109,9 +115,14 @@ public class Zphysics {
 				if (zact.isGrounded){
 					System.out.print(" isGrounded ");
 					System.out.print(" Height:");
-					System.out.print(zact.height);*/
+					System.out.print(zact.height);
 				}
 				System.out.println();
-//		}
-	}
+				}*/
+		}
 }
+
+
+
+
+

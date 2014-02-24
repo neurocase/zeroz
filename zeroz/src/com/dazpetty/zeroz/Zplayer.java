@@ -19,7 +19,7 @@ public class Zplayer extends Zactor {
 	private static final int        FRAME_COLS = 5;         // #1
 	private static final int        FRAME_ROWS = 5;         // #2
 	  
-	Animation                       walkAnimation;          // #3
+	Animation                        walkAnimation;          // #3
 	Texture                         walkSheet;              // #4
 	TextureRegion[]                 walkFrames;             // #5
 	SpriteBatch                     spriteBatch;            // #6
@@ -28,7 +28,7 @@ public class Zplayer extends Zactor {
 	
 	
 	
-	Set<Zbullet> bullets= new HashSet<Zbullet>();
+	
 	
 	
 	public void create(){
@@ -60,9 +60,7 @@ public class Zplayer extends Zactor {
 	}
 	
 	public void shoot(float angle){
-		Zbullet bullet = new Zbullet();
-		bullets.add(bullet);
-		bullet.create(collisionLayer, position, angle);
+		
 	/*	System.out.print(aimVec.x);
 		System.out.print(",");
 		System.out.print(aimVec.y);
@@ -87,15 +85,11 @@ public class Zplayer extends Zactor {
         	currentFrame.flip(true,false);
         }
         
-        for (Zbullet zb : bullets){
-        		zb.update();
-		}
+        
         
         spriteBatch.begin();
-        spriteBatch.draw(currentFrame, Gdx.graphics.getWidth()/2-width*32,Gdx.graphics.getHeight()/2);//-height*32);    
-        for (Zbullet zb : bullets){
-			spriteBatch.draw(zb.texture, zb.position.x, zb.position.y);
-		}
+        spriteBatch.draw(currentFrame, Gdx.graphics.getWidth()/2-width*32,Gdx.graphics.getHeight()/2);//-height*32);   
+  
         spriteBatch.end();	
 	}
 }

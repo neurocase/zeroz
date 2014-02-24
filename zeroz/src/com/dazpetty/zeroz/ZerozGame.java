@@ -1,6 +1,8 @@
 package com.dazpetty.zeroz;
 
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import com.badlogic.gdx.ApplicationListener;
@@ -39,6 +41,9 @@ public class ZerozGame implements ApplicationListener {
 	private Vector2 playerstart = new Vector2(7,7);
 	private Zphysics physics;
 	public Vector2 aimVec = new Vector2(0,0);
+	Set<Zbullet> bullets= new LinkedHashSet<Zbullet>();
+	Iterator<Zbullet> itzbullet = bullets.iterator();
+	private Vector2 playerpos = new Vector2(0,0); 
 	
 	
 	/*private static final int        FRAME_COLS = 4;         // #1
@@ -120,7 +125,8 @@ public class ZerozGame implements ApplicationListener {
 		
 		
 		
-        
+		playerpos.x = (zplayer.position.x + Gdx.graphics.getWidth()/2);
+		playerpos.y = (zplayer.position.y + Gdx.graphics.getHeight()/2+zplayer.height*32);
         
         
 		batch.setProjectionMatrix(camera.combined);
@@ -143,19 +149,33 @@ public class ZerozGame implements ApplicationListener {
 		if(Gdx.input.isKeyPressed(Input.Keys.DOWN)){
 			//aimVec.x = (Gdx.input.getX() * 0.1f + (Gdx.graphics.getWidth()/2));// - zplayer.position.x;
 			//aimVec.y = (Gdx.input.getY() * 0.1f + (Gdx.graphics.getHeight()/2));// - zplayer.position.y;
-			zplayer.shoot(aimVec.angle());
+			//zplayer.shoot();
+			aimVec.x = (Gdx.input.getX() - Gdx.graphics.getWidth()/2 - 9 - 5);
+			aimVec.y = (-(Gdx.input.getY() - Gdx.graphics.getHeight()/2+zplayer.height*32 - 8 -10));
+			System.out.print(" Angle:");
+			System.out.print(aimVec.angle());
+			System.out.print(" ::");
+			Zbullet bullet = new Zbullet();
+			float an = aimVec.angle();
+			bullets.add(bullet);
+			bullet.create(collisionLayer, playerpos, an);
 			
 			//Gdx.graphics.getWidth()/2-width*32,Gdx.graphics.getHeight()/2
 	     }
+		
+		
+		
 		if(Gdx.input.isTouched()){
 			System.out.print("X:");
 			System.out.print(Gdx.input.getX() - Gdx.graphics.getWidth()/2);
 			aimVec.x = (Gdx.input.getX() - Gdx.graphics.getWidth()/2);
-			System.out.print("    Y:");
-			System.out.print(-(Gdx.input.getY() - Gdx.graphics.getHeight()/2+zplayer.height*32));
 			aimVec.y = (-(Gdx.input.getY() - Gdx.graphics.getHeight()/2+zplayer.height*32));
+			System.out.print("    Y:");
+			System.out.print(-(Gdx.input.getY() - Gdx.graphics.getHeight()/2 +zplayer.height*32));
+			
 			System.out.print(" Angle:");
 			System.out.print(aimVec.angle());
+			System.out.println();
 			//if (aimVec.x == 0){
 				//a
 				
@@ -176,8 +196,18 @@ public class ZerozGame implements ApplicationListener {
 		
 		batch.begin();
 		dpadsprite.draw(batch);
-	//	playersprite.draw(batch);
-		batch.end();
+	    for (Zbullet zb : bullets){
+	    	zb.update();
+		}
+	    /*while(itzbullet.hasNext()){
+	    	Zbullet ib = itzbullet.next();
+	    	if(ib.distance > 0){
+	    		itzbullet.remove();
+	    	}
+
+	    }*/
+	    
+	    batch.end();
 		zplayer.draw(1,1);
 	}
 
