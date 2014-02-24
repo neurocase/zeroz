@@ -1,5 +1,8 @@
 package com.dazpetty.zeroz;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
@@ -25,18 +28,13 @@ public class Zplayer extends Zactor {
 	
 	
 	
+	Set<Zbullet> bullets= new HashSet<Zbullet>();
+	
+	
 	public void create(){
 	height = 2;
 	width = 1.25f;
 	
-	/*
-	 *   WHAT IF, I Create a Sprite sheet for all animations, each on a line
-	 *   and can use TextureRegion[][] tmp = TextureRegion.split(walkSheet, walkSheet.getWidth() / 
-	 *	 FRAME_COLS, walkSheet.getHeight() / FRAME_ROWS);                                // #10
-	 *
-	 *   
-	 * 
-	 */
 	walkSheet = new Texture(Gdx.files.internal("data/gfx/enforcer/run.png"));     // #9
 	   TextureRegion[][] tmp = TextureRegion.split(walkSheet, walkSheet.getWidth() / 
 			   FRAME_COLS, walkSheet.getHeight() / FRAME_ROWS);                                // #10
@@ -61,18 +59,43 @@ public class Zplayer extends Zactor {
 		initialized = true;
 	}
 	
+	public void shoot(Vector2 aimVec){
+		Zbullet bullet = new Zbullet();
+		bullets.add(bullet);
+		bullet.create(collisionLayer, position, aimVec);
+	/*	System.out.print(aimVec.x);
+		System.out.print(",");
+		System.out.print(aimVec.y);
+		System.out.print(":-player:");
+		System.out.print(aimVec.x - position.x);
+		System.out.print(",");
+		System.out.print(aimVec.y - this.position.y);*/
+	}
+	
 	public void draw(float x, float y){
+		
+		
+		
+		
 		stateTime += Gdx.graphics.getDeltaTime();                       // #15
         currentFrame = walkAnimation.getKeyFrame(stateTime, true);      
         
         if(!isGoRight && currentFrame.isFlipX()){
-        	currentFrame.flip(true,false);// #16
+        	currentFrame.flip(true,false);
         }
         if(isGoRight && !currentFrame.isFlipX()){
-        	currentFrame.flip(true,false);// #16
-        }   
+        	currentFrame.flip(true,false);
+        }
+        
+        for (Zbullet zb : bullets){
+
+		}
+        
         spriteBatch.begin();
-        spriteBatch.draw(currentFrame, Gdx.graphics.getWidth()/2-width*32,Gdx.graphics.getHeight()/2);//-height*32);                         // #17
+        spriteBatch.draw(currentFrame, Gdx.graphics.getWidth()/2-width*32,Gdx.graphics.getHeight()/2);//-height*32);    
+        for (Zbullet zb : bullets){
+			spriteBatch.draw(zb.texture, zb.position.x, zb.position.y);
+		}
         spriteBatch.end();	
 	}
 }

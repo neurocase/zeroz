@@ -12,8 +12,10 @@ public class Zobject {
 	public float height = 2;
 	public float width = 1.25f;
 	public TextureRegion textureRegion;
+	public float rotDir = 0;
+	public boolean isFriendly = true;
 	
-	
+	 
 	
 	
 }

@@ -30,7 +30,8 @@ public class Zactor extends Zobject{
 	public float rotdir = 0;
 	public float gravMass = 0.45f;
 	public float deceleration = 0.25f;
-	public String blockedKey = "collision";
+	public String blockedKey = "solid";
+	public String platformKey = "platform";
 	public boolean initialized = false;
 	public Vector2 position = new Vector2(0,0);
 	public Vector2 velocity = new Vector2(0,0);
@@ -49,6 +50,11 @@ public class Zactor extends Zobject{
 	protected boolean isCellBlocked(float x, float y) {
 		Cell cell = collisionLayer.getCell((int) (x), (int) (y));		
 		return cell != null && cell.getTile() != null && cell.getTile().getProperties().containsKey(blockedKey);
+	}
+	
+	protected boolean isCellPlatform(float x, float y) {
+		Cell cell = collisionLayer.getCell((int) (x), (int) (y));		
+		return cell != null && cell.getTile() != null && cell.getTile().getProperties().containsKey(platformKey);
 	}
 	
 	public void goLeft(){

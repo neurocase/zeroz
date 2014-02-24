@@ -1,5 +1,8 @@
 package com.dazpetty.zeroz;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -35,6 +38,7 @@ public class ZerozGame implements ApplicationListener {
 	public TiledMapTileLayer collisionLayer;
 	private Vector2 playerstart = new Vector2(7,7);
 	private Zphysics physics;
+	public Vector2 aimVec = new Vector2(0,0);
 	
 	
 	/*private static final int        FRAME_COLS = 4;         // #1
@@ -56,35 +60,15 @@ public class ZerozGame implements ApplicationListener {
 	@Override
 	public void create() {	
 		
-		
-	/*	walkSheet = new Texture(Gdx.files.internal("data/gfx/punk/run.png"));     // #9
-		   TextureRegion[][] tmp = TextureRegion.split(walkSheet, walkSheet.getWidth() / 
-				   FRAME_COLS, walkSheet.getHeight() / FRAME_ROWS);                                // #10
-       walkFrames = new TextureRegion[FRAME_COLS * FRAME_ROWS];
-       int index = 0;
-       for (int i = 0; i < FRAME_ROWS; i++) {
-               for (int j = 0; j < FRAME_COLS; j++) {
-                       walkFrames[index++] = tmp[i][j];
-               }
-       }*/
-   /*    walkAnimation = new Animation(0.025f, walkFrames);              // #11
-       spriteBatch = new SpriteBatch();                                // #12
-       stateTime = 0f;                                                 // #13*/
-		
-       
-       
 		map = new TmxMapLoader().load("data/testmap2.tmx");	
 		
 		collisionLayer = (TiledMapTileLayer) map.getLayers().get("collision");
 		
 		zplayer = new Zplayer();
 		physics = new Zphysics();
-		zplayer.initActor(collisionLayer, playerstart);//, Gdx.files.internal("data/player.png"));
+		zplayer.initActor(collisionLayer, playerstart);
 		zplayer.create();
 		
-		//worldController = new WorldController();
-		//zplayer.Velx = 0;
-		//zplayer.posy = 4;
 		float w = Gdx.graphics.getWidth();
 		float h = Gdx.graphics.getHeight();
 		
@@ -128,7 +112,7 @@ public class ZerozGame implements ApplicationListener {
 		zplayer.dispose();	
 		map.dispose();
 	}
-
+	
 	@Override
 	public void render() {		
 		Gdx.gl.glClearColor(0.4f, 0.25f, 1, 1);
@@ -155,6 +139,27 @@ public class ZerozGame implements ApplicationListener {
 		if(Gdx.input.isKeyPressed(Input.Keys.UP)){
 			zplayer.goJump();
 	     }
+		
+		if(Gdx.input.isKeyPressed(Input.Keys.DOWN)){
+			//aimVec.x = (Gdx.input.getX() * 0.1f + (Gdx.graphics.getWidth()/2));// - zplayer.position.x;
+			//aimVec.y = (Gdx.input.getY() * 0.1f + (Gdx.graphics.getHeight()/2));// - zplayer.position.y;
+			zplayer.shoot(aimVec);
+			
+			//Gdx.graphics.getWidth()/2-width*32,Gdx.graphics.getHeight()/2
+	     }
+		if(Gdx.input.isTouched()){
+			System.out.print("X:");
+			System.out.print(Gdx.input.getX() - Gdx.graphics.getWidth()/2);
+			aimVec.x = (Gdx.input.getX() - Gdx.graphics.getWidth()/2);
+			System.out.print("    Y:");
+			System.out.print(-(Gdx.input.getY() - Gdx.graphics.getHeight()/2+zplayer.height*32));
+			aimVec.y = (-(Gdx.input.getY() - Gdx.graphics.getHeight()/2+zplayer.height*32));
+			//if (aimVec.x == 0){
+				//a
+				
+			//}
+			//Gdx.graphics.getWidth()/2-width*32,Gdx.graphics.getHeight()/2
+		}
 		
 		physics.doPhysics(zplayer);
 		
