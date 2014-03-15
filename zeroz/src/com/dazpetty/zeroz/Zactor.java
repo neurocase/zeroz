@@ -18,73 +18,133 @@ import com.badlogic.gdx.math.Vector2;
  * 
  */
 
-public class Zactor extends Zobject{
+public class Zactor extends Zobject {
 
 	public boolean isJump = true;
 	public boolean isAlive = true;
 	public boolean isGrounded = true;
-	
-	public float jumpSpeed = 17;
-	public float moveSpeed = 2;
+	public boolean isOnLadder = false;
+	public boolean canDoubleJump = false;
+
+	public float jumpSpeed = 16;
+	public float moveSpeed = 5;
 	public int health = 100;
 	public float rotdir = 0;
-	public float gravMass = 0.45f;
-	public float deceleration = 0.25f;
+	public float gravMass = 0.6f;
+	public float deceleration = 0.6f;
 	public String blockedKey = "solid";
 	public String platformKey = "platform";
+	public String ladderKey = "ladder";
 	public boolean initialized = false;
-	public Vector2 position = new Vector2(0,0);
-	public Vector2 velocity = new Vector2(0,0);
+	public Vector2 position = new Vector2(0, 0);
+	public Vector2 velocity = new Vector2(0, 0);
 	protected TiledMapTileLayer collisionLayer;
 	protected boolean isFlying = false;
-	protected boolean isGoRight = true;
-	
-	public void initActor(TiledMapTileLayer cLayer, Vector2 actorstart){
+	public boolean isGoRight = true;
+	public boolean isGoLeft = false;
+	int wantGoDirection = 0;
+	// 0 = nowhere, 1 = right, -1 = left
+
+	public boolean run = false;
+
+	public void initActor(TiledMapTileLayer cLayer, Vector2 actorstart) {
 		position = actorstart;
 		collisionLayer = cLayer;
 		initialized = true;
 		texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		textureRegion = new TextureRegion(texture, 0, 0, 64, 128);
 	}
-	
+
 	protected boolean isCellBlocked(float x, float y) {
-		Cell cell = collisionLayer.getCell((int) (x), (int) (y));		
-		return cell != null && cell.getTile() != null && cell.getTile().getProperties().containsKey(blockedKey);
+		Cell cell = collisionLayer.getCell((int) (x), (int) (y));
+		return cell != null && cell.getTile() != null
+				&& cell.getTile().getProperties().containsKey(blockedKey);
 	}
-	
+
 	protected boolean isCellPlatform(float x, float y) {
-		Cell cell = collisionLayer.getCell((int) (x), (int) (y));		
-		return cell != null && cell.getTile() != null && cell.getTile().getProperties().containsKey(platformKey);
+		Cell cell = collisionLayer.getCell((int) (x), (int) (y));
+		return cell != null && cell.getTile() != null
+				&& cell.getTile().getProperties().containsKey(platformKey);
 	}
-	
-	public void goLeft(){
-			velocity.x -=  moveSpeed;
-    		if (velocity.x < -10) velocity.x = -10;  
-    		isGoRight = false;
+
+	protected boolean isCellLadder(float x, float y) {
+		Cell cell = collisionLayer.getCell((int) (x), (int) (y));
+		return cell != null && cell.getTile() != null
+				&& cell.getTile().getProperties().containsKey(ladderKey);
+	}
+
+	public void goLeft() {
+		if (velocity.y == 0 || isOnLadder) {
+			velocity.x -= moveSpeed;
+			if (velocity.x < -10)
+				velocity.x = -10;
+			isGoRight = false;
+			run = true;
+		}
+		if (velocity.y != 0 && velocity.x > -5 && canDoubleJump) {
+			velocity.x -= moveSpeed;
+		}
+
 	}
 
 	public void goRight() {
-      			velocity.x +=  moveSpeed;
-          		if (velocity.x > 10) velocity.x = 10;  
-          		isGoRight = true;
-
+		if (velocity.y == 0 || isOnLadder) {
+			velocity.x += moveSpeed;
+			if (velocity.x > 10)
+				velocity.x = 10;
+			isGoRight = true;
+			run = true;
+		}
+		if (velocity.y != 0 && velocity.x < 5 && canDoubleJump) {
+			velocity.x += moveSpeed;
+		}
 	}
 
 	public void goJump() {
-		if (isGrounded){
-			velocity.y += jumpSpeed;
-      	  isGrounded = false;
+
+		for (float i = -0.55f; i < 0.55f; i += 0.55f) {
+			if (isCellLadder(position.x + i, position.y)) {
+				position.x = (int) position.x + i + 0.4f;
+			}
 		}
+
+		if (isCellLadder(position.x, position.y)) {
+			isGrounded = false;
+			velocity.y = 4f;
+			isOnLadder = true;
+			velocity.x = 0;
+			run = true;
+		} else {
+			isOnLadder = false;
+		}
+
+		if (isGrounded) {
+			canDoubleJump = true;
+			velocity.y += jumpSpeed;
+			isGrounded = false;
+			isOnLadder = false;
+		} else if ((velocity.x >= 0 && isCellBlocked(position.x + 0.5f,
+				position.y))
+				|| (velocity.x <= 0 && isCellBlocked(position.x - 0.5f,
+						position.y))) {
+			if (canDoubleJump && velocity.y < (jumpSpeed / 2)) {
+				if (velocity.x > 0) {
+					velocity.x = (-jumpSpeed / 2);
+					isGoRight = false;
+				} else {
+					velocity.x = (jumpSpeed / 2);
+					isGoRight = true;
+				}
+				velocity.y = jumpSpeed - (jumpSpeed / 3.5f);
+				canDoubleJump = false;
+			}
+
+		}
+
 	}
-	
+
 	public void dispose() {
-	//	texture.dispose();
+		// texture.dispose();
 	}
 
 }
-
-
-
-
-
-
