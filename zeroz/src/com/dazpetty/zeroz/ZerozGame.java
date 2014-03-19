@@ -9,6 +9,7 @@ import java.util.Set;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -52,8 +53,17 @@ public class ZerozGame implements ApplicationListener {
 	private Vector2 playerstart = new Vector2(7, 10);
 	private Vector2 enemystart = new Vector2(30, 10);
 	private Zphysics physics;
+
 	Vector3 touchPos = new Vector3(0, 0, 0);
 	Vector3 zeroVector3 = new Vector3(0, 0, 0);
+	Vector3 aimlessVec = new Vector3(0, 0, 1);
+	Vector3 playerTarget = new Vector3(0, 0, 0);
+
+	private boolean playerShoot = false;
+	private boolean giveWorldPos = true;
+	
+	public Zbullet[] bulletArray = new Zbullet[250];
+	private int activeBullet = 0;
 
 	int bulletsadded = 0;
 	float viewwidth = 0;
@@ -68,7 +78,6 @@ public class ZerozGame implements ApplicationListener {
 	private Vector2 playerpos = new Vector2(0, 0);
 	private String npcKey = "target";
 	private Vector3 screenPosZero = new Vector3(0, 0, 0);
-
 	/*
 	 * private static final int FRAME_COLS = 4; // #1 private static final int
 	 * FRAME_ROWS = 6; // #2
@@ -85,39 +94,12 @@ public class ZerozGame implements ApplicationListener {
 
 	@Override
 	public void create() {
-
+			
+		for( int i=0; i<250; i++ ) bulletArray[i] = new Zbullet();
+		
 		map = new TmxMapLoader().load("data/testmap2.tmx");
 		collisionLayer = (TiledMapTileLayer) map.getLayers().get("collision");
 		npcLayer = (TiledMapTileLayer) map.getLayers().get("npcLayer");
-		/*
-		 * this code doesn't work for some reason
-		 * 
-		 * int lh = 0; int lw = 0;
-		 * 
-		 * lh = npcLayer.getHeight(); lw = npcLayer.getWidth();
-		 * 
-		 * for (int i = 0; i < lw; i++){ for (int j = 0; i < lh; j++){ Cell cell
-		 * = npcLayer.getCell((int) (i), (int) (j)); if (cell != null &&
-		 * cell.getTile() != null &&
-		 * cell.getTile().getProperties().containsKey(npcKey)){
-		 * 
-		 * } } }
-		 */
-
-		/*
-		 * Explaining the Aiming system.
-		 * 
-		 * When I take the mouseInput for aiming, it gives me screen
-		 * co-ordinates (from bottom left), from which i add half the width and
-		 * height of the screen to get the appropriate angle.
-		 * 
-		 * When I click on a target I need to convert the screen co-ords to
-		 * world co-ords to check for the target at grid location.
-		 * 
-		 * Once I have the world co-ordinates of the object, I need to project
-		 * it back into relative screen co-ordinates to get the new aiming
-		 * angle.
-		 */
 
 		zenemy = new Zenemy();
 		zplayer = new Zplayer();
@@ -223,30 +205,13 @@ public class ZerozGame implements ApplicationListener {
 
 		float an = 0;
 		if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-			System.out.print(" Angle:");
-			System.out.print(zplayer.aimVec.angle());
-			System.out.print(" ::");
 			Zbullet bullet = new Zbullet();
-			if (zplayer.hasTarget) {
-				zplayer.updateTarget(camera);
-				an = zplayer.aimVec.angle();
-			} else {
-				if (zplayer.isGoRight) {
-					an = 0;
-				} else {
-					an = 180;
-				}
-			}
 
-			if (zplayer.isOnLadder)
-				zplayer.velocity.y = 0;
-			//if (!zplayer.isShooting) {
-				bullets.add(bullet);
-				bullet.create(collisionLayer, zplayer.position, an,
-						zplayer.hasTarget);
-				zplayer.isShooting = true;
+			if (zplayer.isOnLadder) zplayer.velocity.y = 0;
+			
+			playerShoot = true;
 				
-			//}
+			
 		}
 
 		if (Gdx.input.isTouched()) {
@@ -255,8 +220,6 @@ public class ZerozGame implements ApplicationListener {
 					0);
 
 			float section = touchPos.x / viewwidth;
-			// System.out.println("Touch at - X:" + touchPos.x + " Y:"
-			// + touchPos.y + "SECTION:" + section);
 			boolean inTarget = false;
 
 			if (touchPos.y < viewheight - 64) {
@@ -264,7 +227,6 @@ public class ZerozGame implements ApplicationListener {
 			}
 
 			if (inTarget) {
-				zplayer.isShooting = true;
 				camera.unproject(touchPos);
 				int i = (int) touchPos.x;
 				int j = (int) touchPos.y;
@@ -275,16 +237,14 @@ public class ZerozGame implements ApplicationListener {
 
 				for (int l = -2; l < 2; l++) {
 					for (int o = -2; o < 2; o++)
-						if ((int) zenemy.position.x + l == i
-								&& (int) zenemy.position.y + o == j) {
-							System.out.print("ENEMY TARGET ACQUIRED");
-							zplayer.giveTarget(zenemy);
+						if ((int) zenemy.worldpos.x + l == i
+								&& (int) zenemy.worldpos.y + o == j) {
+							//TODO:: TARGET LOCKING
 							foundEnemy = true;
 						}
 
 				}
 				if (!foundEnemy) {
-					zplayer.hasTarget = false;
 					zplayer.hasEnemy = false;
 				}
 			}
@@ -301,57 +261,23 @@ public class ZerozGame implements ApplicationListener {
 				}
 
 				if (section > 0.75 && section < 1) {
-					// copied code from pressing down
-					zplayer.isShooting = true;
-					System.out.print(" Angle:");
-					System.out.print(zplayer.aimVec.angle());
-					System.out.print(" ::");
-					Zbullet bullet = new Zbullet();
-					if (zplayer.hasTarget) {
-						zplayer.updateTarget(camera);
-						an = zplayer.aimVec.angle();
-
-					} else {
-						if (zplayer.isGoRight) {
-							an = 0;
-						} else {
-							an = 180;
-						}
-					}
-
-					if (zplayer.isOnLadder)
 						zplayer.velocity.y = 0;
-
-					//if (!zplayer.isShooting) {
-						bullets.add(bullet);
-						bullet.create(collisionLayer,  zplayer.position, an,
-								zplayer.hasTarget);
-						zplayer.isShooting = true;
-					//}
-
+						playerTarget = aimlessVec;
+						playerShoot = true;
 				}
 
 			}
-			if (inTarget) {
-				Zbullet bullet = new Zbullet();
+			if (inTarget){
 				Vector2 newAimVec = new Vector2();
 
-				newAimVec.x = zplayer.position.x - touchPos.x;
-				newAimVec.y = zplayer.position.y - touchPos.y;
+				newAimVec.x = zplayer.worldpos.x - touchPos.x;
+				newAimVec.y = zplayer.worldpos.y - touchPos.y;
 
-				zplayer.aimVec.x = newAimVec.x;
-				zplayer.aimVec.y = newAimVec.y;
 				
-				float man = (newAimVec.angle() - 180.0f);
-				System.out.println("newAimVec:" + man);
-
-				//if (!zplayer.isShooting) {
-					bullets.add(bullet);
-					bullet.create(collisionLayer, zplayer.position, man,
-							zplayer.hasTarget);
-					zplayer.isShooting = true;
-					zplayer.amTouching = true;
-				//}
+				playerTarget.x = newAimVec.x;
+				playerTarget.y = newAimVec.y;
+				giveWorldPos = false;
+				playerShoot = true;
 			}
 		}
 
@@ -381,48 +307,56 @@ public class ZerozGame implements ApplicationListener {
 		camera.unproject(screenPosZero);
 		buttonsprite.setPosition(screenPosZero.x, screenPosZero.y);
 
-		camera.position.set(zplayer.position.x, zplayer.position.y, 0);
+		camera.position.set(zplayer.worldpos.x, zplayer.worldpos.y, 0);
 
-		if (zplayer.hasTarget) {
-			zplayer.updateTarget(camera);
-			an = zplayer.aimVec.angle();
-
-		}
-		// batch.setProjectionMatrix(orthographic);
 		batch.begin();
-
-		if (zplayer.hasTarget) {
-			targetsprite.setPosition(zenemy.position.x, zenemy.position.y);
-			targetsprite.draw(batch);
-		}
+		zplayer.update(playerTarget.x,playerTarget.y, giveWorldPos, camera, playerShoot);
 
 		leftarrowsprite.draw(batch);
 		rightarrowsprite.draw(batch);
+		
+		
+		for (int i = 0; i < 100; i++){ 
+			if (!bulletArray[i].isAlive){
+			//	bulletArray[i].fire(position, aimAngle);
+				break;
+			}	
+		}
+		
+		if(playerShoot){
+			if (activeBullet == 100){
+				activeBullet = 0;
+			}
+			bulletArray[activeBullet].isAlive = true;
+			Vector3 tmpVec3 = new Vector3(zplayer.worldpos.x,zplayer.worldpos.y,0);
+			//camera.unproject(tmpVec3);
+			bulletArray[activeBullet].screenpos.y = zplayer.worldpos.y;
+			bulletArray[activeBullet].screenpos.x = zplayer.worldpos.x;
+			bulletArray[activeBullet].fire(tmpVec3.x, tmpVec3.y, zplayer.aimAngle);
+			//System.out.println(tmpVec3.x +","+ tmpVec3.y +","+ zplayer.aimAngle);
+			activeBullet++;
+		}
+		
+		for (int i = 0; i < 100; i++){
+			if (bulletArray[i].isAlive){
+				bulletArray[i].update(camera);
+				Vector3 tmpVec = new Vector3 (bulletArray[i].screenpos.x, bulletArray[i].screenpos.y, 0);
+				//camera.project(tmpVec);
+				bulletArray[i].sprite.setPosition(tmpVec.x, tmpVec.y);
 
-		buttonsprite.draw(batch);
-
-		for (Zbullet zb : bullets) {
-			if (zb.isAlive) {
-				zb.update();
-				if ((Math.abs(zb.position.x - zenemy.position.x) < 32)) {
-
-					if (!zb.isTargeted
-							&& (zb.position.y >= (zenemy.position.y))
-							&& (zb.position.y < (zenemy.position.y + 3))) {
-						zenemy.goJump();
-					}
-					if (zb.isTargeted
-							&& Math.abs(zb.position.y - zenemy.position.y + 32) < 32) {
+				if ((Math.abs(bulletArray[i].screenpos.x - zenemy.worldpos.x)<1)){
+					if (Math.abs(bulletArray[i].screenpos.y - zenemy.worldpos.y) < 1){
 						zenemy.goJump();
 					}
 				}
+				//bulletArray[i].sprite.translateX(bulletArray[i].velocity.x / 50);
+				//bulletArray[i].sprite.translateY(bulletArray[i].velocity.y / 50);
+				
+				bulletArray[i].sprite.draw(batch);
 			}
-			zb.sprite.translateX(zb.velocity.x / 50);
-			zb.sprite.translateY(zb.velocity.y / 50);
-			zb.sprite.draw(batch);
 		}
 
-		zplayer.draw();
+	
 		zplayer.sprite.draw(batch);
 		if (!zplayer.isOnLadder) {
 			zplayer.armsprite.draw(batch);
@@ -430,13 +364,21 @@ public class ZerozGame implements ApplicationListener {
 		if (zplayer.isOnLadder && zplayer.isShooting) {
 			zplayer.armsprite.draw(batch);
 		}
+		
 		/*
 		 * TODO: WANT TO REMOVE BULLETS FROM SET TO SAVE MEMORY
 		 */
-
+		
+		buttonsprite.draw(batch);
 		batch.end();
 		zenemy.draw(camera);
-
+		
+		playerShoot = false;
+		playerTarget.x = 0f;
+		playerTarget.y = 0f;
+		System.out.println("ZENEMY X" + zenemy.worldpos.x + ", Y" + zenemy.worldpos.y);
+		System.out.println("ZPLAYER X" + zplayer.worldpos.x + ", Y" + zplayer.worldpos.y);
+		System.out.println("ACTIVEBULLET X" + bulletArray[activeBullet].worldpos.x + ", Y" + bulletArray[activeBullet].worldpos.y);
 	}
 
 	@Override

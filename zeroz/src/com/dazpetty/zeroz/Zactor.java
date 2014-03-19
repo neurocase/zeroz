@@ -36,7 +36,8 @@ public class Zactor extends Zobject {
 	public String platformKey = "platform";
 	public String ladderKey = "ladder";
 	public boolean initialized = false;
-	public Vector2 position = new Vector2(0, 0);
+	public Vector2 screenpos = new Vector2(0, 0);
+	public Vector2 worldpos = new Vector2(0, 0);
 	public Vector2 velocity = new Vector2(0, 0);
 	protected TiledMapTileLayer collisionLayer;
 	protected boolean isFlying = false;
@@ -48,7 +49,7 @@ public class Zactor extends Zobject {
 	public boolean run = false;
 
 	public void initActor(TiledMapTileLayer cLayer, Vector2 actorstart) {
-		position = actorstart;
+		worldpos = actorstart;
 		collisionLayer = cLayer;
 		initialized = true;
 		texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
@@ -103,12 +104,12 @@ public class Zactor extends Zobject {
 	public void goJump() {
 
 		for (float i = -0.55f; i < 0.55f; i += 0.55f) {
-			if (isCellLadder(position.x + i, position.y)) {
-				position.x = (int) position.x + i + 0.4f;
+			if (isCellLadder(worldpos.x + i, worldpos.y)) {
+				worldpos.x = (int) worldpos.x + i + 0.4f;
 			}
 		}
 
-		if (isCellLadder(position.x, position.y)) {
+		if (isCellLadder(worldpos.x, worldpos.y)) {
 			isGrounded = false;
 			velocity.y = 4f;
 			isOnLadder = true;
@@ -123,10 +124,10 @@ public class Zactor extends Zobject {
 			velocity.y += jumpSpeed;
 			isGrounded = false;
 			isOnLadder = false;
-		} else if ((velocity.x >= 0 && isCellBlocked(position.x + 0.5f,
-				position.y))
-				|| (velocity.x <= 0 && isCellBlocked(position.x - 0.5f,
-						position.y))) {
+		} else if ((velocity.x >= 0 && isCellBlocked(worldpos.x + 0.5f,
+				worldpos.y))
+				|| (velocity.x <= 0 && isCellBlocked(worldpos.x - 0.5f,
+						worldpos.y))) {
 			if (canDoubleJump && velocity.y < (jumpSpeed / 2)) {
 				if (velocity.x > 0) {
 					velocity.x = (-jumpSpeed / 2);

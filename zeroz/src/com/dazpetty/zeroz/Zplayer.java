@@ -28,7 +28,7 @@ public class Zplayer extends Zactor {
 	public Sprite armsprite;
 	public Sprite aimladdersprite;
 	
-
+	public float aimAngle = 0;
 	public Sprite idlesprite;
 	public Sprite runsprite;
 	public Sprite backwalksprite;
@@ -60,21 +60,39 @@ public class Zplayer extends Zactor {
 	public boolean isShooting = false;
 	public boolean aimOnLadder = false;
 	public boolean amTouching = false;
+	public int activeBullet = 0;
 	
-	public Vector2 aimVec = new Vector2(0, 0);
-	public Vector2 targetVec = new Vector2(0, 0);
-	public Vector3 aimTargVec = new Vector3(0, 0, 0);
+	//private enum direction{left, right};
+	//private enum state{run,idle,ladderclimb,ladderaim,jump};
+	
+	//private String facingdirection = "right";
+	private String movingdirection = "right";
+	private String aimingdirection = "right";
+	public String state = "idle";
+	
+	
+	
+	public Vector3 targetWorldVec = new Vector3(0, 0, 0);
+	public Vector3 targetScreenVec = new Vector3(0, 0, 0);
+	
+	public Vector3 enemyWorldVec = new Vector3(0, 0, 0);
+	public Vector3 enemyScreenVec = new Vector3(0, 0, 0);
+	
 	public Zenemy myZenemy = new Zenemy();
+	
+	
 
 	/*
 	 * public enum moveState{ runforwards, runbackwards, idle, jump, die; }
 	 */
 
-	public String moveState = "idle";
+	//public String moveState = "idle";
 
 	public void create() {
 		height = 2;
 		width = 1.25f;
+		
+	
 		
 		aimLadderTexture = new Texture(
 				Gdx.files.internal("data/gfx/zman/ladderlean.png"));
@@ -148,220 +166,190 @@ public class Zplayer extends Zactor {
 		upladdersprite = new Sprite(upLadderTexRegion);
 		upladdersprite.setPosition(-32, -10);
 		upladdersprite.scale(1f);
+		
+
+		
 	}
 
 	@Override
 	public void initActor(TiledMapTileLayer cLayer, Vector2 actorstart) {
-		position = actorstart;
+		worldpos = actorstart;
 		collisionLayer = cLayer;
 		initialized = true;
 	}
 
-	public void shoot(float angle) {
 
-	}
-
-	public void draw() {
-	//	isShooting = false;
-		boolean flipSprite = false;
-
+	//public void update(Vector3 targinputvec, boolean isWorldCoord, Camera camera, boolean shoot) {
+	public void update(float inx, float iny, boolean isWorldCoord, Camera camera, boolean shoot) {
+		boolean facingtarget = true;
+		boolean flip = false;
+		boolean aimless = false;
+		currentFrame++;
 		
 		
 		
-		//isOnLadder
-		//isFacingEnemy
-		//isGoLeft/isGoRight
-		//armRotation
-		//targetLocation
+		if (inx == 0 && iny == 0){
+			aimless = true;
+			isWorldCoord = false;
+			if (movingdirection == "right") inx =  -2; 
+			if (movingdirection == "left") inx = 2;
+		}
+			
+		if (velocity.x > 0){
+			movingdirection = "right";
+			if (aimless){
+				aimingdirection = "right";
+			}
+		}else if (velocity.x < 0){
+			movingdirection = "left";
+			if (aimless){
+				aimingdirection = "left";
+			}
+		}else if (velocity.x == 0){
+		}
 		
 		
 		
-		if (run || (isOnLadder && velocity.y > 0)) {
-			currentFrame++;
+		targetScreenVec.x = inx;
+		targetScreenVec.y = iny;
+		targetWorldVec.x = inx;
+		targetWorldVec.y = iny;
+		
+		if (isWorldCoord){
+			camera.project(targetScreenVec);
+		}else{
+			camera.unproject(targetWorldVec);	
+		}
+		
+		if (targetScreenVec.x < 0){
+			aimingdirection = "right";
+		}else if (targetScreenVec.x > 0){
+			aimingdirection = "left";			
+		}
+		
+		float tx = targetWorldVec.x;
+		float ty = targetWorldVec.y;
+		
+		//System.out.println("TargetScreenX:"+ targetScreenVec.x +" TargetScreenY:"+ targetScreenVec.y);	
+		
+		if (velocity.x != 0 && velocity.y ==0 && isGrounded){
+			state = "run";
+		}
+		if (velocity.x ==0 && velocity.y == 0 && !isOnLadder){
+			state = "idle";
+		}
+		if (isOnLadder){
+			if (velocity.y == 0){
+				state = "ladderaim";
+			}else if (velocity.y > 0){
+				state = "ladderclimb";
+			}else if (velocity.y < 0){
+				state = "ladderslide";
+			}
+		}
+		
+		
+		
+		if (velocity.x != 0 && movingdirection == aimingdirection){
+				state = "run";
+		}else if (velocity.x != 0 && movingdirection != aimingdirection){
+			state = "runback";
+		}else if(velocity.x == 0 && velocity.y == 0){
+			state = "idle";
+		}
+		if (!isGrounded && !isOnLadder && velocity.y != 0){
+			state = "jumping";
+		}
+		
+		if (isOnLadder && !aimless){
+			state = "ladderaim";
+			isShooting = true;
+		}
+		
+		if (state == "run" || state == "ladderclimb" || state == "runback"){
 			if (currentFrame > 24) {
 				currentFrame = 0;
 			}
-			if (!isGrounded && !isOnLadder) currentFrame = 7;
+			
 			currentAtlasKey = String.format("%04d", currentFrame);
 			runsprite.setRegion(runTextureAtlas.findRegion(currentAtlasKey));
 			upladdersprite.setRegion(upLadderTextureAtlas.findRegion(currentAtlasKey));
 			backwalksprite.setRegion(backWalkTextureAtlas
 					.findRegion(currentAtlasKey));
-			if ((targetVec.x > position.x && isGoRight)
-					|| (targetVec.x < position.x && !isGoRight) || !hasTarget) {
-				sprite = runsprite;
-			} else {
-				sprite = backwalksprite;
-				flipSprite = true;
-			}
-		} else {
-			currentFrame++;
-			if (currentFrame > 3) {
-				currentFrame = 0;
-			}
+		}
+		
+		if (state == "run"){
+			sprite = runsprite;
+			isOnLadder = false;
+		
+		} else if (state == "runback"){
+			sprite = backwalksprite;
+			isOnLadder = false;
+		
+		} else if (state == "idle"){
+			currentFrame = 0;
 			currentAtlasKey = String.format("%04d", currentFrame);
 			idlesprite.setRegion(idleTextureAtlas.findRegion(currentAtlasKey));
-			sprite = idlesprite;
-
-		}
-
-		
-		/*		[FOLLOWING CODE SETS CORRECT ANIMATION]
-		 * 
-		 * 		Do you have a target?
-		 * 		If so, I need to make sure you are facing your target and make you walk backwards
-		 * 		If moving away from it.
-		 * 
-		 * 		If you don't have a target, then you don't need to walk backwards, because you only target whats directly 
-		 * 		in front of you.
-		 * 
-		 * 		armmov variable gently offsets the position of the arm to make it fit on the shoulder
-		 * 
-		 * 		aimVec is the vector between the player and the target
-		 */
-		
-		float armmov = 0;
-		armsprite.setRotation((aimVec.angle() - 180));
-		float armrot = armsprite.getRotation();
-		
-		
-		if (hasTarget) {
-			armmov = -0.77f;
-			if (hasTarget && targetVec.x < position.x) {
-				if  (isGoRight && sprite.isFlipX()) {
-					sprite.flip(true, false);
-				}
-				
-				
-				if (armrot > 180) {
-					armsprite = rightarmsprite;
-					armsprite.setRotation(armrot);
-				} else {
-					armsprite = leftarmsprite;
-					armsprite.setRotation(armrot);
-				}
-			}
-			
-			if (hasTarget && targetVec.x > position.x) {
-				if (isGoRight && !sprite.isFlipX()) {
-					sprite.flip(true, false);
-				}
-				if (!isGoRight && !sprite.isFlipX()) {
-					sprite.flip(true, false);
-				}
-				if (armrot > 180) {
-					armsprite = leftarmsprite;
-					armsprite.setRotation(armrot);
-				} else {
-					armsprite = rightarmsprite;
-					armsprite.setRotation(armrot);
-				}
-			}
-		} else {
-			if (isGoRight) {				
-				if (!sprite.isFlipX()) {
-					sprite.flip(true, false);
-				}
-				armsprite = rightarmsprite;
-				armsprite.setRotation(180);
-				
-				armmov = -0.8f;
-				if (isGoLeft) {
-					isGoLeft = true;
-				}
-			} else {
-				if (sprite.isFlipX()) {
-					sprite.flip(true, false);
-				}
-				armsprite = leftarmsprite;
-				
-				armsprite.setRotation(0);
-				if (!isGoLeft) {
-					armmov = -0.65f;
-					isGoLeft = false;
-				}
-			}
-		}
-		if (amTouching){
-		armsprite.setRotation(armrot-180);
-		}
-		amTouching = false;
-		
-		if (isOnLadder && velocity.x == 0){
-			sprite = upladdersprite; 
-		}
-		if (velocity.x != 0){
+			sprite = idlesprite;	
 			isOnLadder = false;
-		}
 		
-		
-		if (isOnLadder && isShooting){
-			
+		} else if (state == "jumping"){
+			currentFrame = 7;
+			isOnLadder = false;
+			isGrounded = false;
+			runsprite.setRegion(runTextureAtlas.findRegion(currentAtlasKey));
+			sprite = runsprite;	
+		} else if (state == "ladderclimb"){
+			sprite = upladdersprite;
+			isGrounded = false;
+		} else if(state == "ladderslide"){
+			sprite = upladdersprite;
+			isGrounded = false;
+		} else if (state == "ladderaim"){
 			sprite = aimladdersprite;
+			isGrounded = false;
 		}
 		
+		if (aimingdirection =="right" && !sprite.isFlipX()){
+			flip = true;
+		}
+		
+		if (flip){
+			//aimladdersprite.flip(true, false);
+			sprite.flip(true, false);
+			
+		}
+		
+		if (aimingdirection == "right"){
+			armsprite = rightarmsprite;
+			if (!aimladdersprite.isFlipX()) aimladdersprite.flip(true, false);
+		}else{
+			armsprite = leftarmsprite;
+			if (aimladdersprite.isFlipX()) aimladdersprite.flip(true, false);
+		}
+		
+		Vector2 tmpAimVec = new Vector2(targetScreenVec.x, targetScreenVec.y);
+		aimAngle = tmpAimVec.angle(); 
 		sprite.setSize(1f, 1f);
 		sprite.setOrigin(sprite.getWidth() / 2, 0);
-		sprite.setPosition(position.x-0.5f, position.y);
-		armsprite.setPosition(position.x + armmov, position.y + 1);
+		sprite.setPosition(worldpos.x-0.5f, worldpos.y);
+		armsprite.setRotation(aimAngle);
+		armsprite.setPosition(worldpos.x-0.76f, worldpos.y + 1);
 		
 		
-		run = false;
-		//if(isOnLadder) run = true;
-
-	}
-
-	public void giveTarget(Vector3 newTargetVec, int xt, int yt) {
-		hasTarget = true;
-
-		targetVec.x = xt;
-		targetVec.y = yt;
-
-		aimVec.x = newTargetVec.x;
-		aimVec.y = newTargetVec.y;
-	}
-
-	public void giveTarget(Zenemy zenemy) {
-		myZenemy = zenemy;
-		hasEnemy = true;
-		hasTarget = true;
-		System.out.println("have enemy at X:" + myZenemy.position.x + " Y:"
-				+ myZenemy.position.y);
-
-	}
-
-	public void updateTarget(Camera camera) {
+		if (!aimless){
+			isShooting = true;
+		}else{
+			isShooting = false;
+		}
 		
-		if (hasEnemy) {
-			targetVec.x = myZenemy.position.x + 0.5f;
-			targetVec.y = myZenemy.position.y + 1.25f;
-		}else {
-			Vector3 tmpTargVec = new Vector3(aimVec.x, aimVec.y, 0);
-			camera.project(tmpTargVec);
-			targetVec.x = tmpTargVec.x;
-			targetVec.y = tmpTargVec.y;
-			
-		}
-
-		aimTargVec.x = targetVec.x;
-		aimTargVec.y = targetVec.y;
-		camera.project(aimTargVec);
-		aimVec.x = aimTargVec.x - Gdx.graphics.getWidth() / 2 - 16;
-		aimVec.y = aimTargVec.y - Gdx.graphics.getHeight() / 2 - height * 32;
-
-		System.out.println();
-		System.out.println(Math.abs(position.x - targetVec.x));
-
-		if (Math.abs(position.x - targetVec.x) > 18) {
-			hasTarget = false;
-			hasEnemy = false;
-		}
-		if (Math.abs(position.y - targetVec.y) > 18) {
-			hasTarget = false;
-			hasEnemy = false;
-		}
-
+		
+		
 	}
+		
+		
+		
+	
 
 	@Override
 	public void dispose() {

@@ -34,7 +34,7 @@ public class Zenemy extends Zactor{
 	
 	public void update(Zplayer zplayer){
 		
-		float relativetoplayerx = zplayer.position.x - position.x; 
+		float relativetoplayerx = zplayer.worldpos.x - worldpos.x; 
 		
 		if (relativetoplayerx < -shootDist){
 			//if (!isShooter){
@@ -72,7 +72,7 @@ public class Zenemy extends Zactor{
 	
 	@Override
 	public void initActor(TiledMapTileLayer cLayer, Vector2 actorstart){
-		position = actorstart;
+		worldpos = actorstart;
 		collisionLayer = cLayer;
 		initialized = true;
 	}
@@ -97,7 +97,7 @@ public class Zenemy extends Zactor{
         }
         
         
-        Vector3 enemypos = new Vector3(position.x, position.y, 0);
+        Vector3 enemypos = new Vector3(worldpos.x, worldpos.y, 0);
         camera.project(enemypos);
         
         
