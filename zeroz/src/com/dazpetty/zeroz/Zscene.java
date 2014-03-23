@@ -8,6 +8,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
@@ -26,26 +27,34 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 public class Zscene implements Screen {
-	
+
 	final ZerozGame game;
-	
 
 	private static final String TAG = ZerozGame.class.getName();
 
 	private OrthographicCamera camera;
 	private CameraInputController cameraController;
 	private SpriteBatch batch;
+	private SpriteBatch bgbatch;
+	
+	public Zparralaxcamera pcamera;
+	public Zorthocamcontroller pcamcontroller;
+	
 
-	private Texture leftarrowtex;
-	private Texture rightarrowtex;
-	private Texture buttontex;
+	
+	private Texture bgCityBgTex;
 	private Texture targettex;
+	private TextureRegion bgCityBgTexReg;
 
 	private Sprite targetsprite;
-	private Sprite leftarrowsprite;
-	private Sprite rightarrowsprite;
-	private Sprite buttonsprite;
+	
 	private Sprite playersprite;
+	
+	
+	private Sprite bgCityBackSprite;
+	
+	
+	
 	private TiledMap map;
 	private TiledMapRenderer renderer;
 	public TiledMapTileLayer collisionLayer;
@@ -65,6 +74,8 @@ public class Zscene implements Screen {
 	public Zbullet[] bulletArray = new Zbullet[250];
 	private int activeBullet = 0;
 
+	private boolean showDebug = false;
+
 	int bulletsadded = 0;
 	float viewwidth = 0;
 	float viewheight = 0;
@@ -78,23 +89,14 @@ public class Zscene implements Screen {
 	private Vector2 playerpos = new Vector2(0, 0);
 	private String npcKey = "target";
 	private Vector3 screenPosZero = new Vector3(0, 0, 0);
-	/*
-	 * private static final int FRAME_COLS = 4; // #1 private static final int
-	 * FRAME_ROWS = 6; // #2
-	 * 
-	 * Animation walkAnimation; // #3 Texture walkSheet; // #4 TextureRegion[]
-	 * walkFrames; // #5 SpriteBatch spriteBatch; // #6 TextureRegion
-	 * currentFrame; // #7
-	 */
+
 	float stateTime;
 
 	private Zplayer zplayer;// = new Zactor();
 	private Zenemy zenemy;
 	Vector3 camVector = new Vector3(0, 0, 0);
 
-	
-	
-	public Zscene(final ZerozGame gam){
+	public Zscene(final ZerozGame gam) {
 		this.game = gam;
 
 		for (int i = 0; i < 250; i++)
@@ -123,69 +125,51 @@ public class Zscene implements Screen {
 		camera.update();
 		batch = new SpriteBatch();
 
+		
+		
+		bgCityBgTex = new Texture(Gdx.files.internal("data/gfx/background/cityp1.png"));
+		bgCityBgTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		bgCityBgTexReg = new TextureRegion(bgCityBgTex, 0, 0, 1024,
+				512);
+		
+		
 		targettex = new Texture(Gdx.files.internal("data/gfx/target.png"));
-
 		targettex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
-		leftarrowtex = new Texture(
-				Gdx.files.internal("data/gfx/buttons/left.png"));
-		leftarrowtex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
-		rightarrowtex = new Texture(
-				Gdx.files.internal("data/gfx/buttons/right.png"));
-		rightarrowtex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-
-		buttontex = new Texture(
-				Gdx.files.internal("data/gfx/buttons/circle.png"));
-		buttontex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-
+		
 		TextureRegion targettexreg = new TextureRegion(targettex, 0, 0, 128,
 				128);
-
-		TextureRegion leftarrowtexreg = new TextureRegion(leftarrowtex, 0, 0,
-				32, 32);
-		TextureRegion rightarrowtexreg = new TextureRegion(rightarrowtex, 0, 0,
-				32, 32);
-		TextureRegion buttontexreg = new TextureRegion(buttontex, 0, 0, 32, 32);
+		
+		bgCityBackSprite = new Sprite(bgCityBgTexReg);
+		bgCityBackSprite.setSize(51.2f, 102.4f);
+		bgCityBackSprite.setOrigin(0, 0);
+		bgCityBackSprite.setPosition(0f, 0f);
 
 		targetsprite = new Sprite(targettexreg);
 		targetsprite.setSize(2f, 2f);
 		targetsprite.setOrigin(0, 0);
 		targetsprite.setPosition(0f, 0f);
-
-		leftarrowsprite = new Sprite(leftarrowtexreg);
-		leftarrowsprite.setSize(2f, 1f);
-		leftarrowsprite.setOrigin(0, 0);
-		leftarrowsprite.setPosition(0f, 0f);
-
-		rightarrowsprite = new Sprite(rightarrowtexreg);
-		rightarrowsprite.setSize(2f, 1f);
-		rightarrowsprite.setOrigin(0, 0);
-		rightarrowsprite.setPosition(0f, 0f);
-
-		buttonsprite = new Sprite(buttontexreg);
-		buttonsprite.setSize(2f, 1f);
-		buttonsprite.setOrigin(0, 0);
-		buttonsprite.setPosition(0f, 0f);	
 		
 		
-		
+        pcamera = new Zparralaxcamera(1, viewheight / viewwidth);
+        bgbatch = new SpriteBatch();
+
 	}
 
-	@Override
-	public void render(float delta) {
-
-		zplayer.isShooting = false;
-
-		Gdx.gl.glClearColor(0.4f, 0.25f, 1, 1);
-		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-
-		batch.setProjectionMatrix(camera.combined);
-
+	
+	public void checkKeyboard(){
 		if (Gdx.input.isKeyPressed(Keys.R)) {
-			//restart game
+			game.setScreen(new Zmainmenu(game));
+			// is this wasting memory?
 		}
-		
+		if (Gdx.input.isKeyPressed(Keys.D)) {
+			if (!showDebug) {
+				showDebug = true;
+			} else {
+				showDebug = false;
+			}
+		}
 		if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
 			Gdx.app.exit();
 		}
@@ -199,9 +183,11 @@ public class Zscene implements Screen {
 
 		if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
 			zplayer.goJump();
+			zplayer.goThruPlatform = true;
 		}
 
 		float an = 0;
+
 		if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
 			Zbullet bullet = new Zbullet();
 
@@ -211,114 +197,147 @@ public class Zscene implements Screen {
 			playerShoot = true;
 
 		}
+	}
+	
+	public void checkTouch(){
+		for (int p = 0; p < 5; p++) {
+			if (Gdx.input.isTouched(p)) {
 
-		if (Gdx.input.isTouched()) {
+				Vector3 touchPos = new Vector3(Gdx.input.getX(p),
+						Gdx.input.getY(p), 0);
 
-			Vector3 touchPos = new Vector3(Gdx.input.getX(), Gdx.input.getY(),
-					0);
+				float section = touchPos.x / viewwidth;
+				boolean inTarget = false;
 
-			float section = touchPos.x / viewwidth;
-			boolean inTarget = false;
-
-			if (touchPos.y < viewheight - 64) {
-				inTarget = true;
-			}
-
-			if (inTarget) {
-				camera.unproject(touchPos);
-				int i = (int) touchPos.x;
-				int j = (int) touchPos.y;
-
-				Cell cell = npcLayer.getCell((int) (i), (int) (j));
-
-				boolean foundEnemy = false;
-
-				for (int l = -2; l < 2; l++) {
-					for (int o = -2; o < 2; o++)
-						if ((int) zenemy.worldpos.x + l == i
-								&& (int) zenemy.worldpos.y + o == j) {
-							// TODO:: TARGET LOCKING
-							foundEnemy = true;
-						}
-
-				}
-				if (!foundEnemy) {
-					zplayer.hasEnemy = false;
-				}
-			}
-			if (!inTarget) {
-
-				if (section < 0.15) {
-					zplayer.goLeft();
-				} else if (section < 0.3) {
-					zplayer.goRight();
+				if (touchPos.y < viewheight - 64) {
+					inTarget = true;
 				}
 
-				if (section >= 0.5f && section <= 0.75f) {
-					zplayer.goJump();
-				}
+				if (inTarget) {
+					camera.unproject(touchPos);
+					int i = (int) touchPos.x;
+					int j = (int) touchPos.y;
 
-				if (section > 0.75 && section < 1) {
-					zplayer.velocity.y = 0;
-					playerTarget = aimlessVec;
+					Cell cell = npcLayer.getCell((int) (i), (int) (j));
+
+					boolean foundEnemy = false;
+
+					for (int l = -2; l < 2; l++) {
+						for (int o = -2; o < 2; o++)
+							if ((int) zenemy.worldpos.x + l == i
+									&& (int) zenemy.worldpos.y + o == j) {
+								// TODO:: TARGET LOCKING
+								foundEnemy = true;
+							}
+
+					}
+					if (!foundEnemy) {
+						zplayer.hasEnemy = false;
+					}
+				}
+				if (!inTarget) {
+
+					if (section < 0.15) {
+						zplayer.goLeft();
+					} else if (section < 0.3) {
+						zplayer.goRight();
+					}
+
+					if (section >= 0.5f && section <= 0.75f) {
+						zplayer.goJump();
+						zplayer.goThruPlatform = true;
+					}
+
+					if (section > 0.75 && section < 1) {
+						playerTarget = aimlessVec;
+						playerShoot = true;
+					}
+
+				}
+				if (inTarget) {
+					Vector2 newAimVec = new Vector2();
+
+					newAimVec.x = zplayer.worldpos.x - touchPos.x;
+					newAimVec.y = zplayer.worldpos.y - touchPos.y;
+
+					playerTarget.x = newAimVec.x;
+					playerTarget.y = newAimVec.y;
+					giveWorldPos = false;
 					playerShoot = true;
 				}
-
-			}
-			if (inTarget) {
-				Vector2 newAimVec = new Vector2();
-
-				newAimVec.x = zplayer.worldpos.x - touchPos.x;
-				newAimVec.y = zplayer.worldpos.y - touchPos.y;
-
-				playerTarget.x = newAimVec.x;
-				playerTarget.y = newAimVec.y;
-				giveWorldPos = false;
-				playerShoot = true;
 			}
 		}
+	}
+	
+	public void displayControls(){
+		viewwidth = Gdx.graphics.getWidth();
+		viewheight = Gdx.graphics.getHeight();
+		
+		game.batch.begin();
+		
+		game.font.draw(game.batch, "LEFT",viewwidth*0.08f,30);
+		game.font.draw(game.batch, "RIGHT",viewwidth*0.15f,30);
+		game.font.draw(game.batch, "JUMP/CLIMB",viewwidth*0.3f,30);
+		game.font.draw(game.batch, "SHOOT",viewwidth*0.6f,30);
+		
+		game.batch.end();
+	}
+	
+	public void showDebugInfo(boolean show){
+		if (show){
+			game.batch.begin();
+			String info1 = "ZENEMY X" + zenemy.worldpos.x + ", Y"
+					+ zenemy.worldpos.y;
 
+			String info2 = "ZPLAYER X" + zplayer.worldpos.x + ", Y"
+					+ zplayer.worldpos.y;
+
+			String info3 = "ACTIVEBULLET X"
+					+ bulletArray[activeBullet].worldpos.x + ", Y"
+					+ bulletArray[activeBullet].worldpos.y;
+			game.font.draw(game.batch, info1, 20, 320);
+			game.font.draw(game.batch, info2, 20, 340);
+			game.font.draw(game.batch, info3, 20, 360);
+			game.batch.end();
+		}
+	}
+	
+	@Override
+	public void render(float delta) {
+		zplayer.goThruPlatform = false;
+		zplayer.isShooting = false;
+
+		Gdx.gl.glClearColor(0.4f, 0.25f, 1, 1);
+		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+
+		
+	//new TextureRegion()
+		bgbatch.setProjectionMatrix(pcamera.calculateParallaxMatrix(0.5f, 1));
+		bgbatch.begin();
+		//bgbatch.draw(bgCityBgTexReg, 1024, 512);
+		bgCityBackSprite.draw(bgbatch);
+		bgbatch.end();
+		
+		batch.setProjectionMatrix(camera.combined);
+
+		checkKeyboard();
+		checkTouch();
+	
 		zenemy.update(zplayer);
 
 		physics.doPhysics(zenemy);
 		physics.doPhysics(zplayer);
-
 		renderer.setView(camera);
 		camera.update();
-
 		renderer.render();
-		screenPosZero = zeroVector3;
-		screenPosZero.y += viewheight;
-		camera.unproject(screenPosZero);
-		leftarrowsprite.setPosition(screenPosZero.x, screenPosZero.y);
-
-		screenPosZero = zeroVector3;
-		screenPosZero.y += viewheight;
-		screenPosZero.x += ((viewwidth / 8));
-		camera.unproject(screenPosZero);
-		rightarrowsprite.setPosition(screenPosZero.x, screenPosZero.y);
-
-		screenPosZero = zeroVector3;
-		screenPosZero.y += viewheight;
-		screenPosZero.x += (viewwidth - (viewwidth / 4));
-		camera.unproject(screenPosZero);
-		buttonsprite.setPosition(screenPosZero.x, screenPosZero.y);
-
-		camera.position.set(zplayer.worldpos.x, zplayer.worldpos.y, 0);
-
+	
 		batch.begin();
+		
+		
+		
+		
 		zplayer.update(playerTarget.x, playerTarget.y, giveWorldPos, camera,
 				playerShoot);
-
-		leftarrowsprite.draw(batch);
-		rightarrowsprite.draw(batch);
-
-		for (int i = 0; i < 100; i++) {
-			if (!bulletArray[i].isAlive) {
-				// bulletArray[i].fire(position, aimAngle);
-				break;
-			}
-		}
 
 		if (playerShoot) {
 			if (activeBullet == 100) {
@@ -327,13 +346,10 @@ public class Zscene implements Screen {
 			bulletArray[activeBullet].isAlive = true;
 			Vector3 tmpVec3 = new Vector3(zplayer.worldpos.x,
 					zplayer.worldpos.y, 0);
-			// camera.unproject(tmpVec3);
 			bulletArray[activeBullet].screenpos.y = zplayer.worldpos.y;
 			bulletArray[activeBullet].screenpos.x = zplayer.worldpos.x;
 			bulletArray[activeBullet].fire(tmpVec3.x, tmpVec3.y,
 					zplayer.aimAngle);
-			// System.out.println(tmpVec3.x +","+ tmpVec3.y +","+
-			// zplayer.aimAngle);
 			activeBullet++;
 		}
 
@@ -342,7 +358,6 @@ public class Zscene implements Screen {
 				bulletArray[i].update(camera);
 				Vector3 tmpVec = new Vector3(bulletArray[i].screenpos.x,
 						bulletArray[i].screenpos.y, 0);
-				// camera.project(tmpVec);
 				bulletArray[i].sprite.setPosition(tmpVec.x, tmpVec.y);
 
 				if ((Math.abs(bulletArray[i].screenpos.x - zenemy.worldpos.x) < 1)) {
@@ -350,11 +365,6 @@ public class Zscene implements Screen {
 						zenemy.goJump();
 					}
 				}
-				// bulletArray[i].sprite.translateX(bulletArray[i].velocity.x /
-				// 50);
-				// bulletArray[i].sprite.translateY(bulletArray[i].velocity.y /
-				// 50);
-
 				bulletArray[i].sprite.draw(batch);
 			}
 		}
@@ -366,59 +376,50 @@ public class Zscene implements Screen {
 		if (zplayer.isOnLadder && zplayer.isShooting) {
 			zplayer.armsprite.draw(batch);
 		}
-
-		/*
-		 * TODO: WANT TO REMOVE BULLETS FROM SET TO SAVE MEMORY
-		 */
-
-		buttonsprite.draw(batch);
+		
+		camera.position.set(zplayer.worldpos.x, zplayer.worldpos.y, 0);
+		
 		batch.end();
 		zenemy.draw(camera);
 
 		playerShoot = false;
 		playerTarget.x = 0f;
 		playerTarget.y = 0f;
-		System.out.println("ZENEMY X" + zenemy.worldpos.x + ", Y"
-				+ zenemy.worldpos.y);
-		System.out.println("ZPLAYER X" + zplayer.worldpos.x + ", Y"
-				+ zplayer.worldpos.y);
-		System.out.println("ACTIVEBULLET X"
-				+ bulletArray[activeBullet].worldpos.x + ", Y"
-				+ bulletArray[activeBullet].worldpos.y);
 		
 		
-		
-		
+		displayControls();
+		showDebugInfo(showDebug);
+
 	}
 
 	@Override
 	public void resize(int width, int height) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void show() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void hide() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void pause() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void resume() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -426,9 +427,9 @@ public class Zscene implements Screen {
 		// TODO Auto-generated method stub
 		targettex.dispose();
 		batch.dispose();
-		leftarrowtex.dispose();
-		rightarrowtex.dispose();
-		buttontex.dispose();
+//		leftarrowtex.dispose();
+//		rightarrowtex.dispose();
+//		buttontex.dispose();
 		zenemy.dispose();
 		zplayer.dispose();
 		map.dispose();

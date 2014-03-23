@@ -116,7 +116,7 @@ public class Zphysics {
 			zact.worldpos.x = newposition.x;
 		}
 
-		if (!Gdx.input.isKeyPressed(Input.Keys.UP)
+		if (!zact.goThruPlatform
 				&& zact.isCellPlatform(zact.worldpos.x, newposition.y)
 				&& zact.velocity.y <= 0) {
 			zact.velocity.y = 0;

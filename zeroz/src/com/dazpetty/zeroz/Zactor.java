@@ -25,6 +25,7 @@ public class Zactor extends Zobject {
 	public boolean isGrounded = true;
 	public boolean isOnLadder = false;
 	public boolean canDoubleJump = false;
+	public boolean goThruPlatform = false;
 
 	public float jumpSpeed = 16;
 	public float moveSpeed = 5;
