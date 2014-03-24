@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="125" height="25" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="tilemapnew1" tilewidth="32" tileheight="32">
+  <image source="tilemapnew1.png" trans="fe00fe" width="1024" height="1024"/>
+  <tile id="52">
+   <properties>
+    <property name="solid" value="solid"/>
+   </properties>
+  </tile>
+  <tile id="54">
+   <properties>
+    <property name="solid" value="solid"/>
+   </properties>
+  </tile>
+  <tile id="64">
+   <properties>
+    <property name="solid" value="solid"/>
+   </properties>
+  </tile>
+  <tile id="87">
+   <properties>
+    <property name="solid" value="solid"/>
+   </properties>
+  </tile>
+  <tile id="173">
+   <properties>
+    <property name="platform" value="platform"/>
+   </properties>
+  </tile>
+  <tile id="174">
+   <properties>
+    <property name="platform" value="platform"/>
+   </properties>
+  </tile>
+  <tile id="175">
+   <properties>
+    <property name="platform" value="platform"/>
+   </properties>
+  </tile>
+  <tile id="176">
+   <properties>
+    <property name="platform" value="platform"/>
+   </properties>
+  </tile>
+  <tile id="177">
+   <properties>
+    <property name="platform" value="platform"/>
+   </properties>
+  </tile>
+  <tile id="256">
+   <properties>
+    <property name="solid" value="solid"/>
+   </properties>
+  </tile>
+  <tile id="257">
+   <properties>
+    <property name="solid" value="solid"/>
+   </properties>
+  </tile>
+  <tile id="258">
+   <properties>
+    <property name="solid" value="solid"/>
+   </properties>
+  </tile>
+  <tile id="264">
+   <properties>
+    <property name="solid" value="solid"/>
+   </properties>
+  </tile>
+  <tile id="307">
+   <properties>
+    <property name="ladder" value="ladder"/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer name="collision" width="125" height="25">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+2XPS8EQRjHd0lwidLHUBLxPXBCtyJXaRVaUSo0Cq1QejmdTkSt110UG5WvYIbd7JPHM687t3u78/ySf+7mmRezfrO7JAnDMEy3SdO2d8A0DTuPD3YeH+w8Pth5fLDz+GDn8RHK+QqfnZlkmaiFcr7GzmeSVaJGOffxx86b4cKiNkjNuUuqPCV//mBNngtT+uTc5nqnGRUPIvci4+L7I6jJT+hUcgjmZuBzQPwM7C9L1HuR9YyY02UOLGsu/SPFONw2vWvfNTXs8kyxho3zci8LIosgS+Bc9sn5qWXNpb90jsfhdm5Y51tTwy5vFGu4OKfoo/Nry5pLf+kcj8NtnXP4HC+f7eOiJsEu3xTrNOX8Rd/de0bmIb+Y7nOXZ7sLdZ1Dv19EMJuGdhd41dRuk8o5dfZhLSdq0KX0e4TmU+fAlbrOJ6B/nYiuD2bDZ/Mt8Wmolc4nxDhYy0GN+ltevrvP0XzqHe+Kj/OttGrjqJzviAwN2fXInsi+x3XDa5q1zIvMKWLqa3vv8OxsF95VGXo6O6nhW9Lk78H2f/OmMDkLyXGREFzVnF/3LOvWovpi5bJICJ4DrYOZ1vMuVkLe5x+B1nHBdC+z6/+EdF6XH9lS2snUMAAA
+  </data>
+ </layer>
+ <layer name="Tile Layer 2" width="125" height="25">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3YwQnCQBAF0LUBvVhHWtGDTeSSUuzJc6rIUWxCAx6WQAjBsBOT92Bg9vZhGBg2JQAAAACA5Z0P0QmAOY6fOn3rGpyFMqrBuw5JQSn9fIczZ/vMfH/WMvNHdIAd6G+3S1rP3dZFB9iQJuvzXWpLB2HSc2aNuWd9vkuvH7Ld/MkAAPBn3gJdBpXUMAAA
+  </data>
+ </layer>
+</map>

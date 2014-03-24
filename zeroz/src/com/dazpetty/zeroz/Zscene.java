@@ -40,7 +40,7 @@ public class Zscene implements Screen {
 	public Zparralaxcamera pcamera;
 	public Zorthocamcontroller pcamcontroller;
 	
-
+	private float addextracamx = 0;
 	
 	private Texture bgCityBgTex;
 	private Texture targettex;
@@ -102,7 +102,7 @@ public class Zscene implements Screen {
 		for (int i = 0; i < 250; i++)
 			bulletArray[i] = new Zbullet();
 
-		map = new TmxMapLoader().load("data/testmap2.tmx");
+		map = new TmxMapLoader().load("data/testmap3.tmx");
 		collisionLayer = (TiledMapTileLayer) map.getLayers().get("collision");
 		npcLayer = (TiledMapTileLayer) map.getLayers().get("npcLayer");
 
@@ -129,8 +129,7 @@ public class Zscene implements Screen {
 		
 		bgCityBgTex = new Texture(Gdx.files.internal("data/gfx/background/cityp1.png"));
 		bgCityBgTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		bgCityBgTexReg = new TextureRegion(bgCityBgTex, 0, 0, 1024,
-				512);
+		bgCityBgTexReg = new TextureRegion(bgCityBgTex, 0,0, 1024, 512);
 		
 		
 		targettex = new Texture(Gdx.files.internal("data/gfx/target.png"));
@@ -152,13 +151,21 @@ public class Zscene implements Screen {
 		targetsprite.setPosition(0f, 0f);
 		
 		
-        pcamera = new Zparralaxcamera(1, viewheight / viewwidth);
+        pcamera = new Zparralaxcamera(viewheight*2f, viewwidth*0.5f);
+        //pcamera = new Zparralaxcamera(480, 320);
+        pcamcontroller = new Zorthocamcontroller(pcamera);
+        Gdx.input.setInputProcessor(pcamcontroller);
+
         bgbatch = new SpriteBatch();
 
 	}
 
 	
 	public void checkKeyboard(){
+		
+		zplayer.isCrouching = false;
+		
+		
 		if (Gdx.input.isKeyPressed(Keys.R)) {
 			game.setScreen(new Zmainmenu(game));
 			// is this wasting memory?
@@ -169,6 +176,16 @@ public class Zscene implements Screen {
 			} else {
 				showDebug = false;
 			}
+		}
+		
+		if (Gdx.input.isKeyPressed(Keys.C)) {
+			
+			Zbullet bullet = new Zbullet();
+
+			if (zplayer.isOnLadder)
+				zplayer.velocity.y = 0;
+
+			playerShoot = true;
 		}
 		if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
 			Gdx.app.exit();
@@ -181,21 +198,19 @@ public class Zscene implements Screen {
 			zplayer.goLeft();
 		}
 
-		if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+		if (Gdx.input.isKeyPressed(Input.Keys.UP) && !Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
 			zplayer.goJump();
+			
+		}
+		if (Gdx.input.isKeyPressed(Input.Keys.UP) && Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
 			zplayer.goThruPlatform = true;
+			zplayer.goJumpDown();
 		}
 
 		float an = 0;
 
 		if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-			Zbullet bullet = new Zbullet();
-
-			if (zplayer.isOnLadder)
-				zplayer.velocity.y = 0;
-
-			playerShoot = true;
-
+			zplayer.isCrouching = true;
 		}
 	}
 	
@@ -218,7 +233,7 @@ public class Zscene implements Screen {
 					int i = (int) touchPos.x;
 					int j = (int) touchPos.y;
 
-					Cell cell = npcLayer.getCell((int) (i), (int) (j));
+				//	Cell cell = npcLayer.getCell((int) (i), (int) (j));
 
 					boolean foundEnemy = false;
 
@@ -290,9 +305,9 @@ public class Zscene implements Screen {
 					+ zenemy.worldpos.y;
 
 			String info2 = "ZPLAYER X" + zplayer.worldpos.x + ", Y"
-					+ zplayer.worldpos.y;
+					+ zplayer.worldpos.y + " state:" + zplayer.state;
 
-			String info3 = "ACTIVEBULLET X"
+			String info3 = "ACTIVEBULLET X" 
 					+ bulletArray[activeBullet].worldpos.x + ", Y"
 					+ bulletArray[activeBullet].worldpos.y;
 			game.font.draw(game.batch, info1, 20, 320);
@@ -312,10 +327,41 @@ public class Zscene implements Screen {
 
 		
 	//new TextureRegion()
-		bgbatch.setProjectionMatrix(pcamera.calculateParallaxMatrix(0.5f, 1));
+		
+		// keep camera in foreground layer bounds
+				boolean updatePCamera = false;
+				
+				pcamera.position.x = camera.position.x;
+				pcamera.position.y = camera.position.y;
+				if (pcamera.position.x < -1024 + pcamera.viewportWidth / 2) {
+					pcamera.position.x = -1024 + (int)(pcamera.viewportWidth / 2);
+					updatePCamera = true;
+				}
+
+				if (pcamera.position.x > 1024 - pcamera.viewportWidth / 2) {
+					pcamera.position.x = 1024 - (int)(pcamera.viewportWidth / 2);
+					updatePCamera = true;
+				}
+
+				if (pcamera.position.y < 0) {
+					pcamera.position.y = 0;
+					updatePCamera = true;
+				}
+				// arbitrary height of scene
+				if (pcamera.position.y > 400 - pcamera.viewportHeight / 2) {
+					pcamera.position.y = 400 - (int)(pcamera.viewportHeight / 2);
+					updatePCamera = true;
+				}
+
+		
+		//bgbatch.setProjectionMatrix(pcamera.calculateParallaxMatrix(0.5f, 1));
+		bgbatch.setProjectionMatrix(pcamera.calculateParallaxMatrix(2, 4));
 		bgbatch.begin();
-		//bgbatch.draw(bgCityBgTexReg, 1024, 512);
-		bgCityBackSprite.draw(bgbatch);
+
+		//bgbatch.draw(bgCityBgTexReg, -512, -120);
+		bgbatch.draw(bgCityBgTexReg, -(int)(bgCityBgTexReg.getRegionWidth() / 2) -(int)(bgCityBgTexReg.getRegionWidth()), -(int)(bgCityBgTexReg.getRegionHeight() / 2));
+		bgbatch.draw(bgCityBgTexReg, -(int)(bgCityBgTexReg.getRegionWidth() / 2), -(int)(bgCityBgTexReg.getRegionHeight() / 2));
+		bgbatch.draw(bgCityBgTexReg, -(int)(bgCityBgTexReg.getRegionWidth() / 2) +(int)(bgCityBgTexReg.getRegionWidth()), -(int)(bgCityBgTexReg.getRegionHeight() / 2));
 		bgbatch.end();
 		
 		batch.setProjectionMatrix(camera.combined);
@@ -377,7 +423,30 @@ public class Zscene implements Screen {
 			zplayer.armsprite.draw(batch);
 		}
 		
-		camera.position.set(zplayer.worldpos.x, zplayer.worldpos.y, 0);
+		float extracamx = 0;
+		if (zplayer.aimingdirection == "right"){
+			if (addextracamx < viewwidth/2){
+				addextracamx += 7;
+				if (addextracamx < 0){
+					addextracamx += 14;
+				}
+				if (zplayer.velocity.x > 0){
+					addextracamx += 7;
+				}
+			}
+			}else if (zplayer.aimingdirection == "left"){
+				if (addextracamx > -viewwidth/2){
+					addextracamx -= 7;
+					if (addextracamx > 0){
+						addextracamx -= 14;
+					}
+					if (zplayer.velocity.x > 0){
+						addextracamx -= 7;
+					}
+				}
+			}
+		//camera.position.set(zplayer.worldpos.x+(extracamx/100), zplayer.worldpos.y+1.5f, 0);
+		camera.position.set(zplayer.worldpos.x+addextracamx/200, zplayer.worldpos.y+1.5f, 0);
 		
 		batch.end();
 		zenemy.draw(camera);

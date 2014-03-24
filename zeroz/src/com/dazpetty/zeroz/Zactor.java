@@ -26,6 +26,7 @@ public class Zactor extends Zobject {
 	public boolean isOnLadder = false;
 	public boolean canDoubleJump = false;
 	public boolean goThruPlatform = false;
+	public boolean isCrouching = false;
 
 	public float jumpSpeed = 16;
 	public float moveSpeed = 5;
@@ -102,6 +103,12 @@ public class Zactor extends Zobject {
 		}
 	}
 
+	public void goJumpDown(){
+		isGrounded = false;
+		isOnLadder = false;
+		canDoubleJump = true;
+	}
+	
 	public void goJump() {
 
 		for (float i = -0.55f; i < 0.55f; i += 0.55f) {
@@ -122,7 +129,11 @@ public class Zactor extends Zobject {
 
 		if (isGrounded) {
 			canDoubleJump = true;
+			if (!isCrouching){
 			velocity.y += jumpSpeed;
+			}else{
+				
+			}
 			isGrounded = false;
 			isOnLadder = false;
 		} else if ((velocity.x >= 0 && isCellBlocked(worldpos.x + 0.5f,
