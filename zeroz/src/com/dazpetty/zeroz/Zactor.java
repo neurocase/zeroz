@@ -106,7 +106,7 @@ public class Zactor extends Zobject {
 	public void goJumpDown(){
 		isGrounded = false;
 		isOnLadder = false;
-		canDoubleJump = true;
+		
 	}
 	
 	public void goJump() {

@@ -1,27 +1,19 @@
 package com.dazpetty.zeroz;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-
-public class Zplayer extends Zactor {
-
-	private static final int FRAME_COLS = 5; // #1
-	private static final int FRAME_ROWS = 5; // #2
+/*
+public class ZhumanSprite {
+	public static final int FRAME_COLS = 5; // #1
+	public static final int FRAME_ROWS = 5; // #2
 
 	public Sprite leftarmsprite;
 	public Sprite rightarmsprite;
@@ -43,20 +35,22 @@ public class Zplayer extends Zactor {
 	public Texture leftArmTexture;
 	public Texture aimLadderTexture;
 
-	private String currentAtlasKey = new String("0000");
+	public String currentAtlasKey = new String("0000");
 
-	private int currentFrame = 1;
-	private TextureAtlas runTextureAtlas;
-	private TextureAtlas idleTextureAtlas;
-	private TextureAtlas backWalkTextureAtlas;
-	private TextureAtlas crouchTextureAtlas;
-	private TextureAtlas crouchBackTextureAtlas;
+	public int currentFrame = 1;
+	public TextureAtlas runTextureAtlas;
+	public TextureAtlas idleTextureAtlas;
+	public TextureAtlas backWalkTextureAtlas;
+	public TextureAtlas crouchTextureAtlas;
+	public TextureAtlas crouchBackTextureAtlas;
 	
-	private TextureAtlas upLadderTextureAtlas;
+	
+	
+	public TextureAtlas upLadderTextureAtlas;
 
 	float stateTime;
 
-	private AtlasRegion runTexRegion;
+	public AtlasRegion runTexRegion;
 
 	public boolean hasTarget = false;
 	public boolean hasEnemy = false;
@@ -64,33 +58,15 @@ public class Zplayer extends Zactor {
 	
 	public boolean aimOnLadder = false;
 	public boolean amTouching = false;
-	public int activeBullet = 0;
+	//public int activeBullet = 0;
 
-	// private enum direction{left, right};
-	// private enum state{run,idle,ladderclimb,ladderaim,jump};
-
-	// private String facingdirection = "right";
-	private String movingdirection = "right";
-	public String aimingdirection = "right";
-	public String state = "idle";
-
-	public Vector3 targetWorldVec = new Vector3(0, 0, 0);
-	public Vector3 targetScreenVec = new Vector3(0, 0, 0);
-
-	public Vector3 enemyWorldVec = new Vector3(0, 0, 0);
-	public Vector3 enemyScreenVec = new Vector3(0, 0, 0);
-
-	//public Zenemy myZenemy = new Zenemy();
-
-	/*
-	 * public enum moveState{ runforwards, runbackwards, idle, jump, die; }
-	 */
-
-	// public String moveState = "idle";
-
-	public void create() {
-		height = 2;
-		width = 1.25f;
+	
+	
+	
+	
+	public ZhumanSprite(){
+		//height = 2;
+		//width = 1.25f;
 
 		aimLadderTexture = new Texture(
 				Gdx.files.internal("data/gfx/zman/ladderlean.png"));
@@ -176,25 +152,20 @@ public class Zplayer extends Zactor {
 		upladdersprite = new Sprite(upLadderTexRegion);
 		upladdersprite.setPosition(-32, -10);
 		upladdersprite.scale(1f);
-
 	}
-
-	@Override
-	public void initActor(TiledMapTileLayer cLayer, Vector2 actorstart) {
-		worldpos = actorstart;
-		collisionLayer = cLayer;
-		initialized = true;
-	}
-
-	// public void update(Vector3 targinputvec, boolean isWorldCoord, Camera
-	// camera, boolean shoot) {
+	
 	public void update(float inx, float iny, boolean isWorldCoord,
-			Camera camera, boolean shoot) {
+			Camera camera, boolean shoot, Vector3 velocity) {
+		
+		
 		boolean facingtarget = true;
 		boolean flip = false;
 		boolean aimless = false;
 		currentFrame++;
 
+		String movingdirection;
+		String aimingdirection;
+		
 		if (inx == 0 && iny == 0) {
 			aimless = true;
 			isWorldCoord = false;
@@ -204,6 +175,8 @@ public class Zplayer extends Zactor {
 				inx = 2;
 		}
 
+		
+		
 		if (velocity.x > 0) {
 			movingdirection = "right";
 			if (aimless) {
@@ -376,20 +349,7 @@ public class Zplayer extends Zactor {
 		} else {
 			isShooting = false;
 		}
-
-	}
-
-	@Override
-	public void dispose() {
-		runTextureAtlas.dispose();
-		idleTextureAtlas.dispose();
-		backWalkTextureAtlas.dispose();
-		rightArmTexture.dispose();
-		leftArmTexture.dispose();
-	}
-}
-
-/*
- * is going right if facing enemy hasTarget
- */
-
+	}*/
+	
+	
+//}

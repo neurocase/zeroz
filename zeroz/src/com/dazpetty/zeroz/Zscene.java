@@ -216,6 +216,8 @@ public class Zscene implements Screen {
 	
 	public void checkTouch(){
 		for (int p = 0; p < 5; p++) {
+			boolean wantJump = false;
+			boolean wantCrouch = false;
 			if (Gdx.input.isTouched(p)) {
 
 				Vector3 touchPos = new Vector3(Gdx.input.getX(p),
@@ -235,7 +237,7 @@ public class Zscene implements Screen {
 
 				//	Cell cell = npcLayer.getCell((int) (i), (int) (j));
 
-					boolean foundEnemy = false;
+					/*boolean foundEnemy = false;
 
 					for (int l = -2; l < 2; l++) {
 						for (int o = -2; o < 2; o++)
@@ -248,26 +250,24 @@ public class Zscene implements Screen {
 					}
 					if (!foundEnemy) {
 						zplayer.hasEnemy = false;
-					}
+					}*/
 				}
 				if (!inTarget) {
-
 					if (section < 0.15) {
-						zplayer.goLeft();
+						zplayer.goLeft();					
 					} else if (section < 0.3) {
 						zplayer.goRight();
 					}
-
-					if (section >= 0.5f && section <= 0.75f) {
-						zplayer.goJump();
-						zplayer.goThruPlatform = true;
+					if (section >= 0.5f && section <= 0.65f) {
+						wantCrouch = true;
 					}
-
-					if (section > 0.75 && section < 1) {
+					if (section >= 0.65f && section <= 0.8f) {
+						wantJump = true;
+					}
+					if (section > 0.8 && section < 1) {
 						playerTarget = aimlessVec;
 						playerShoot = true;
 					}
-
 				}
 				if (inTarget) {
 					Vector2 newAimVec = new Vector2();
@@ -280,6 +280,17 @@ public class Zscene implements Screen {
 					giveWorldPos = false;
 					playerShoot = true;
 				}
+			}
+			if (!wantCrouch && wantJump){
+				zplayer.goJump();
+				zplayer.goThruPlatform = true;
+			}
+			if (wantCrouch && wantJump){
+				zplayer.goThruPlatform = true;
+				zplayer.goJumpDown();
+			}
+			if (wantCrouch && !wantJump){
+				zplayer.isCrouching = true;
 			}
 		}
 	}
@@ -406,11 +417,16 @@ public class Zscene implements Screen {
 						bulletArray[i].screenpos.y, 0);
 				bulletArray[i].sprite.setPosition(tmpVec.x, tmpVec.y);
 
+				
+				
+				//TODO: check collision of bullet with 
+				
+				/*
 				if ((Math.abs(bulletArray[i].screenpos.x - zenemy.worldpos.x) < 1)) {
 					if (Math.abs(bulletArray[i].screenpos.y - zenemy.worldpos.y) < 1) {
 						zenemy.goJump();
 					}
-				}
+				}*/
 				bulletArray[i].sprite.draw(batch);
 			}
 		}
