@@ -93,7 +93,7 @@ public class ZerozGame extends Game {
 	@Override
 	public void dispose() {
 		 batch.dispose();
-	        font.dispose();
+	     font.dispose();
 	}
 
 	@Override
