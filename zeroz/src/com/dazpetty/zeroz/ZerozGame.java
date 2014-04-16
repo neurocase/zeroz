@@ -37,17 +37,19 @@ public class ZerozGame extends Game {
 	  public Sprite rightarrowsprite;
 	  public Sprite buttonsprite;
 	  
-	  public Texture leftarrowtex;
+	  public Texture dirbuttonstex;
 	  public Texture rightarrowtex;
 	  public Texture buttontex;
 	
 	@Override
 	public void create() {
 		
-		leftarrowtex = new Texture(
-				Gdx.files.internal("data/gfx/buttons/left.png"));
-		leftarrowtex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		dirbuttonstex = new Texture(
+				Gdx.files.internal("data/gfx/hud/dirbuttons.png"));
+		dirbuttonstex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
+		
+		
 		rightarrowtex = new Texture(
 				Gdx.files.internal("data/gfx/buttons/right.png"));
 		rightarrowtex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
@@ -56,22 +58,22 @@ public class ZerozGame extends Game {
 				Gdx.files.internal("data/gfx/buttons/circle.png"));
 		buttontex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
-		TextureRegion leftarrowtexreg = new TextureRegion(leftarrowtex, 0, 0,
-				32, 32);
+	//	TextureRegion leftarrowtexreg = new TextureRegion(leftarrowtex, 0, 0,
+		//		32, 32);
 		TextureRegion rightarrowtexreg = new TextureRegion(rightarrowtex, 0, 0,
 				32, 32);
 		TextureRegion buttontexreg = new TextureRegion(buttontex, 0, 0, 32, 32);
 		
 		
-		leftarrowsprite = new Sprite(leftarrowtexreg);
+	/*	leftarrowsprite = new Sprite(leftarrowtexreg);
 		leftarrowsprite.setSize(2f, 1f);
 		leftarrowsprite.setOrigin(0, 0);
-		leftarrowsprite.setPosition(0f, 0f);
+		leftarrowsprite.setPosition(0f, 0f);*/
 
-		rightarrowsprite = new Sprite(rightarrowtexreg);
-		rightarrowsprite.setSize(2f, 1f);
-		rightarrowsprite.setOrigin(0, 0);
-		rightarrowsprite.setPosition(0f, 0f);
+		//rightarrowsprite = new Sprite(rightarrowtexreg);
+		//rightarrowsprite.setSize(2f, 1f);
+		//rightarrowsprite.setOrigin(0, 0);
+		//rightarrowsprite.setPosition(0f, 0f);
 
 		buttonsprite = new Sprite(buttontexreg);
 		buttonsprite.setSize(2f, 1f);
@@ -83,7 +85,7 @@ public class ZerozGame extends Game {
         batch = new SpriteBatch();
         //Use LibGDX's default Arial font.
         font = new BitmapFont();
-        this.setScreen(new Zmainmenu(this));
+        this.setScreen(new MainMenu(this));
         
         
 

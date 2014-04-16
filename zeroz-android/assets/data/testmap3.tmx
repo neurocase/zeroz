@@ -2,6 +2,11 @@
 <map version="1.0" orientation="orthogonal" width="125" height="25" tilewidth="32" tileheight="32">
  <tileset firstgid="1" name="tilemapnew1" tilewidth="32" tileheight="32">
   <image source="tilemapnew1.png" trans="fe00fe" width="1024" height="1024"/>
+  <tile id="31">
+   <properties>
+    <property name="enemyspawn" value=""/>
+   </properties>
+  </tile>
   <tile id="52">
    <properties>
     <property name="solid" value="solid"/>
@@ -81,6 +86,11 @@
  <layer name="Tile Layer 2" width="125" height="25">
   <data encoding="base64" compression="gzip">
    H4sIAAAAAAAAA+3YwQnCQBAF0LUBvVhHWtGDTeSSUuzJc6rIUWxCAx6WQAjBsBOT92Bg9vZhGBg2JQAAAACA5Z0P0QmAOY6fOn3rGpyFMqrBuw5JQSn9fIczZ/vMfH/WMvNHdIAd6G+3S1rP3dZFB9iQJuvzXWpLB2HSc2aNuWd9vkuvH7Ld/MkAAPBn3gJdBpXUMAAA
+  </data>
+ </layer>
+ <layer name="miscLayer" width="125" height="25" visible="0">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3OAQkAAAgDMKO8f0pLKIJsCVYFAAAAAAD7ch0AAACAAbkOAADAMw3UbhN61DAAAA==
   </data>
  </layer>
 </map>
