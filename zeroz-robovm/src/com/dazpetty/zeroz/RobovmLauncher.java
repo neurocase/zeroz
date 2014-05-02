@@ -5,6 +5,7 @@ import org.robovm.cocoatouch.uikit.UIApplication;
 
 import com.badlogic.gdx.backends.iosrobovm.IOSApplication;
 import com.badlogic.gdx.backends.iosrobovm.IOSApplicationConfiguration;
+import com.dazpetty.zeroz.core.ZerozGame;
 
 public class RobovmLauncher extends IOSApplication.Delegate {
 	@Override

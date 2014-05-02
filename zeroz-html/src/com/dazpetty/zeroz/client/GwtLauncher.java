@@ -1,6 +1,6 @@
 package com.dazpetty.zeroz.client;
 
-import com.dazpetty.zeroz.ZerozGame;
+import com.dazpetty.zeroz.core.ZerozGame;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.gwt.GwtApplication;
 import com.badlogic.gdx.backends.gwt.GwtApplicationConfiguration;

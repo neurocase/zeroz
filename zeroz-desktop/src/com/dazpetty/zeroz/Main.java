@@ -2,6 +2,7 @@ package com.dazpetty.zeroz;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.dazpetty.zeroz.core.ZerozGame;
 
 public class Main {
 	public static void main(String[] args) {
