@@ -96,7 +96,8 @@ public class Actor{
 	public Vector3 targetScreenVec = new Vector3(0, 0, 0);
 	public Vector3 enemyWorldVec = new Vector3(0, 0, 0);
 	public Vector3 enemyScreenVec = new Vector3(0, 0, 0);
-	public Vector3 actorTarget = new Vector3(0, 0, 0);
+	public Vector3 aimingAt = new Vector3(0, 0, 0);
+	public Vector2 actorTarget = new Vector2(0, 0);
 	public Vector2 p1 = new Vector2(), p2 = new Vector2(), collision = new Vector2(), normal = new Vector2();
 	int wantGoDirection = 0;
 	public float aimAtPlayer = 0;
@@ -416,8 +417,8 @@ public class Actor{
 	public void update(boolean isWorldCoord,
 			Camera camera, boolean shoot) {
 		
-		float inx = actorTarget.x;
-		float iny = actorTarget.y;
+		float inx = aimingAt.x;
+		float iny = aimingAt.y;
 		
 		if (isAI){
 			boolean facingtarget = true;
@@ -639,8 +640,9 @@ public class Actor{
 		physics.doPhysics(this);
 		goThruPlatform = false;
 		isShooting = false;
-		actorTarget.x = 0;
-		actorTarget.y = 0;
+		
+		aimingAt.x = 0;
+		aimingAt.y = 0;
 	}
 
 	/*public void shoot(){
@@ -673,7 +675,9 @@ public class Actor{
 			}
 		}
 	}*/
+	public float distanceFromPlayer = 0;
 	
+
 	
 	public void updateAI(Actor zplayer){
 		//attemptShoot(0);
@@ -684,6 +688,9 @@ public class Actor{
 			float relativetoplayery = zplayer.worldpos.y - worldpos.y;
 			relativepos.x = relativetoplayerx;
 			relativepos.y = relativetoplayery;
+			distanceFromPlayer = (relativetoplayerx *relativetoplayerx) +(relativetoplayery * relativetoplayery);
+			distanceFromPlayer = Math.abs((float) Math.sqrt(distanceFromPlayer));
+			
 			
 			targetWorldVec.x = zplayer.worldpos.x;
 			targetWorldVec.y = zplayer.worldpos.y;
@@ -719,6 +726,41 @@ public class Actor{
 		crouchBackTextureAtlas.dispose();
 		upLadderTextureAtlas.dispose();
 		deathTextureAtlas.dispose();
+	}
+	float distanceFromTarget = 0;
+	private boolean targetIsNull = false;
+	public void giveQuickTarget(Actor ztarget){
+			float relativetoplayerx = ztarget.worldpos.x - worldpos.x ; 
+			float relativetoplayery = ztarget.worldpos.y - worldpos.y;
+			targetIsNull = false;
+			// the actorTarget vector is relative to the player, as if the player is at 0,0
+			
+			actorTarget.x = relativetoplayerx;
+			actorTarget.y = relativetoplayery;
+	}
+	
+	
+	
+	
+	public void quickShoot() {
+		if (!targetIsNull){
+			attemptShoot(actorTarget.angle());
+			aimingAt.x = actorTarget.x;
+			aimingAt.y = actorTarget.y;
+		}else{
+			if (movingdirection == "right"){
+				attemptShoot(180);
+			}else{
+				attemptShoot(0);
+			}
+		}
+		// TODO Auto-generated method stub
+		
+	}
+	public void setTargetToNull() {
+		targetIsNull = true;
+		// TODO Auto-generated method stub
+		
 	}
 
 }

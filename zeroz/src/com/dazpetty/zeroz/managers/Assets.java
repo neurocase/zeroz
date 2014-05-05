@@ -7,24 +7,21 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 
 public class Assets {
 	
-	
 	public static final AssetManager manager = new AssetManager();
-	
 	public static TextureParameter param = new TextureParameter();
-	
 	
 	public Assets(){
 		param.minFilter = TextureFilter.Linear;
 		param.genMipMaps = true;
-		//param.
 	}
 	
 	public static final String dirbuttons = "data/gfx/hud/dirbuttons.png";
+	public static final String shootbutton = "data/gfx/hud/shootbutton.png";
+	public static final String jumpbutton = "data/gfx/hud/jumpbutton.png";
 	
 	public static void load(){
 		manager.load(dirbuttons,Texture.class, param);
-	
+		manager.load(shootbutton,Texture.class, param);
+		manager.load(jumpbutton,Texture.class, param);
 	}
-	
-	
 }

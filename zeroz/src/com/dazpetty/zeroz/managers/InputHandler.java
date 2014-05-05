@@ -22,8 +22,6 @@ public class InputHandler {
  * attemptShoot();
  * giveWorldPos = false;
  * playerShoot = true;
- * 
- * 
  */
 	public float ang = 0;
 	float viewwidth;
@@ -38,6 +36,17 @@ public class InputHandler {
 	
 	private boolean InputHandlerLoaded = false;
 	
+	/*
+	 *  TOUCH VARIABLES
+	 */
+	float tleft = 0.25f;
+	float crouchbegin = 0.14f;
+	float crouchend = 0.36f;
+	float tright = 0.5f;
+	float tjump = 0.60f;
+	float tshoot = 0.80f;
+	float touchAreaHeight = 96;
+	
 	public void LoadInputHandler(float viewwidthin, float viewheightin, Camera camerain, Actor zplayerin){
 		viewwidth = viewwidthin;
 		viewheight = viewheightin;
@@ -49,21 +58,9 @@ public class InputHandler {
 
 	public void checkKeyboard() {
 		zplayer.isCrouching = false;
-
-	/*	if (Gdx.input.isKeyPressed(Keys.R)) {
-			game.setScreen(new MainMenu(game));
-		}*/
-		/*if (Gdx.input.isKeyPressed(Keys.D)) {
-			if (!showDebug) {
-				showDebug = true;
-			} else {
-				showDebug = false;
-			}
-		}*/
 		if (Gdx.input.isKeyPressed(Keys.U)) {
 			zplayer.attemptShoot(ang);
 		}
-
 		if (Gdx.input.isKeyPressed(Keys.C)) {
 			if (zplayer.isOnLadder)
 				zplayer.velocity.y = 0;
@@ -80,7 +77,6 @@ public class InputHandler {
 		if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
 			zplayer.goLeft();
 		}
-
 		if (Gdx.input.isKeyPressed(Input.Keys.UP)
 				&& !Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
 			zplayer.goJump();
@@ -103,25 +99,13 @@ public class InputHandler {
 			boolean wantJump = false;
 			boolean wantCrouch = false;
 			if (Gdx.input.isTouched(p)) {
-
-				float t1 = 0.25f;
-				float c1 = 0.14f;
-				float c2 = 0.36f;
-				float t2 = 0.5f;
-				// float t3 = 0.6f;
-				float t4 = 0.55f;
-				float t5 = 0.9f;
-
 				Vector3 touchPos = new Vector3(Gdx.input.getX(p),
 						Gdx.input.getY(p), 0);
-
 				float section = touchPos.x / viewwidth;
 				boolean inTarget = false;
-
-				if (touchPos.y < viewheight - 96) {
+				if (touchPos.y < viewheight - touchAreaHeight) {
 					inTarget = true;
 				}
-
 				if (inTarget) {
 					camera.unproject(touchPos);
 					int i = (int) touchPos.x;
@@ -130,21 +114,22 @@ public class InputHandler {
 				if (!inTarget) {
 
 					if (!(section > 0.2 && section < 0.3)) {
-						if (section < t1) {
+						if (section < tleft) {
 							zplayer.goLeft();
-						} else if (section < t2) {
+						} else if (section < tright) {
 							zplayer.goRight();
 						}
 					}
-					if (section >= c1 && section <= c2) {
+					if (section >= crouchbegin && section <= crouchend) {
 						wantCrouch = true;
 					}
-					if (section >= t4 && section <= t5) {
+					if (section >= tjump && section <= tshoot) {
 						wantJump = true;
 					}
-					if (section > t5 && section < 1) {
-						zplayer.actorTarget = aimlessVec;
+					if (section > tshoot && section < 1) {
+						//zplayer.actorTarget = aimlessVec;
 						playerShoot = true;
+						zplayer.quickShoot();
 					}
 				}
 				if (inTarget) {
@@ -153,10 +138,10 @@ public class InputHandler {
 					newAimVec.x = touchPos.x - zplayer.worldpos.x;
 					newAimVec.y = touchPos.y - zplayer.worldpos.y;
 
-					zplayer.actorTarget.x = newAimVec.x;
-					zplayer.actorTarget.y = newAimVec.y;
+					zplayer.aimingAt.x = newAimVec.x;
+					zplayer.aimingAt.y = newAimVec.y;
 					
-					System.out.println("Z" + zplayer.actorTarget.x + " : " + zplayer.actorTarget.y);
+					System.out.println("Z" + zplayer.aimingAt.x + " : " + zplayer.aimingAt.y);
 					
 					newAimVec.y -= 1;
 					float ang = newAimVec.angle();
@@ -180,5 +165,29 @@ public class InputHandler {
 			}
 		}
 	}
+	
+	public float getYInputPosition(){
+		return viewheight - touchAreaHeight;
+	}
+	
+	
+	public float getXInputPosition(String str){
+		float x = 0;
+		if(str == "left"){
+			x =  tleft * viewwidth;
+		}else if(str == "crouchbegin"){
+			x = crouchbegin * viewwidth;
+		}else if(str == "crouchend"){
+			x = crouchend * viewwidth;
+		}else if(str == "right"){
+			x = tright * viewwidth;
+		}else if(str == "jump"){
+			x = tjump * viewwidth;
+		}else if(str == "shoot"){
+			x = tshoot * viewwidth;
+		}
+		return x;
+	}
+	
 	
 }

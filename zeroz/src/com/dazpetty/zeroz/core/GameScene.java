@@ -111,6 +111,10 @@ public class GameScene implements Screen {
 	private Sprite bgCityBackSprite;
 	public Texture dirbuttonstex;
 	public Sprite dirbuttonssprite;
+	public Texture jumpbuttontex;
+	public Sprite jumpbuttonsprite;
+	public Texture shootbuttontex;
+	public Sprite shootbuttonsprite;
 	Texture grentex;
 	private SpriteBatch batch;
 	private SpriteBatch bgbatch;
@@ -173,6 +177,19 @@ public class GameScene implements Screen {
 		dirbuttonssprite.setSize(7.5f, 1f);
 		dirbuttonssprite.setOrigin(0, 0);
 		dirbuttonssprite.setPosition(30, 30);
+		
+		jumpbuttonsprite = new Sprite(Assets.manager.get(Assets.jumpbutton,
+				Texture.class));
+		jumpbuttonsprite.setSize(1f, 1f);
+		jumpbuttonsprite.setOrigin(0, 0);
+
+		
+		shootbuttonsprite = new Sprite(Assets.manager.get(Assets.shootbutton,
+				Texture.class));
+		shootbuttonsprite.setSize(1f, 1f);
+		shootbuttonsprite.setOrigin(0, 0);
+	
+		
 		batch = new SpriteBatch();
 		bgCityBgTex = new Texture(
 				Gdx.files.internal("data/gfx/background/cityp1.png"));
@@ -300,6 +317,10 @@ public class GameScene implements Screen {
 		inputHandler.LoadInputHandler(viewwidth, viewheight, camera, zplayer);
 		//BOX 2D DEBUG RENDERER
 		debugRenderer = new Box2DDebugRenderer();
+		
+		
+		
+		
 	}
 
 
@@ -344,40 +365,33 @@ public class GameScene implements Screen {
 	public void displayControls() {
 		viewwidth = Gdx.graphics.getWidth();
 		viewheight = Gdx.graphics.getHeight();
-
-		game.batch.begin();
-
-		game.font.draw(game.batch, "JUMP/CLIMB", viewwidth * 0.37f, 30);
-		game.font.draw(game.batch, "SHOOT", viewwidth * 0.5f, 30);
-		game.batch.end();
 	}
 
 	public void showDebugInfo(boolean show) {
-		//if (show) {
-			game.batch.begin();
-			String info2 = "";
-			if (debugOn){
-			info2 = " Health:" + zplayer.health + " ZPLAYER X:" + zplayer.worldpos.x + ", Y:"
-					+ zplayer.worldpos.y + " state:" + zplayer.state;
-			}else{
-			 info2 = " Health:" + zplayer.health;
-			 if (zplayer.health <= 0){
-		    	 info2 = "GAME OVER: YOU DIED";
-		     }
-			}
-			if (Gdx.input.isTouched()) {
-				Vector3 touchPos = new Vector3(Gdx.input.getX(),
-						Gdx.input.getY(), 0);
-				String info4 = "ScreenTouch X:" + touchPos.x + " Y:"
-						+ touchPos.y;
-				camera.unproject(touchPos);
-				String info5 = "ScreenTouch X:" + touchPos.x + " Y:"
-						+ touchPos.y;
-				game.font.draw(game.batch, info4, 20, 300);
-				game.font.draw(game.batch, info5, 20, 280);
-			}
-			game.font.draw(game.batch, info2, 20, 340);
-			game.batch.end();
+		game.batch.begin();
+		String info2 = "";
+		if (debugOn){
+		info2 = " Health:" + zplayer.health + " ZPLAYER X:" + zplayer.worldpos.x + ", Y:"
+				+ zplayer.worldpos.y + " state:" + zplayer.state;
+		}else{
+		 info2 = " Health:" + zplayer.health;
+		 if (zplayer.health <= 0){
+	    	 info2 = "GAME OVER: YOU DIED";
+	     }
+		}
+		if (Gdx.input.isTouched()) {
+			Vector3 touchPos = new Vector3(Gdx.input.getX(),
+					Gdx.input.getY(), 0);
+			String info4 = "ScreenTouch X:" + touchPos.x + " Y:"
+					+ touchPos.y;
+			camera.unproject(touchPos);
+			String info5 = "ScreenTouch X:" + touchPos.x + " Y:"
+					+ touchPos.y;
+			game.font.draw(game.batch, info4, 20, 300);
+			game.font.draw(game.batch, info5, 20, 280);
+		}
+		game.font.draw(game.batch, info2, 20, 340);
+		game.batch.end();
 	}
 
 	public void box2DRender(boolean debug) {
@@ -525,6 +539,19 @@ public class GameScene implements Screen {
 		dirbuttonssprite.setPosition(camera.position.x - 8,
 				camera.position.y - 5);
 		dirbuttonssprite.draw(batch);
+		
+		Vector3 tmpVec3 = new Vector3((inputHandler.getXInputPosition("jump")), 0, 0);
+		camera.unproject(tmpVec3);
+		tmpVec3.y = camera.position.y - 5;
+		jumpbuttonsprite.setPosition(tmpVec3.x, tmpVec3.y);
+		
+		tmpVec3.x = (inputHandler.getXInputPosition("shoot"));
+		camera.unproject(tmpVec3);
+		tmpVec3.y = camera.position.y - 5;
+		shootbuttonsprite.setPosition(tmpVec3.x, tmpVec3.y);
+		shootbuttonsprite.draw(batch);
+		
+		jumpbuttonsprite.draw(batch);
 	
 		batch.setColor(Color.RED);
 		for (int i = 0; i < ENEMY_LIMIT; i++) {
@@ -540,7 +567,36 @@ public class GameScene implements Screen {
 				}
 			}
 		}
+		/*
+		 *  TODO: CYCLE THROUGH ENEMY ACTORS AND GIVE PLAYER CLOSEST ONE FOR QUICK SHOOT
+		 * 
+		 * 
+		 */
+		int closest_enemy = 0;
+		float calcdist = 999;
+		boolean enemyTooFar = false;
+		for (int i = 0; i < ENEMY_LIMIT; i++){
+			if (zenemy[i] != null && zenemy[i].isAlive){
+				if (zenemy[i].distanceFromPlayer < calcdist){
+					calcdist = zenemy[i].distanceFromPlayer;
+					closest_enemy = i;
+				}
+			}
+			if (calcdist > 9){
+				enemyTooFar = true;
+				
+			}else{
+				enemyTooFar = false;
+			}
+		}
+		if (zenemy[closest_enemy] != null){
+			zplayer.giveQuickTarget(zenemy[closest_enemy]);
+		}
+		if (enemyTooFar || zenemy[closest_enemy] == null){
+			zplayer.setTargetToNull();
+		}
 		zplayer.sprite.draw(batch);
+		
 		/*
 		 * 	NEED TO FIX ARMSPRITE LOADING/NOT LOADING HERE
 		 */
@@ -677,11 +733,9 @@ public class GameScene implements Screen {
 				}
 		}
 		destroybodies.clear();
-		
 		if (zplayer.worldpos.y < -15){
 			zplayer.health = 0;
-		}
-		
+		}	
 		
 	}
 
@@ -727,8 +781,33 @@ public class GameScene implements Screen {
 
 }
 /* TODO: 
- *   ARM NOT APPEARING ON LADDER
- *	 LADDER MOVEMENT NOT THAT AWESOME / FALLING DOWN
- *	 
+ * ----------
+ * KNOWN BUGS
+ * ---------- 
+ *   1. Arm not appearing on ladder, sprite not flipping on ladder
+ *	 2. Ladder movement not that awesome
+ *	 3. There is a bug where sometimes a health pickup will not "pickup". 
+ *		It does not seem to be registering the collision between itself and
+ *		the player, shooting the item seems to increase the chance of this bug occurring.
+ *		In all cases it seems if the player returns to the item later, he is able to pick it up.
+ *   4. Sometimes after comming off a ladder a player seems to get stuck in a wierd sliding state,
+ *   	and cannot receive input(shoot, jump, left, right etc).
+ * 
+ * -------------------
+ * NOT YET IMPLIMENTED
+ * -------------------
+ * 	1. Enemies: Flying Drones, Melee Fighters, Shooter, Boss Helicopter
+ *  2. Weapons: Items, Graphics, etc.
+ *  3. Level: Changing level, winning conditions
+ *  4  Controls: Tap on screen does power weapon (heavy mg, rocket, grenade)
+ *  	, tap on shoot button shoots secondary weapon (pistol, uzi).
+ *  5. make is so ladder+ground areas act as platforms and that platform ignored if on ladder
  *  
+ * --------
+ * TUTORIAL
+ * --------
+ * - introduce jumping, crouching, jumping down a platform, ladders
+ * - introduce quick shoot weapon, special weapon and opening doors by destroying objects
+ * 
+ *   
  */

@@ -55,7 +55,7 @@ public class GamePhysics {
 	
 			if (!zact.goThruPlatform
 					&& zact.tm.isCellPlatform(zact.worldpos.x, newposition.y)
-					&& zact.velocity.y <= 0) {
+					&& zact.velocity.y <= 0 && !zact.isOnLadder) {
 				zact.velocity.y = 0;
 				zact.isGrounded = true;
 			}

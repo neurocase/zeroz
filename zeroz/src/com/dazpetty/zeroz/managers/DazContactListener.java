@@ -30,106 +30,68 @@ public class DazContactListener implements ContactListener {
 	}
 	
 	
-	public void printCollisions(Fixture fa, Fixture fb){
-		String sb = (String) fb.getUserData();
-		String sa = (String) fa.getUserData();
-		System.out.println("fa is: "+ sa + " " + " fb is: " + sb);
-		if ((sa == "item" && sb == "player")){
-					Body bod = fa.getBody();
-					int stb = (Integer) bod.getUserData();
-					System.out.println("touch item:" + stb );
-					itemsToRemove.add(fa.getBody());
-		}
-		if ((sb == "item" && sa == "player")){
-					Body bod = fb.getBody();
-					int stb = (Integer) bod.getUserData();
-					System.out.println("touch item:" + stb );
-					itemsToRemove.add(fb.getBody());
-		}
-		
-		
-		if ((sa == "ai" || sa == "ground" || sa == "destroyable") && sb == "playerproj"){
-			if (fb.getBody() != null){
-				Body bod = fb.getBody();
-				String st = (String) bod.getUserData();
-				System.out.println(st);
-				bodiesToRemove.add(fb.getBody());
-				if(sa == "ai"){
-					Body bodb = fa.getBody();
-					String stb = (String) bodb.getUserData();
-					System.out.println("Enemy " + stb + " damage.");
-					if (fa.getBody() != null) { enemiesToDamage.add(fa.getBody());}
-				}else if(sa == "destroyable"){
-					Body bodb = fa.getBody();
-					String stb = (String) bodb.getUserData();
-					System.out.println("Destroyable " + stb + " damage.");
-					if (fa.getBody() != null) { destroyablesToDamage.add(fa.getBody());}
+	public void checkCollision(Fixture fa, Fixture fb, String object){
+		if (fa.getUserData().equals(object)|| fb.getUserData().equals(object)){
+			String sb = (String) fb.getUserData();
+			String sa = (String) fa.getUserData();
+			String hold = sa;
+			int runloop = 0;
+			System.out.println("Collision:"+ sa + " && " + sb);
+			while (runloop < 2){
+				if ((sa == "item" && sb == "player")){
+							Body bod = fa.getBody();
+							int stb = (Integer) bod.getUserData();
+							System.out.println("touch item:" + stb );
+							itemsToRemove.add(bod);
 				}
+				
+				if ((sa == "ai" || sa == "ground" || sa == "destroyable") && sb == "playerproj"){
+					if (fb.getBody() != null){
+						Body bod = fb.getBody();
+						String st = (String) bod.getUserData();
+						System.out.println(st);
+						bodiesToRemove.add(fb.getBody());
+						if(sa == "ai"){
+							Body bodb = fa.getBody();
+							String stb = (String) bodb.getUserData();
+							System.out.println("Enemy " + stb + " damage.");
+							if (fa.getBody() != null) { enemiesToDamage.add(fa.getBody());}
+						}else if(sa == "destroyable"){
+							Body bodb = fa.getBody();
+							String stb = (String) bodb.getUserData();
+							System.out.println("Destroyable " + stb + " damage.");
+							if (fa.getBody() != null) { destroyablesToDamage.add(fa.getBody());}
+						}
+					}
+				}
+			
+				if ((sa == "player" || sa == "ground" || sa == "destroyable") && sb == "aiproj"){
+					if (fb.getBody() != null){
+						Body bod = fb.getBody();
+						String st = (String) bod.getUserData();
+						System.out.println(st);
+						aiBodiesToRemove.add(fb.getBody());
+						if(sa == "player"){
+							Body bodb = fa.getBody();
+							String stb = (String) bodb.getUserData();
+							System.out.println("Player " + stb + " damage.");
+							System.out.println("Damage Player");
+							damagePlayer = true;
+						}else if(sa == "destroyable"){
+							Body bodb = fa.getBody();
+							String stb = (String) bodb.getUserData();
+							System.out.println("Destroyable " + stb + " damage.");
+							if (fa.getBody() != null) { destroyablesToDamage.add(fa.getBody());}
+						}
+					}
+				}
+				runloop++;
+				sa = sb;
+				sb = hold;
 			}
 		}
-		if ((sb == "ai"|| sb == "ground" || sb == "destroyable") && sa == "playerproj"){
-			if (fa.getBody() != null){
-				Body bod = fa.getBody();
-				String st = (String) bod.getUserData();
-				System.out.println(st);
-				aiBodiesToRemove.add(fa.getBody());
-				if(sb == "ai"){
-					Body bodb = fb.getBody();
-					String stb = (String) bodb.getUserData();
-					System.out.println("Enemy " + stb + " damage.");
-					if (fb.getBody() != null) {enemiesToDamage.add(fb.getBody());}
-				}else if(sb == "destroyable"){
-					Body bodb = fb.getBody();
-					String stb = (String) bodb.getUserData();
-					System.out.println("Destroyable " + stb + " damage.");
-					if (fb.getBody() != null) { destroyablesToDamage.add(fb.getBody());}
-				}
-			}
-		}
-		
-		if ((sa == "player" || sa == "ground" || sa == "destroyable") && sb == "aiproj"){
-			if (fb.getBody() != null){
-				Body bod = fb.getBody();
-				String st = (String) bod.getUserData();
-				System.out.println(st);
-				aiBodiesToRemove.add(fb.getBody());
-				if(sa == "player"){
-					Body bodb = fa.getBody();
-					String stb = (String) bodb.getUserData();
-					System.out.println("Player " + stb + " damage.");
-					System.out.println("Damage Player");
-					damagePlayer = true;
-				}else if(sa == "destroyable"){
-					Body bodb = fa.getBody();
-					String stb = (String) bodb.getUserData();
-					System.out.println("Destroyable " + stb + " damage.");
-					if (fa.getBody() != null) { destroyablesToDamage.add(fa.getBody());}
-				}
-			}
-		}
-		if ((sb == "player"|| sb == "ground" || sb == "destroyable") && sa == "aiproj"){
-			if (fa.getBody() != null){
-				Body bod = fa.getBody();
-				String st = (String) bod.getUserData();
-				System.out.println(st);
-				bodiesToRemove.add(fa.getBody());
-				if(sb == "player"){
-					Body bodb = fb.getBody();
-					String stb = (String) bodb.getUserData();
-					System.out.println("Player " + stb + " damage.");
-					System.out.println("Damage Player");
-					damagePlayer = true;
-				}else if(sb == "destroyable"){
-					Body bodb = fb.getBody();
-					String stb = (String) bodb.getUserData();
-					System.out.println("Destroyable " + stb + " damage.");
-					if (fb.getBody() != null) { destroyablesToDamage.add(fb.getBody());}
-				}
-			}
-		}
-		
-		
 	}
+
 	public boolean DamagePlayer(){
 		if (damagePlayer){
 			damagePlayer = false;
@@ -139,58 +101,24 @@ public class DazContactListener implements ContactListener {
 		}
 	}
 	
+	
+
+	
 	public void beginContact(Contact contact) {
 		
 		Fixture fa = contact.getFixtureA();
 		Fixture fb = contact.getFixtureB();
 		
-		
 		if(fa == null || fb == null) return;
 		
 		if (fa.getUserData() == null || fb.getUserData() == null) return;
-				
-	/*	if(fa.getUserData() != null && fa.getUserData().equals("ai")) {
-			printCollisions(fa,fb);
-		}
-		if(fb.getUserData() != null && fb.getUserData().equals("ai")) {
-			printCollisions(fa,fb);
-		}*/
 		
-		if(fa.getUserData() != null && fa.getUserData().equals("destroyable")) {
-			printCollisions(fa,fb);
-		}
-		if(fb.getUserData() != null && fb.getUserData().equals("destroyable")) {
-			printCollisions(fa,fb);
-		}
-		
-		if(fa.getUserData() != null && fa.getUserData().equals("item")) {
-			printCollisions(fa,fb);
-		}
-		if(fb.getUserData() != null && fb.getUserData().equals("item")) {
-			printCollisions(fa,fb);
-		}
-		
-	/*	if(fa.getUserData() != null && fa.getUserData().equals("player")) {
-			printCollisions(fa,fb);
-		}
-		if(fb.getUserData() != null && fb.getUserData().equals("player")) {
-			printCollisions(fa,fb);
-		}*/
-		
-		
-		if(fa.getUserData() != null && fa.getUserData().equals("playerproj")) {
-			printCollisions(fa,fb);
-		}
-		if(fb.getUserData() != null && fb.getUserData().equals("playerproj")) {
-			printCollisions(fa,fb);
-		}
-		if(fa.getUserData() != null && fa.getUserData().equals("aiproj")) {
-			printCollisions(fa,fb);
-		}
-		if(fb.getUserData() != null && fb.getUserData().equals("aiproj")) {
-			printCollisions(fa,fb);
-		}
-
+		checkCollision(fa, fb,"destroyable");
+		checkCollision(fa, fb,"item");
+		checkCollision(fa, fb,"player");
+		checkCollision(fa, fb,"playerproj");
+		checkCollision(fa, fb,"aiproj");
+	
 		
 	}
 	
