@@ -197,7 +197,7 @@ public class Actor{
 			}
 		}
 	}
-	public Actor(Camera scam, World world, boolean amAI, TiledLayerManager newtm, Vector2 actorstart, int id, HumanSprite humanSprite, ProjectileManager projManIn){
+	public Actor(Camera scam, World world, boolean amAI, TiledLayerManager newtm, Vector2 actorstart, int id, HumanSprite humanSprite, ProjectileManager projManIn, String actorType){
 		projMan = projManIn;
 		if (tm == null){
 		tm = (TiledLayerManager) newtm;
@@ -292,31 +292,27 @@ public class Actor{
 		AtlasRegion deathTexRegion = deathTextureAtlas.findRegion("0000");
 		
 		runsprite = new Sprite(runTexRegion);
-		runsprite.setPosition(-10, -10);
+	//	runsprite.setPosition(-10, -10);
 		runsprite.scale(1f);
 
 		idlesprite = new Sprite(idleTexRegion);
-		idlesprite.setPosition(-10, -10);
+	//	idlesprite.setPosition(-10, -10);
 		idlesprite.scale(1f);
 		
 		crouchbacksprite = new Sprite(crouchBackTexRegion);
-		crouchbacksprite.setPosition(-10, -10);
+		//crouchbacksprite.setPosition(-10, -10);
 		crouchbacksprite.scale(1f);
 		
 		crouchsprite = new Sprite(crouchTexRegion);
-		crouchsprite.setPosition(-10, -10);
 		crouchsprite.scale(1f);
 		
 		backwalksprite = new Sprite(backWalkTexRegion);
-		backwalksprite.setPosition(-10, -10);
 		backwalksprite.scale(1f);
 
 		deathsprite = new Sprite(deathTexRegion);
-		deathsprite.setPosition(-32, -10);
 		deathsprite.scale(1f);
 		
 		upladdersprite = new Sprite(upLadderTexRegion);
-		upladdersprite.setPosition(-32, -10);
 		upladdersprite.scale(1f);
 		physics = new GamePhysics();
 	}
@@ -739,7 +735,15 @@ public class Actor{
 			actorTarget.y = relativetoplayery;
 	}
 	
-	
+	public void giveQuickTarget(Drone ztarget){
+		float relativetoplayerx = ztarget.worldpos.x - worldpos.x ; 
+		float relativetoplayery = ztarget.worldpos.y - worldpos.y;
+		targetIsNull = false;
+		// the actorTarget vector is relative to the player, as if the player is at 0,0
+		
+		actorTarget.x = relativetoplayerx;
+		actorTarget.y = relativetoplayery;
+}
 	
 	
 	public void quickShoot() {
@@ -754,8 +758,6 @@ public class Actor{
 				attemptShoot(0);
 			}
 		}
-		// TODO Auto-generated method stub
-		
 	}
 	public void setTargetToNull() {
 		targetIsNull = true;

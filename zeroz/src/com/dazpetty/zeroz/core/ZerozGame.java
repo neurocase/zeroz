@@ -40,7 +40,14 @@ public class ZerozGame extends Game {
 	  public Texture dirbuttonstex;
 	  public Texture rightarrowtex;
 	  public Texture buttontex;
+	  
+	  public int level = 0;
 	
+	  
+	  public void nextLevel(){
+		  level++;
+	  }
+	  
 	@Override
 	public void create() {
 		

@@ -15,7 +15,7 @@ public class MainMenu implements Screen {
 	
 public MainMenu(ZerozGame gam) {
 	game = gam;
-
+	
     camera = new OrthographicCamera();
     camera.setToOrtho(false, 800, 480);
 	}

@@ -11,7 +11,6 @@ public class GwtLauncher extends GwtApplication {
 		GwtApplicationConfiguration cfg = new GwtApplicationConfiguration(480, 320);
 		return cfg;
 	}
-
 	@Override
 	public ApplicationListener getApplicationListener () {
 		return new ZerozGame();

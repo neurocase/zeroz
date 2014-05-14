@@ -42,12 +42,15 @@ public class HumanSprite {
 	public TextureAtlas crouchBackTextureAtlas;
 	public TextureAtlas upLadderTextureAtlas;
 	public TextureAtlas deathTextureAtlas;
+	
+	
+	
+	
+
 
 	float stateTime;
 
-	public AtlasRegion runTexRegion;
 	
-
 	
 	public HumanSprite(){
 		aimLadderTexture = new Texture(
@@ -105,31 +108,31 @@ public class HumanSprite {
 		AtlasRegion deathTexRegion = deathTextureAtlas.findRegion("0000");
 	
 		runsprite = new Sprite(runTexRegion);
-		runsprite.setPosition(-10, -10);
+		//runsprite.setPosition(-10, -10);
 		runsprite.scale(1f);
 	
 		idlesprite = new Sprite(idleTexRegion);
-		idlesprite.setPosition(-10, -10);
+		//idlesprite.setPosition(-10, -10);
 		idlesprite.scale(1f);
 		
 		crouchbacksprite = new Sprite(crouchBackTexRegion);
-		crouchbacksprite.setPosition(-10, -10);
+		//crouchbacksprite.setPosition(-10, -10);
 		crouchbacksprite.scale(1f);
 		
 		crouchsprite = new Sprite(crouchTexRegion);
-		crouchsprite.setPosition(-10, -10);
+		//crouchsprite.setPosition(-10, -10);
 		crouchsprite.scale(1f);
 		
 		backwalksprite = new Sprite(backWalkTexRegion);
-		backwalksprite.setPosition(-10, -10);
+		//backwalksprite.setPosition(-10, -10);
 		backwalksprite.scale(1f);
 	
 		deathsprite = new Sprite(deathTexRegion);
-		deathsprite.setPosition(-32, -10);
+		//deathsprite.setPosition(-32, -10);
 		deathsprite.scale(1f);
 		
 		upladdersprite = new Sprite(upLadderTexRegion);
-		upladdersprite.setPosition(-32, -10);
+		//upladdersprite.setPosition(-32, -10);
 		upladdersprite.scale(1f);
 	}
 	

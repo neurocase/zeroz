@@ -11,6 +11,8 @@ public class TiledLayerManager {
 
 	public TiledMapTileLayer collisionLayer;
 	public TiledMapTileLayer miscLayer;
+	public String levelcompleteKey = "levelcomplete";
+	public String playerstartKey = "playerstart";
 	public String itemKey = "item";
 	public String blockedKey = "solid";
 	public String platformKey = "platform";
@@ -25,27 +27,42 @@ public class TiledLayerManager {
 	
 	
 	
-	public TiledLayerManager(){
-		map = new TmxMapLoader().load("data/testmap3.tmx");
+	public TiledLayerManager(int level){
+		
+		String levelstr = Integer.toString(level);
+		map = new TmxMapLoader().load("data/levels/level" + levelstr + ".tmx");
 		collisionLayer = (TiledMapTileLayer) map.getLayers().get("collision");
 		miscLayer = (TiledMapTileLayer) map.getLayers().get("miscLayer");
 		Arrays.fill(keys, Boolean.FALSE);
 	
 	}
 	
-	public TiledLayerManager(TiledLayerManager newtm) {
+	// This seems to be dead code
+	/*public TiledLayerManager(TiledLayerManager newtm, int level) {
 		collisionLayer = newtm.collisionLayer;
 		miscLayer = newtm.miscLayer;
 		
 		map = new TmxMapLoader().load("data/testmap3.tmx");
 		collisionLayer = (TiledMapTileLayer) map.getLayers().get("collision");
 		miscLayer = (TiledMapTileLayer) map.getLayers().get("miscLayer");
-	}
+	}*/
 
 	public boolean isCellLadder(float x, float y) {
 		Cell cell = collisionLayer.getCell((int) (x), (int) (y));
 		return cell != null && cell.getTile() != null
 				&& cell.getTile().getProperties().containsKey(ladderKey);
+	}
+	
+	public boolean isCellPlayerStart(float x, float y) {
+		Cell cell = miscLayer.getCell((int) (x), (int) (y));
+		return cell != null && cell.getTile() != null
+				&& cell.getTile().getProperties().containsKey(playerstartKey);
+	}
+	
+	public boolean isCellLevelComplete(float x, float y) {
+		Cell cell = miscLayer.getCell((int) (x), (int) (y));
+		return cell != null && cell.getTile() != null
+				&& cell.getTile().getProperties().containsKey(levelcompleteKey);
 	}
 
 	public boolean isCellDestroyable(float x, float y) {
@@ -66,6 +83,16 @@ public class TiledLayerManager {
 		return cell != null && cell.getTile() != null
 				&& cell.getTile().getProperties().containsKey(enemyKey);
 		
+	}
+	public String getEnemyType(float x, float y){
+		Cell cell = miscLayer.getCell((int) (x), (int) (y));
+		String value = "null";
+		if (isCellEnemySpawn(x,y)){
+			value = (String) cell.getTile().getProperties().get(enemyKey);
+		}else{
+			System.out.println("ERROR: CELL IS NOT ENEMY SPAWN");
+		}
+		return value;
 	}
 	
 	public boolean isCellItem(float x, float y) {

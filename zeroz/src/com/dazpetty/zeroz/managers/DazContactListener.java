@@ -16,6 +16,7 @@ public class DazContactListener implements ContactListener {
 	private Array<Body> itemsToRemove;
 	private Array<Body> enemiesToDamage;
 	private Array<Body> destroyablesToDamage;
+	private Array<Body> droneToDamage;
 	private boolean playerDead;
 	public boolean damagePlayer = false;
 
@@ -27,6 +28,7 @@ public class DazContactListener implements ContactListener {
 		bodiesToRemove = new Array<Body>();
 		enemiesToDamage = new Array<Body>();
 		destroyablesToDamage = new Array<Body>();
+		droneToDamage = new Array<Body>();
 	}
 	
 	
@@ -45,7 +47,7 @@ public class DazContactListener implements ContactListener {
 							itemsToRemove.add(bod);
 				}
 				
-				if ((sa == "ai" || sa == "ground" || sa == "destroyable") && sb == "playerproj"){
+				if ((sa == "ai" || sa == "ground" || sa == "destroyable" || sa == "drone") && sb == "playerproj"){
 					if (fb.getBody() != null){
 						Body bod = fb.getBody();
 						String st = (String) bod.getUserData();
@@ -61,11 +63,16 @@ public class DazContactListener implements ContactListener {
 							String stb = (String) bodb.getUserData();
 							System.out.println("Destroyable " + stb + " damage.");
 							if (fa.getBody() != null) { destroyablesToDamage.add(fa.getBody());}
+						}else if(sa == "drone"){
+							Body bodb = fa.getBody();
+							Integer stb = (Integer) bodb.getUserData();
+							System.out.println("---------Drone " + stb + " damage.");
+							if (fa.getBody() != null) { droneToDamage.add(fa.getBody());}
 						}
 					}
 				}
 			
-				if ((sa == "player" || sa == "ground" || sa == "destroyable") && sb == "aiproj"){
+				if ((sa == "player" || sa == "ground") && sb == "aiproj"){
 					if (fb.getBody() != null){
 						Body bod = fb.getBody();
 						String st = (String) bod.getUserData();
@@ -77,11 +84,6 @@ public class DazContactListener implements ContactListener {
 							System.out.println("Player " + stb + " damage.");
 							System.out.println("Damage Player");
 							damagePlayer = true;
-						}else if(sa == "destroyable"){
-							Body bodb = fa.getBody();
-							String stb = (String) bodb.getUserData();
-							System.out.println("Destroyable " + stb + " damage.");
-							if (fa.getBody() != null) { destroyablesToDamage.add(fa.getBody());}
 						}
 					}
 				}
@@ -118,6 +120,7 @@ public class DazContactListener implements ContactListener {
 		checkCollision(fa, fb,"player");
 		checkCollision(fa, fb,"playerproj");
 		checkCollision(fa, fb,"aiproj");
+		checkCollision(fa, fb,"drone");
 	
 		
 	}
@@ -139,6 +142,7 @@ public class DazContactListener implements ContactListener {
 	}
 	
 	public boolean playerCanJump() { return count > 0; }
+	public Array<Body> getDrones() { return droneToDamage; }
 	public Array<Body> getDestroyables() { return destroyablesToDamage; }
 	public Array<Body> getAiBodies() { return aiBodiesToRemove; }
 	public Array<Body> getBodies() { return bodiesToRemove; }
