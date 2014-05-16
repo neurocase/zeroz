@@ -55,8 +55,6 @@ public class ZerozGame extends Game {
 				Gdx.files.internal("data/gfx/hud/dirbuttons.png"));
 		dirbuttonstex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
-		
-		
 		rightarrowtex = new Texture(
 				Gdx.files.internal("data/gfx/buttons/right.png"));
 		rightarrowtex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
@@ -67,6 +65,7 @@ public class ZerozGame extends Game {
 
 	//	TextureRegion leftarrowtexreg = new TextureRegion(leftarrowtex, 0, 0,
 		//		32, 32);
+		
 		TextureRegion rightarrowtexreg = new TextureRegion(rightarrowtex, 0, 0,
 				32, 32);
 		TextureRegion buttontexreg = new TextureRegion(buttontex, 0, 0, 32, 32);
@@ -86,8 +85,6 @@ public class ZerozGame extends Game {
 		buttonsprite.setSize(2f, 1f);
 		buttonsprite.setOrigin(0, 0);
 		buttonsprite.setPosition(0f, 0f);
-		
-		
 		
         batch = new SpriteBatch();
         //Use LibGDX's default Arial font.

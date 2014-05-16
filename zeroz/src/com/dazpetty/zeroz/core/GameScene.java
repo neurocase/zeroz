@@ -41,6 +41,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.dazpetty.zeroz.entities.Actor;
+import com.dazpetty.zeroz.entities.CopterBoss;
 import com.dazpetty.zeroz.entities.Destroyable;
 import com.dazpetty.zeroz.entities.Door;
 import com.dazpetty.zeroz.entities.Drone;
@@ -87,6 +88,8 @@ public class GameScene implements Screen {
 	private boolean playerShoot = false;
 	private boolean giveWorldPos = true;
 	private boolean showDebug = false;
+	private boolean isLevelScrolling = false;
+	private boolean isBossLevel = false;
 	boolean initbod = false;
 	public int enemycount = 1;
 	public int dronecount = 1;
@@ -148,6 +151,7 @@ public class GameScene implements Screen {
 	private Vector2 playerpos = new Vector2(0, 0);
 	private Vector3 screenPosZero = new Vector3(0, 0, 0);
 	Vector3 camVector = new Vector3(0, 0, 0);
+	
 
 	/*
 	 * TILED MAP TYPES
@@ -164,7 +168,7 @@ public class GameScene implements Screen {
 	final ZerozGame game;
 	public ProjectileManager projMan = new ProjectileManager(PROJECTILE_LIMIT);
 	public ProjectileManager aiProjMan = new ProjectileManager(PROJECTILE_LIMIT);
-	
+	public CopterBoss copterBoss;// = new CopterBoss();
 	//Vector2 enemyspawner[] = new Vector2[ENEMY_SPAWN_LIMIT];
 	EnemySpawner enemyspawner[] = new EnemySpawner[ENEMY_SPAWN_LIMIT];
 	
@@ -203,7 +207,6 @@ public class GameScene implements Screen {
 		shootbuttonsprite.setOrigin(0, 0);
 		shootbuttonsprite.setPosition(0f, 0f);
 
-		
 		levelCompleteTex = new Texture(
 				Gdx.files.internal("data/gfx/hud/levelcomplete.png"));
 		levelCompleteTexReg = new TextureRegion(levelCompleteTex, 0, 0, 512, 256);
@@ -340,18 +343,31 @@ public class GameScene implements Screen {
 					playerstart.x = w;
 					playerstart.y = h;
 				}
+				if (!isLevelScrolling){
+					if (tm.isLevelScrolling(w, h)) {
+						isLevelScrolling = true;
+					}
+				}
+				if (!isBossLevel){
+					if (tm.isCellBoss(w, h)) {
+						isBossLevel = true;
+						copterBoss = new CopterBoss(w, h, world);
+						
+					}
+				}
+				
 			}
 		}
+		
 		// CREATE PLAYER
 		zplayer = new Actor(camera, world, false, tm, playerstart, 0,
-				humanSprite, projMan, "player");
+				humanSprite, projMan, "player", isLevelScrolling);		
 		// INPUTHANDLER
 		inputHandler.LoadInputHandler(viewwidth, viewheight, camera, zplayer);
 		// BOX 2D DEBUG RENDERER
 		debugRenderer = new Box2DDebugRenderer();
 
 		//drone[0] = new Drone(5, 5, world, 0, camera);
-		
 		hudtarget = new HUDTarget();
 	}
 
@@ -369,7 +385,7 @@ public class GameScene implements Screen {
 		
 		if (s == 1) {
 			zplayer = new Actor(camera, world, false, tm, startpos, -1,
-					humanSprite, projMan, es.enemyType);
+					humanSprite, projMan, es.enemyType, isLevelScrolling);
 		}
 		if (s == 2) {
 		//	if (es.enemyType == null){
@@ -404,7 +420,7 @@ public class GameScene implements Screen {
 						 */
 						zenemy[enemycount] = new Actor(camera, world, true,
 								zplayer.tm, startpos, enemycount, humanSprite,
-								aiProjMan, es.enemyType);
+								aiProjMan, es.enemyType, isLevelScrolling);
 					}
 					es.lasttimespawn = System.currentTimeMillis();
 					enemycount++;
@@ -433,7 +449,7 @@ public class GameScene implements Screen {
 							 */
 							zenemy[enemycount] = new Actor(camera, world, true,
 									zplayer.tm, startpos, enemycount, humanSprite,
-									aiProjMan, es.enemyType);
+									aiProjMan, es.enemyType, isLevelScrolling);
 						}
 						es.lasttimespawn = System.currentTimeMillis();
 						enemycount++;
@@ -538,11 +554,16 @@ public class GameScene implements Screen {
 	@Override
 	public void render(float delta) {
 		
+		
+		
 		if (Gdx.input.isKeyPressed(Keys.R)) {
 			game.setScreen(new MainMenu(game));
 		}
 		if (Gdx.input.isKeyPressed(Keys.D)) {
 			debugOn = true;
+		}
+		if (Gdx.input.isKeyPressed(Keys.C)) {
+			levelComplete = true;
 		}
 		/*
 		 * UPDATE PLAYER
@@ -645,7 +666,6 @@ public class GameScene implements Screen {
 				}
 			}
 		}
-	
 		/*
 		 * BEGIN CORE SPRITE BATCH RENDER LOOP
 		 */
@@ -654,11 +674,22 @@ public class GameScene implements Screen {
 				drone[i].update(zplayer);
 			}
 		}
-
 		renderer.setView(camera);
 		renderer.render();
 		batch.begin();
-
+		
+		if (isBossLevel){
+			copterBoss.bossSprite.draw(batch);
+			copterBoss.update();
+			
+			for (int i = 0; i < copterBoss.copterTurret.length; i++){
+				if (copterBoss.copterTurret[i] != null && copterBoss.copterTurret[i].isAlive){
+					copterBoss.copterTurret[i].baseSprite.draw(batch);
+					copterBoss.copterTurret[i].barrelSprite.draw(batch);
+				}
+			}
+		}
+		
 		for (int i = 0; i < DRONE_LIMIT; i++) {
 			if (drone[i] != null && drone[i].isAlive) {
 				drone[i].sprite.draw(batch);
@@ -666,11 +697,9 @@ public class GameScene implements Screen {
 		}
 		// drone[0].sprite.setPosition(zplayer.screenpos.x,
 		// zplayer.screenpos.y);
-
 		dirbuttonssprite.setPosition(camera.position.x - 8,
 				camera.position.y - 5);
 		dirbuttonssprite.draw(batch);
-
 		Vector3 tmpVec3 = new Vector3((inputHandler.getXInputPosition("jump")),
 				0, 0);
 		camera.unproject(tmpVec3);
@@ -699,10 +728,7 @@ public class GameScene implements Screen {
 				}
 			}
 		}
-		
-		
 		zplayer.sprite.draw(batch);
-
 		/*
 		 * NEED TO FIX ARMSPRITE LOADING/NOT LOADING HERE
 		 */
@@ -734,8 +760,10 @@ public class GameScene implements Screen {
 				}
 			}
 		}
+		if (!isLevelScrolling){
 		camera.position.set(zplayer.worldpos.x + addextracamx / 200,
 				zplayer.worldpos.y + 1.5f, 0);
+		}
 		for (int i = 0; i < DESTROYABLE_LIMIT; i++) {
 			if (destroyable[i] != null) {
 				destroyable[i].sprite.draw(batch);
@@ -763,17 +791,17 @@ public class GameScene implements Screen {
 			hudtarget.sprite.draw(batch);
 		}
 		//boolean levelcomplete = false;
-		if (Math.abs(levelcompletepos.x - zplayer.worldpos.x) < 3 && Math.abs(levelcompletepos.y - zplayer.worldpos.y) < 3 ){
-			levelComplete = true;
-			levelcompletesprite.setPosition(camera.position.x-5, camera.position.y-2);
-			levelcompletesprite.setSize(12f, 6f);
+		if (levelcompletepos.x != 0 && levelcompletepos.y != 0){
+			if (Math.abs(levelcompletepos.x - zplayer.worldpos.x) < 3 && Math.abs(levelcompletepos.y - zplayer.worldpos.y) < 3 ){
+				levelComplete = true;
+				levelcompletesprite.setPosition(camera.position.x-5, camera.position.y-2);
+				levelcompletesprite.setSize(12f, 6f);
+			}
 		}
 		
-		if (levelComplete) levelcompletesprite.draw(batch);
-		
-		batch.end();
-		
+		if (levelComplete) levelcompletesprite.draw(batch);	
 
+		batch.end();
 		/*
 		 * ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ END CORE SPRITE BATCH RENDER LOOP
 		 */
@@ -784,23 +812,22 @@ public class GameScene implements Screen {
 		/*
 		 * DEACTIVATE DOORS, ENEMIES AND DESTROYED OBJECTS
 		 */
-
 		if (pollCheck(10)){
 			huntClosestEnemy();
 			
 			Array<Body> projbodies = cl.getBodies();
 			for (int i = 0; i < projbodies.size; i++) {
 				Body b = projbodies.get(i);
-				System.out.println("Destroying :" + b.getUserData());
-				projMan.KillProjectile(Integer.parseInt((String) b.getUserData()));
+				System.out.println("Destroying Proj:" + b.getUserData());
+				projMan.KillProjectile((Integer) b.getUserData());
 			}
 			projbodies.clear();
 			Array<Body> aiprojbodies = cl.getAiBodies();
 			for (int i = 0; i < aiprojbodies.size; i++) {
 				Body b = aiprojbodies.get(i);
-				System.out.println("Destroying :" + b.getUserData());
+				System.out.println("Destroying Ai Proj:" + b.getUserData());
 				aiProjMan
-						.KillProjectile(Integer.parseInt((String) b.getUserData()));
+						.KillProjectile((Integer) b.getUserData());
 				if (cl.DamagePlayer()) {
 					zplayer.takeDamage(5);
 				}
@@ -810,13 +837,12 @@ public class GameScene implements Screen {
 			Array<Body> enemybodies = cl.getEnemies();
 			for (int i = 0; i < enemybodies.size; i++) {
 				Body b = enemybodies.get(i);
-				int t = Integer.parseInt((String) b.getUserData());
+				int t = (Integer) b.getUserData();
 				System.out.println("Destroying Enemy:" + b.getUserData());
 				zenemy[t].isAlive = false;
 				zenemy[t].body.setActive(false);
 			}
-			enemybodies.clear();
-	
+			enemybodies.clear();	
 			Array<Body> itembodies = cl.getItems();
 			for (int i = 0; i < itembodies.size; i++) {
 				Body b = itembodies.get(i);
@@ -844,12 +870,26 @@ public class GameScene implements Screen {
 				}
 			}
 			dronebodies.clear();
+			
+			Array<Body> turretbodies = cl.getCopterTurret();
+			for (int i = 0; i < turretbodies.size; i++) {
+				Body b = turretbodies.get(i);
+				int t = (Integer) b.getUserData();
+				System.out.println("Destroying Turret :" + b.getUserData());
+				if (copterBoss.copterTurret[t] != null && t < copterBoss.copterTurret.length){
+					if (copterBoss.copterTurret[t].isAlive && t <= turretbodies.size) {
+						copterBoss.copterTurret[t].isAlive = false;
+						copterBoss.copterTurret[t].body.setActive(false);
+					}
+				}
+			}
+			turretbodies.clear();
 	
 			int killKeyValue = 0;
 			Array<Body> destroybodies = cl.getDestroyables();
 			for (int i = 0; i < destroybodies.size; i++) {
 				Body b = destroybodies.get(i);
-				int t = Integer.parseInt((String) b.getUserData());
+				int t = (Integer) b.getUserData();
 				System.out.println("Destroying Destroyable:" + b.getUserData()
 						+ "at Address:" + t);
 				if (destroyable[t] != null) {
@@ -875,6 +915,11 @@ public class GameScene implements Screen {
 		if (zplayer.worldpos.y < -15) {
 			zplayer.health = 0;
 		}
+		
+		if (Gdx.input.isTouched()) {
+			
+		}
+		
 		
 		if (Gdx.input.isTouched()) {
 			if (!zplayer.isAlive) {
@@ -1004,7 +1049,7 @@ public class GameScene implements Screen {
 			enemyTooFar_left = false;
 		}
 
-		if (!zplayer.isOnLadder) {
+		if (!zplayer.isOnLadder && !isLevelScrolling) {
 			if (zplayer.isGoRight) {
 				if (targetIsDrone_right) {
 					if (drone[closest_enemy_right] != null) {

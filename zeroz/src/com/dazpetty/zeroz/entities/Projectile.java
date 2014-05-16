@@ -60,6 +60,7 @@ public class Projectile implements Poolable {
 		float velx = (float) (speed * Math.cos(rad));
 		float vely = (float) (speed * Math.sin(rad));
 		
+		projsprite.setRotation(angle);
 		body.setTransform(act.worldpos.x, act.worldpos.y+1, angle);
 		body.setLinearVelocity(velx,vely);
 	}
@@ -72,7 +73,7 @@ public class Projectile implements Poolable {
 		isDead = false;
 		
 		body.setGravityScale(0);
-		String str = Integer.toString(id);
+		int str = id;
 		body.setUserData(str);
 		body.setBullet(true);
 		//bodyDef.
@@ -80,17 +81,18 @@ public class Projectile implements Poolable {
 		float velx = (float) (speed * Math.cos(rad));
 		float vely = (float) (speed * Math.sin(rad));
 		
-		projtex = new Texture(Gdx.files.internal("data/gfx/reddot.png"));
+		projtex = new Texture(Gdx.files.internal("data/gfx/effects/bullet2.png"));
 		projtex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		
-		TextureRegion projtexreg = new TextureRegion(projtex, 0, 0, 16,
-				16);
+		TextureRegion projtexreg = new TextureRegion(projtex, 0, 0,16,
+				8);
 		projsprite = new Sprite(projtexreg);
-		projsprite.setSize(0.5f, 0.5f);
+		projsprite.setSize(0.5f, 0.25f);
 		projsprite.setOrigin(projsprite.getWidth() / 2, projsprite.getHeight() / 2);
 		projsprite.setPosition(0f, 0f);
 		fixtureDef = new FixtureDef(); 
 	    dynamicCircle = new CircleShape();  
+	    projsprite.setRotation(angle);
 	    body.setTransform(act.worldpos.x, act.worldpos.y+1, angle);
 	    body.setLinearVelocity(velx,vely);
 	    

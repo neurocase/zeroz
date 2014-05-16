@@ -13,6 +13,10 @@ public class TiledLayerManager {
 	public TiledMapTileLayer miscLayer;
 	public String levelcompleteKey = "levelcomplete";
 	public String playerstartKey = "playerstart";
+	
+	public String bossKey = "boss";
+	public String scrollingKey = "scrollingmap";
+	
 	public String itemKey = "item";
 	public String blockedKey = "solid";
 	public String platformKey = "platform";
@@ -46,6 +50,20 @@ public class TiledLayerManager {
 		collisionLayer = (TiledMapTileLayer) map.getLayers().get("collision");
 		miscLayer = (TiledMapTileLayer) map.getLayers().get("miscLayer");
 	}*/
+	
+
+	public boolean isLevelScrolling(float x, float y) {
+		Cell cell = miscLayer.getCell((int) (x), (int) (y));
+		return cell != null && cell.getTile() != null
+				&& cell.getTile().getProperties().containsKey(scrollingKey);
+	}
+	
+	public boolean isCellBoss(float x, float y) {
+		Cell cell = miscLayer.getCell((int) (x), (int) (y));
+		return cell != null && cell.getTile() != null
+				&& cell.getTile().getProperties().containsKey(bossKey);
+	}
+	
 
 	public boolean isCellLadder(float x, float y) {
 		Cell cell = collisionLayer.getCell((int) (x), (int) (y));
@@ -64,6 +82,7 @@ public class TiledLayerManager {
 		return cell != null && cell.getTile() != null
 				&& cell.getTile().getProperties().containsKey(levelcompleteKey);
 	}
+	
 
 	public boolean isCellDestroyable(float x, float y) {
 		Cell cell = miscLayer.getCell((int) (x), (int) (y));

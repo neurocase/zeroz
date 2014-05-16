@@ -17,6 +17,7 @@ public class DazContactListener implements ContactListener {
 	private Array<Body> enemiesToDamage;
 	private Array<Body> destroyablesToDamage;
 	private Array<Body> droneToDamage;
+	private Array<Body> copterTurretToDamage;
 	private boolean playerDead;
 	public boolean damagePlayer = false;
 
@@ -29,6 +30,7 @@ public class DazContactListener implements ContactListener {
 		enemiesToDamage = new Array<Body>();
 		destroyablesToDamage = new Array<Body>();
 		droneToDamage = new Array<Body>();
+		copterTurretToDamage = new Array<Body>();
 	}
 	
 	
@@ -47,20 +49,20 @@ public class DazContactListener implements ContactListener {
 							itemsToRemove.add(bod);
 				}
 				
-				if ((sa == "ai" || sa == "ground" || sa == "destroyable" || sa == "drone") && sb == "playerproj"){
+				if ((sa == "copterturret" || sa == "ai" || sa == "ground" || sa == "destroyable" || sa == "drone") && sb == "playerproj"){
 					if (fb.getBody() != null){
 						Body bod = fb.getBody();
-						String st = (String) bod.getUserData();
+						int st = (Integer) bod.getUserData();
 						System.out.println(st);
 						bodiesToRemove.add(fb.getBody());
 						if(sa == "ai"){
 							Body bodb = fa.getBody();
-							String stb = (String) bodb.getUserData();
+							int stb = (Integer) bodb.getUserData();
 							System.out.println("Enemy " + stb + " damage.");
 							if (fa.getBody() != null) { enemiesToDamage.add(fa.getBody());}
 						}else if(sa == "destroyable"){
 							Body bodb = fa.getBody();
-							String stb = (String) bodb.getUserData();
+							int stb = (Integer) bodb.getUserData();
 							System.out.println("Destroyable " + stb + " damage.");
 							if (fa.getBody() != null) { destroyablesToDamage.add(fa.getBody());}
 						}else if(sa == "drone"){
@@ -68,19 +70,27 @@ public class DazContactListener implements ContactListener {
 							Integer stb = (Integer) bodb.getUserData();
 							System.out.println("---------Drone " + stb + " damage.");
 							if (fa.getBody() != null) { droneToDamage.add(fa.getBody());}
+						}else if(sa == "copterturret"){
+							Body bodb = fa.getBody();
+							int stb = (Integer) bodb.getUserData();
+							System.out.println("---------CopterTurret " + stb + " damage.");
+							if (fa.getBody() != null) { copterTurretToDamage.add(fa.getBody());}
 						}
+						
+						
+						
 					}
 				}
 			
 				if ((sa == "player" || sa == "ground") && sb == "aiproj"){
 					if (fb.getBody() != null){
 						Body bod = fb.getBody();
-						String st = (String) bod.getUserData();
+						int st = (Integer) bod.getUserData();
 						System.out.println(st);
 						aiBodiesToRemove.add(fb.getBody());
 						if(sa == "player"){
 							Body bodb = fa.getBody();
-							String stb = (String) bodb.getUserData();
+							int stb = (Integer) bodb.getUserData();
 							System.out.println("Player " + stb + " damage.");
 							System.out.println("Damage Player");
 							damagePlayer = true;
@@ -148,6 +158,7 @@ public class DazContactListener implements ContactListener {
 	public Array<Body> getBodies() { return bodiesToRemove; }
 	public Array<Body> getItems() { return itemsToRemove; }
 	public Array<Body> getEnemies() { return enemiesToDamage; }
+	public Array<Body> getCopterTurret() { return copterTurretToDamage; }
 	public boolean isPlayerDead() { return playerDead; }
 	
 	public void preSolve(Contact c, Manifold m) {}

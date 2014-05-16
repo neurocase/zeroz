@@ -66,6 +66,11 @@
    <property name="solid" value=""/>
   </properties>
  </tile>
+ <tile id="158">
+  <properties>
+   <property name="boss" value=""/>
+  </properties>
+ </tile>
  <tile id="159">
   <properties>
    <property name="door" value="2"/>
@@ -109,6 +114,11 @@
  <tile id="178">
   <properties>
    <property name="platform" value=""/>
+  </properties>
+ </tile>
+ <tile id="190">
+  <properties>
+   <property name="scrollingmap" value=""/>
   </properties>
  </tile>
  <tile id="191">

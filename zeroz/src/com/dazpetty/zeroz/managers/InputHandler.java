@@ -141,7 +141,7 @@ public class InputHandler {
 					zplayer.aimingAt.x = newAimVec.x;
 					zplayer.aimingAt.y = newAimVec.y;
 					
-					System.out.println("Z" + zplayer.aimingAt.x + " : " + zplayer.aimingAt.y);
+				//	System.out.println("Z" + zplayer.aimingAt.x + " : " + zplayer.aimingAt.y);
 					
 					newAimVec.y -= 1;
 					float ang = newAimVec.angle();

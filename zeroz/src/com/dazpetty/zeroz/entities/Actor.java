@@ -32,19 +32,22 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.dazpetty.zeroz.managers.GamePhysics;
 import com.dazpetty.zeroz.managers.ProjectileManager;
 import com.dazpetty.zeroz.managers.TiledLayerManager;
+
 /*
  * Zactor: Zactor is the Actor class, all game entities which move are actors,
  * actor is the base class for enemies, ai and the player.
  * 
+ * 		Moving
+ * 
  */
-public class Actor{
+public class Actor {
 	/*
-	 *  BOOLEANS
+	 * BOOLEANS
 	 */
 	public boolean isJump = true;
 	public boolean isAlive = true;
 	public boolean isGrounded = true;
-	//isDisposed is for clearing away enemies that are not near the player
+	// isDisposed is for clearing away enemies that are not near the player
 	public boolean isDisposed = false;
 	public boolean isOnLadder = false;
 	public boolean canDoubleJump = false;
@@ -63,8 +66,9 @@ public class Actor{
 	public boolean amTouching = false;
 	public boolean run = false;
 	public boolean blinkOn = false;
+	public boolean isLevelScrolling = false;
 	/*
-	 *  ORDINARY VARIABLES
+	 * ORDINARY VARIABLES
 	 */
 	public int deathanim = 0;
 	public float jumpSpeed = 16;
@@ -87,7 +91,7 @@ public class Actor{
 	public String aimingdirection = "right";
 	public String state = "idle";
 	/*
-	 *  Vectors
+	 * Vectors
 	 */
 	public Vector2 screenpos = new Vector2(0, 0);
 	public Vector2 worldpos = new Vector2(0, 0);
@@ -98,16 +102,17 @@ public class Actor{
 	public Vector3 enemyScreenVec = new Vector3(0, 0, 0);
 	public Vector3 aimingAt = new Vector3(0, 0, 0);
 	public Vector2 actorTarget = new Vector2(0, 0);
-	public Vector2 p1 = new Vector2(), p2 = new Vector2(), collision = new Vector2(), normal = new Vector2();
+	public Vector2 p1 = new Vector2(), p2 = new Vector2(),
+			collision = new Vector2(), normal = new Vector2();
 	int wantGoDirection = 0;
 	public float aimAtPlayer = 0;
 	public int activeBullet = 0;
 	public float height = 0;
 	public float width = 0;
- 	public long lasttimeshoot = System.currentTimeMillis();
+	public long lasttimeshoot = System.currentTimeMillis();
 
 	/*
-	 *  ANIMATION TYPES
+	 * ANIMATION TYPES
 	 */
 	public int MAX_MOVE_SPEED = 10;
 	private static final int FRAME_COLS = 5; // #1
@@ -115,11 +120,11 @@ public class Actor{
 	private String currentAtlasKey = new String("0000");
 	float stateTime;
 	private int currentFrame = 1;
-	
+
 	public Sprite rightarmsprite;
 	public Sprite armsprite;
 	public Sprite aimladdersprite;
-	public String type = null; 
+	public String type = null;
 	public Sprite idlesprite;
 	public Sprite runsprite;
 	public Sprite backwalksprite;
@@ -158,28 +163,31 @@ public class Actor{
 	public FixtureDef fixtureDef;
 	public CircleShape dynamicCircle;
 	/*
-	 *  AI's VARIABLES 
+	 * AI's VARIABLES
 	 */
 	public boolean isJumpy = false;
 	public float shootDist = 4;
-	float relativetoplayerx = 0; 
+	float relativetoplayerx = 0;
 	float relativetoplayery = 0;
-	public Vector2 relativepos = new Vector2(relativetoplayerx,relativetoplayery);
+	public Vector2 relativepos = new Vector2(relativetoplayerx,
+			relativetoplayery);
+
 	/*
-	 *  FUNCTIONS
+	 * FUNCTIONS
 	 */
-	public void reUseActor(Vector2 actorstart){
+	public void reUseActor(Vector2 actorstart) {
 		body.setActive(true);
-    	body.setAwake(true);
-    	isDisposed = false;
-    	isOnLadder = false;
-    	isDead = false;
-    	isAlive = true;
-    	worldpos = actorstart;
-    	health = startinghealth;
-	} 
+		body.setAwake(true);
+		isDisposed = false;
+		isOnLadder = false;
+		isDead = false;
+		isAlive = true;
+		worldpos = actorstart;
+		health = startinghealth;
+	}
+
 	public void attemptShoot(float ang) {
-		if (isAlive){
+		if (isAlive) {
 			long timenow = System.currentTimeMillis();
 			long a = timenow - lasttimeshoot;
 			if (timenow - lasttimeshoot > (50 * 10)) {
@@ -188,137 +196,148 @@ public class Actor{
 				if (projMan.activeproj == projMan.PROJECTILE_LIMIT - 1)
 					projMan.activeproj = 0;
 				float speed = 25;
-	
+
 				if (projMan.proj[projMan.activeproj] == null) {
-					projMan.proj[projMan.activeproj] = new Projectile(this, world, projMan.activeproj,
-							ang, speed);
+					projMan.proj[projMan.activeproj] = new Projectile(this,
+							world, projMan.activeproj, ang, speed);
 				}
-				projMan.proj[projMan.activeproj].reUseProjectile(this, ang, speed);
+				projMan.proj[projMan.activeproj].reUseProjectile(this, ang,
+						speed);
 			}
 		}
 	}
-	public Actor(Camera scam, World world, boolean amAI, TiledLayerManager newtm, Vector2 actorstart, int id, HumanSprite humanSprite, ProjectileManager projManIn, String actorType){
+
+	public Actor(Camera scam, World world, boolean amAI,
+			TiledLayerManager newtm, Vector2 actorstart, int id,
+			HumanSprite humanSprite, ProjectileManager projManIn,
+			String actorType, boolean isLevelScrollingIn) {
+		
+		
+		isLevelScrolling = isLevelScrollingIn;
+
 		projMan = projManIn;
-		if (tm == null){
-		tm = (TiledLayerManager) newtm;
-			if (newtm == null){
+		if (tm == null) {
+			tm = (TiledLayerManager) newtm;
+			if (newtm == null) {
 				System.out.println("newtm is null");
 			}
 		}
-	    if (body == null){
-	    	BodyDef bodyDef = new BodyDef(); 
-		    bodyDef.type = BodyType.DynamicBody;
-	    	body = world.createBody(bodyDef);
-	    }else{
-	    	body.setActive(true);
-	    	body.setAwake(true);
-	    }
-	    
+		if (body == null) {
+			BodyDef bodyDef = new BodyDef();
+			bodyDef.type = BodyType.DynamicBody;
+			body = world.createBody(bodyDef);
+		} else {
+			body.setActive(true);
+			body.setAwake(true);
+		}
+
 		worldpos = actorstart;
 		initialized = true;
-		
+
 		isDisposed = false;
 		isAI = amAI;
 		this.world = world;
-		
-		body.setUserData(Integer.toString(id));
 
-		fixtureDef = new FixtureDef(); 
-	    PolygonShape pBox = new PolygonShape();
-	    pBox.setAsBox(0.5f, 1f);
-	    fixtureDef.shape = pBox;
-	    Fixture fixture = body.createFixture(fixtureDef);
-	    
-	    if (isAI){
-	    fixture.setUserData("ai");
-	    }else{
-	    	fixture.setUserData("player");
-	    }
-	    body.setLinearVelocity(0, 0);
-	    
-	    
-	    fixtureDef.shape = pBox;  
-	    fixtureDef.density = 0.5f;  
-	    fixtureDef.friction = 0.3f;  
-	    fixtureDef.restitution = 0.6f;
-	    if (!isAI){
-	    	fixtureDef.filter.maskBits = 7;
-	    	fixtureDef.filter.categoryBits = 8;
-	    }else{
-	    	fixtureDef.filter.maskBits = 9;
-	    	fixtureDef.filter.categoryBits = 4;
-	    }
-	    body.createFixture(fixtureDef);
+		body.setUserData(id);
+
+		fixtureDef = new FixtureDef();
+		PolygonShape pBox = new PolygonShape();
+		pBox.setAsBox(0.5f, 1f);
+		fixtureDef.shape = pBox;
+		Fixture fixture = body.createFixture(fixtureDef);
+
+		if (isAI) {
+			fixture.setUserData("ai");
+		} else {
+			fixture.setUserData("player");
+		}
+		body.setLinearVelocity(0, 0);
+
+		fixtureDef.shape = pBox;
+		fixtureDef.density = 0.5f;
+		fixtureDef.friction = 0.3f;
+		fixtureDef.restitution = 0.6f;
+		if (!isAI) {
+			fixtureDef.filter.maskBits = 7;
+			fixtureDef.filter.categoryBits = 8;
+		} else {
+			fixtureDef.filter.maskBits = 9;
+			fixtureDef.filter.categoryBits = 4;
+		}
+		body.createFixture(fixtureDef);
 
 		height = 2;
 		width = 1.25f;
 		scenecamera = scam;
 
 		aimLadderTexture = humanSprite.aimLadderTexture;
-		
+
 		armTexture = humanSprite.armTexture;
 
 		TextureRegion aimLadderTexRegion = new TextureRegion(aimLadderTexture,
 				0, 0, 128, 128);
-		TextureRegion armTexRegion = new TextureRegion(armTexture, 0,
-				0, 64, 64);
+		TextureRegion armTexRegion = new TextureRegion(armTexture, 0, 0, 64, 64);
 
 		aimladdersprite = new Sprite(aimLadderTexRegion);
 		aimladdersprite.setPosition(-10, -10);
 		aimladdersprite.scale(1f);
 
-		
-		
 		armsprite = new Sprite(armTexRegion);
 		armsprite.setSize(1, 1);
 		armsprite.setOrigin(((armsprite.getWidth() * 0.77f)),
-		armsprite.getHeight() / 2);
+				armsprite.getHeight() / 2);
 		armsprite.setPosition(-10, -10);
 
 		runTextureAtlas = humanSprite.runTextureAtlas;
-		idleTextureAtlas = humanSprite.idleTextureAtlas; 
-		backWalkTextureAtlas = humanSprite.backWalkTextureAtlas; 
+		idleTextureAtlas = humanSprite.idleTextureAtlas;
+		backWalkTextureAtlas = humanSprite.backWalkTextureAtlas;
 		crouchTextureAtlas = humanSprite.crouchTextureAtlas;
 		crouchBackTextureAtlas = humanSprite.crouchBackTextureAtlas;
 		upLadderTextureAtlas = humanSprite.upLadderTextureAtlas;
 		deathTextureAtlas = humanSprite.deathTextureAtlas;
-		
+
 		AtlasRegion runTexRegion = runTextureAtlas.findRegion("0000");
 		AtlasRegion idleTexRegion = idleTextureAtlas.findRegion("0000");
 		AtlasRegion crouchTexRegion = crouchTextureAtlas.findRegion("0000");
-		AtlasRegion crouchBackTexRegion = crouchBackTextureAtlas.findRegion("0000");
+		AtlasRegion crouchBackTexRegion = crouchBackTextureAtlas
+				.findRegion("0000");
 		AtlasRegion backWalkTexRegion = backWalkTextureAtlas.findRegion("0000");
 		AtlasRegion upLadderTexRegion = upLadderTextureAtlas.findRegion("0000");
 		AtlasRegion deathTexRegion = deathTextureAtlas.findRegion("0000");
-		
+
 		runsprite = new Sprite(runTexRegion);
-	//	runsprite.setPosition(-10, -10);
+		// runsprite.setPosition(-10, -10);
 		runsprite.scale(1f);
 
 		idlesprite = new Sprite(idleTexRegion);
-	//	idlesprite.setPosition(-10, -10);
+		// idlesprite.setPosition(-10, -10);
 		idlesprite.scale(1f);
-		
+
 		crouchbacksprite = new Sprite(crouchBackTexRegion);
-		//crouchbacksprite.setPosition(-10, -10);
+		// crouchbacksprite.setPosition(-10, -10);
 		crouchbacksprite.scale(1f);
-		
+
 		crouchsprite = new Sprite(crouchTexRegion);
 		crouchsprite.scale(1f);
-		
+
 		backwalksprite = new Sprite(backWalkTexRegion);
 		backwalksprite.scale(1f);
 
 		deathsprite = new Sprite(deathTexRegion);
 		deathsprite.scale(1f);
-		
+
 		upladdersprite = new Sprite(upLadderTexRegion);
 		upladdersprite.scale(1f);
 		physics = new GamePhysics();
 	}
+
 	public void goLeft() {
-		if (isAlive){
-			if (isCrouching || state == "crouchback" || state == "crouch"){ MAX_MOVE_SPEED = 6; }else{ MAX_MOVE_SPEED = 10;}
+		if (isAlive) {
+			if (isCrouching || state == "crouchback" || state == "crouch") {
+				MAX_MOVE_SPEED = 6;
+			} else {
+				MAX_MOVE_SPEED = 10;
+			}
 			if (velocity.y == 0 || isOnLadder) {
 				velocity.x -= moveSpeed;
 				if (velocity.x < -MAX_MOVE_SPEED)
@@ -333,8 +352,12 @@ public class Actor{
 	}
 
 	public void goRight() {
-		if (isAlive){
-			if (isCrouching || state == "crouchback" || state == "crouch"){ MAX_MOVE_SPEED = 6; }else{ MAX_MOVE_SPEED = 10;}
+		if (isAlive) {
+			if (isCrouching || state == "crouchback" || state == "crouch") {
+				MAX_MOVE_SPEED = 6;
+			} else {
+				MAX_MOVE_SPEED = 10;
+			}
 			if (velocity.y == 0 || isOnLadder) {
 				velocity.x += moveSpeed;
 				if (velocity.x > MAX_MOVE_SPEED)
@@ -348,26 +371,21 @@ public class Actor{
 		}
 	}
 
-	public void goJumpDown(){
+	public void goJumpDown() {
 		isGrounded = false;
 		isOnLadder = false;
-		
+
 	}
-	
-	
-	
-	
-	
-	
+
 	public void goJump() {
-		if (tm != null){
-			if (isAlive){
+		if (tm != null) {
+			if (isAlive) {
 				for (float i = -0.55f; i < 0.55f; i += 0.55f) {
 					if (tm.isCellLadder(worldpos.x + i, worldpos.y)) {
 						worldpos.x = (int) worldpos.x + i + 0.4f;
 					}
 				}
-		
+
 				if (tm.isCellLadder(worldpos.x, worldpos.y)) {
 					isGrounded = false;
 					velocity.y = 4f;
@@ -377,20 +395,20 @@ public class Actor{
 				} else {
 					isOnLadder = false;
 				}
-		
+
 				if (isGrounded) {
 					canDoubleJump = true;
-					if (!isCrouching){
-					velocity.y += jumpSpeed;
-					}else{
-		
+					if (!isCrouching) {
+						velocity.y += jumpSpeed;
+					} else {
+
 					}
 					isGrounded = false;
 					isOnLadder = false;
-				} else if ((velocity.x >= 0 && tm.isCellBlocked(worldpos.x + 0.5f,
-						worldpos.y, true))
-						|| (velocity.x <= 0 && tm.isCellBlocked(worldpos.x - 0.5f,
-								worldpos.y, true))) {
+				} else if ((velocity.x >= 0 && tm.isCellBlocked(
+						worldpos.x + 0.5f, worldpos.y, true))
+						|| (velocity.x <= 0 && tm.isCellBlocked(
+								worldpos.x - 0.5f, worldpos.y, true))) {
 					if (canDoubleJump && velocity.y < (jumpSpeed / 2)) {
 						if (velocity.x > 0) {
 							velocity.x = (-jumpSpeed / 2);
@@ -402,21 +420,20 @@ public class Actor{
 						velocity.y = jumpSpeed - (jumpSpeed / 3.5f);
 						canDoubleJump = false;
 					}
-		
+
 				}
 			}
-		}else{
+		} else {
 			System.out.println("Error, TileLayerManager is NULL");
 		}
 	}
-	
-	public void update(boolean isWorldCoord,
-			Camera camera, boolean shoot) {
-		
+
+	public void update(boolean isWorldCoord, Camera camera, boolean shoot) {
+
 		float inx = aimingAt.x;
 		float iny = aimingAt.y;
-		
-		if (isAI){
+
+		if (isAI) {
 			boolean facingtarget = true;
 			boolean flip = false;
 			boolean aimless = false;
@@ -425,9 +442,10 @@ public class Actor{
 			aimless = true;
 			isWorldCoord = false;
 		}
-		
-		if (!armsprite.isFlipX()) armsprite.flip(true, false);
-		
+
+		if (!armsprite.isFlipX())
+			armsprite.flip(true, false);
+
 		boolean facingtarget = true;
 		boolean flip = false;
 		boolean aimless = false;
@@ -438,10 +456,10 @@ public class Actor{
 			isWorldCoord = false;
 			if (movingdirection == "right")
 				inx = -2;
-			if (movingdirection == "left")
+			if (movingdirection == "left" && !isLevelScrolling)
 				inx = 2;
-		}else{
-			iny-=1;
+		} else {
+			iny -= 1;
 		}
 
 		if (velocity.x < 0) {
@@ -449,13 +467,18 @@ public class Actor{
 			if (aimless) {
 				aimingdirection = "right";
 			}
-		} else if (velocity.x > 0) {
+		} else if (velocity.x > 0 ) {
 			movingdirection = "left";
 			if (aimless) {
 				aimingdirection = "left";
 			}
 		} else if (velocity.x == 0) {
 		}
+		
+		if (isLevelScrolling){
+			movingdirection = "left";
+		}
+		
 
 		targetScreenVec.x = inx;
 		targetScreenVec.y = iny;
@@ -466,23 +489,29 @@ public class Actor{
 			camera.project(targetScreenVec);
 		} else {
 			camera.unproject(targetWorldVec);
-		}	
-		
-		if (aimAngle > 90 && aimAngle < 270){
+		}
+
+		if (aimAngle > 90 && aimAngle < 270) {
 			aimingdirection = "right";
-		}else{
+		} else {
 			aimingdirection = "left";
 		}
-		
+
 		float tx = targetWorldVec.x;
 		float ty = targetWorldVec.y;
-
 
 		if (velocity.x != 0 && velocity.y == 0 && isGrounded) {
 			state = "run";
 		}
 		if (velocity.x == 0 && velocity.y == 0 && !isOnLadder) {
 			state = "idle";
+			if (isLevelScrolling){
+				movingdirection = "left";
+				state = "run";
+				if (aimingdirection == "left"){
+					state = "runback";
+				}
+			}
 		}
 		if (isOnLadder) {
 			if (velocity.y == 0) {
@@ -506,8 +535,15 @@ public class Actor{
 			}
 		} else if (velocity.x == 0 && velocity.y == 0) {
 			state = "idle";
-			if (isCrouching){
+			if (isLevelScrolling){
+				state = "run";	
+				movingdirection = "left";
+			}
+			if (isCrouching) {
 				state = "crouchidle";
+				if (isLevelScrolling){
+					state = "crouchrun";	
+				}
 			}
 		}
 		if (!isGrounded && !isOnLadder && velocity.y != 0) {
@@ -518,12 +554,13 @@ public class Actor{
 			state = "ladderaim";
 			isShooting = true;
 		}
-		
-		if (health <= 0){
+
+		if (health <= 0) {
 			isAlive = false;
 		}
-		
-		if (state == "run" || state == "ladderclimb" || state == "runback" || state == "crouch" || state == "crouchback"|| isDead) {
+
+		if (state == "run" || state == "ladderclimb" || state == "runback"
+				|| state == "crouch" || state == "crouchback" || isDead) {
 			if (currentFrame > 24) {
 				currentFrame = 0;
 			}
@@ -538,11 +575,10 @@ public class Actor{
 			crouchsprite.setRegion(crouchTextureAtlas
 					.findRegion(currentAtlasKey));
 
-
 		}
-		
+
 		float armyadd = 0;
-		
+
 		if (state == "run") {
 			sprite = runsprite;
 			isOnLadder = false;
@@ -570,29 +606,31 @@ public class Actor{
 		} else if (state == "ladderaim") {
 			sprite = aimladdersprite;
 			isGrounded = false;
-		} else if (state == "crouch"){
+		} else if (state == "crouch") {
 			sprite = crouchsprite;
-		} else if (state == "crouchback"){
+		} else if (state == "crouchback") {
 			sprite = crouchbacksprite;
-		} else if (state == "crouchidle"){
+		} else if (state == "crouchidle") {
 			currentFrame = 0;
 			sprite = crouchsprite;
 		}
-		if (!isAlive){
+		if (!isAlive) {
 			currentFrame = deathanim;
 			sprite = deathsprite;
 			currentAtlasKey = String.format("%04d", currentFrame);
-			
-			if (deathanim < 7 && !isGrounded) deathanim++;
-			if (deathanim < 10 && isGrounded) deathanim++;
-			deathsprite.setRegion(deathTextureAtlas
-					.findRegion(currentAtlasKey));
+
+			if (deathanim < 7 && !isGrounded)
+				deathanim++;
+			if (deathanim < 10 && isGrounded)
+				deathanim++;
+			deathsprite
+					.setRegion(deathTextureAtlas.findRegion(currentAtlasKey));
 		}
-		
-		if (isCrouching && isGrounded){
+
+		if (isCrouching && isGrounded) {
 			armyadd = -0.55f;
 		}
-		
+
 		if (aimingdirection == "left" && !sprite.isFlipX()) {
 			flip = true;
 		}
@@ -602,116 +640,109 @@ public class Actor{
 		}
 
 		if (aimingdirection == "right") {
-			if (armsprite.isFlipY()) armsprite.flip(false, true);
+			if (armsprite.isFlipY())
+				armsprite.flip(false, true);
 		} else {
-			if (!armsprite.isFlipY()) armsprite.flip(false, true);	
+			if (!armsprite.isFlipY())
+				armsprite.flip(false, true);
 			if (aimladdersprite.isFlipX())
 				aimladdersprite.flip(true, false);
 		}
-		
+
 		Vector2 tmpAimVec = new Vector2(targetScreenVec.x, targetScreenVec.y);
-		if (isAI){
-			aimAngle = aimAtPlayer;	
-		}else {
-		aimAngle = tmpAimVec.angle();
+		if (isAI) {
+			aimAngle = aimAtPlayer;
+		} else {
+			aimAngle = tmpAimVec.angle();
 		}
 		sprite.setSize(1f, 1f);
 		sprite.setOrigin(sprite.getWidth() / 2, 0);
 		sprite.setPosition(worldpos.x - 0.5f, worldpos.y);
-		armsprite.setRotation(aimAngle-180);
+		armsprite.setRotation(aimAngle - 180);
 		armsprite.setPosition(worldpos.x - 0.76f, worldpos.y + 1 + armyadd);
-		
-		if (type == "enemy"){
-		sprite.setColor(Color.RED);
-		}else{
-			sprite.setColor(Color.WHITE);	
+
+		if (type == "enemy") {
+			sprite.setColor(Color.RED);
+		} else {
+			sprite.setColor(Color.WHITE);
 		}
 		if (!aimless) {
 			isShooting = true;
 		} else {
 			isShooting = false;
 		}
-		body.setTransform(worldpos.x, worldpos.y+1, 0f);
-		if (tm == null){System.out.println("TM IN ACTOR IS NULL");}
+		body.setTransform(worldpos.x, worldpos.y + 1, 0f);
+		if (tm == null) {
+			System.out.println("TM IN ACTOR IS NULL");
+		}
 		physics.doPhysics(this);
 		goThruPlatform = false;
 		isShooting = false;
-		
+
 		aimingAt.x = 0;
 		aimingAt.y = 0;
 	}
 
-	/*public void shoot(){
-		if (isAlive && weapon.shoot()){
-			RayCastCallback callback = new RayCastCallback() {
-				@Override
-				public float reportRayFixture(Fixture fixture, Vector2 point, Vector2 normal, float fraction) {
-					collision.set(point);
-					Actor.this.normal.set(normal).add(point);
-					return 0;
-				}
-			};
-			
-		for (int i = 0; i < weapon.shots[weapon.weaponid]; i++){
-			float scatterbullets = (float) (Math.random() * weapon.accuracyscatter[weapon.weaponid] -(weapon.accuracyscatter[weapon.weaponid]/2));  
-			p1.x = worldpos.x;
-			p1.y = worldpos.y+1.75f;
-			//float newy = p1.y + 1;
-			
-			float ifCrouch = 0;
-			
-			if (isCrouching){
-				ifCrouch = -0.7f;
-			}
-			if (activeBullet == 100) {
-				activeBullet = 0;
-			}
-			world.rayCast(callback, p1,p2);
-			activeBullet++;
-			}
-		}
-	}*/
+	/*
+	 * public void shoot(){ if (isAlive && weapon.shoot()){ RayCastCallback
+	 * callback = new RayCastCallback() {
+	 * 
+	 * @Override public float reportRayFixture(Fixture fixture, Vector2 point,
+	 * Vector2 normal, float fraction) { collision.set(point);
+	 * Actor.this.normal.set(normal).add(point); return 0; } };
+	 * 
+	 * for (int i = 0; i < weapon.shots[weapon.weaponid]; i++){ float
+	 * scatterbullets = (float) (Math.random() *
+	 * weapon.accuracyscatter[weapon.weaponid]
+	 * -(weapon.accuracyscatter[weapon.weaponid]/2)); p1.x = worldpos.x; p1.y =
+	 * worldpos.y+1.75f; //float newy = p1.y + 1;
+	 * 
+	 * float ifCrouch = 0;
+	 * 
+	 * if (isCrouching){ ifCrouch = -0.7f; } if (activeBullet == 100) {
+	 * activeBullet = 0; } world.rayCast(callback, p1,p2); activeBullet++; } } }
+	 */
 	public float distanceFromPlayer = 0;
-	
 
-	
-	public void updateAI(Actor zplayer){
-		//attemptShoot(0);
-		if (isAlive && zplayer.isAlive){
+	public void updateAI(Actor zplayer) {
+		// attemptShoot(0);
+		if (isAlive && zplayer.isAlive) {
 			isAI = true;
 			type = "enemy";
-			float relativetoplayerx = zplayer.worldpos.x - worldpos.x ; 
+			float relativetoplayerx = zplayer.worldpos.x - worldpos.x;
 			float relativetoplayery = zplayer.worldpos.y - worldpos.y;
 			relativepos.x = relativetoplayerx;
 			relativepos.y = relativetoplayery;
-			distanceFromPlayer = (relativetoplayerx *relativetoplayerx) +(relativetoplayery * relativetoplayery);
-			distanceFromPlayer = Math.abs((float) Math.sqrt(distanceFromPlayer));
-			
-			
+			distanceFromPlayer = (relativetoplayerx * relativetoplayerx)
+					+ (relativetoplayery * relativetoplayery);
+			distanceFromPlayer = Math
+					.abs((float) Math.sqrt(distanceFromPlayer));
+
 			targetWorldVec.x = zplayer.worldpos.x;
 			targetWorldVec.y = zplayer.worldpos.y;
 			aimAtPlayer = relativepos.angle();
 			aimAngle = aimAtPlayer;
-			if (relativetoplayerx < -shootDist){
+			if (relativetoplayerx < -shootDist) {
 				goLeft();
-			}else if (relativetoplayerx > shootDist){
+			} else if (relativetoplayerx > shootDist) {
 				goRight();
-				
-			}else{
+
+			} else {
 				attemptShoot(relativepos.angle());
 			}
-			if (relativetoplayery > 2){
+			if (relativetoplayery > 2) {
 				goJump();
 			}
-			if (isGrounded && isJumpy){
+			if (isGrounded && isJumpy) {
 				goJump();
 			}
 		}
 	}
-	
+
 	public void takeDamage(int i) {
-		health -= i;		
+		health -= i;
 	}
+
 	public void dispose() {
 		runTextureAtlas.dispose();
 		idleTextureAtlas.dispose();
@@ -723,46 +754,50 @@ public class Actor{
 		upLadderTextureAtlas.dispose();
 		deathTextureAtlas.dispose();
 	}
+
 	float distanceFromTarget = 0;
 	private boolean targetIsNull = false;
-	public void giveQuickTarget(Actor ztarget){
-			float relativetoplayerx = ztarget.worldpos.x - worldpos.x ; 
-			float relativetoplayery = ztarget.worldpos.y - worldpos.y;
-			targetIsNull = false;
-			// the actorTarget vector is relative to the player, as if the player is at 0,0
-			
-			actorTarget.x = relativetoplayerx;
-			actorTarget.y = relativetoplayery;
-	}
-	
-	public void giveQuickTarget(Drone ztarget){
-		float relativetoplayerx = ztarget.worldpos.x - worldpos.x ; 
+
+	public void giveQuickTarget(Actor ztarget) {
+		float relativetoplayerx = ztarget.worldpos.x - worldpos.x;
 		float relativetoplayery = ztarget.worldpos.y - worldpos.y;
 		targetIsNull = false;
-		// the actorTarget vector is relative to the player, as if the player is at 0,0
-		
+		// the actorTarget vector is relative to the player, as if the player is
+		// at 0,0
+
 		actorTarget.x = relativetoplayerx;
 		actorTarget.y = relativetoplayery;
-}
-	
-	
+	}
+
+	public void giveQuickTarget(Drone ztarget) {
+		float relativetoplayerx = ztarget.worldpos.x - worldpos.x;
+		float relativetoplayery = ztarget.worldpos.y - worldpos.y;
+		targetIsNull = false;
+		// the actorTarget vector is relative to the player, as if the player is
+		// at 0,0
+
+		actorTarget.x = relativetoplayerx;
+		actorTarget.y = relativetoplayery;
+	}
+
 	public void quickShoot() {
-		if (!targetIsNull){
+		if (!targetIsNull) {
 			attemptShoot(actorTarget.angle());
 			aimingAt.x = actorTarget.x;
 			aimingAt.y = actorTarget.y;
-		}else{
-			if (movingdirection == "right"){
+		} else {
+			if (movingdirection == "right") {
 				attemptShoot(180);
-			}else{
+			} else {
 				attemptShoot(0);
 			}
 		}
 	}
+
 	public void setTargetToNull() {
 		targetIsNull = true;
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }
