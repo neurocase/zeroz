@@ -30,6 +30,10 @@ public class Projectile implements Poolable {
 	float rad = 0;
 	public long spawntime = System.currentTimeMillis();
 	public long nowtime = System.currentTimeMillis();
+	public long lifetime = 4500;
+	public Weapon weapon;
+	
+	public float speed = 25;
 	
 	
 	public void killProj(){
@@ -41,11 +45,13 @@ public class Projectile implements Poolable {
 	
 	public void checkAgeKill(){
 		nowtime = System.currentTimeMillis();
-		if (nowtime - spawntime > 4500) killProj(); 
+		if (nowtime - spawntime > weapon.lifetime) killProj(); 
 	}
 	
-	public void reUseProjectile(Actor act, float angle, float speed){
+	public void reUseProjectile(Actor act, float angle,  Weapon newweapon){
 		
+		weapon = newweapon;
+		speed = weapon.bulletspeed;
 		spawntime = System.currentTimeMillis();
 		killProj();
 		setupFixture(act.isAI);
@@ -65,7 +71,9 @@ public class Projectile implements Poolable {
 		body.setLinearVelocity(velx,vely);
 	}
 	
-	public Projectile(Actor act, World world, int id, float angle, float speed) {
+	public Projectile(Actor act, World world, int id, float angle,  Weapon newweapon) {
+		weapon = newweapon;
+		speed = weapon.bulletspeed;
 		bodyDef.type = BodyType.DynamicBody;  
 		body = world.createBody(bodyDef);  
 		bodyDef.position.set(act.worldpos.x, act.worldpos.y);  

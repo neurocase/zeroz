@@ -11,7 +11,8 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 public class HumanSprite {
 
 	public Sprite rightarmsprite;
-	public Sprite armsprite;
+	public Sprite armuzisprite;
+	public Sprite armswordsprite;
 	public Sprite aimladdersprite;
 	public String type = null; 
 
@@ -29,7 +30,8 @@ public class HumanSprite {
 	public Sprite sprite;
 	public TextureRegion armTexRegion;
 
-	public Texture armTexture;
+	public Texture armSwordTexture;
+	public Texture armUziTexture;
 	public Texture aimLadderTexture;
 
 	//private String currentAtlasKey = new String("0000");
@@ -57,25 +59,40 @@ public class HumanSprite {
 				Gdx.files.internal("data/gfx/zman/ladderlean.png"));
 		aimLadderTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 	
-		armTexture = new Texture(
+		armUziTexture = new Texture(
 				Gdx.files.internal("data/gfx/zman/arm3.png"));
-		armTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		armUziTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		
+		TextureRegion armUziTexRegion = new TextureRegion(armUziTexture, 0,
+				0, 64, 64);
+		
+		armSwordTexture = new Texture(
+				Gdx.files.internal("data/gfx/zman/armsword.png"));
+		armSwordTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		
+		TextureRegion armSwordTexRegion = new TextureRegion(armSwordTexture, 0,
+				0, 64, 64);
 	
 		TextureRegion aimLadderTexRegion = new TextureRegion(aimLadderTexture,
 				0, 0, 128, 128);
 	
-		TextureRegion armTexRegion = new TextureRegion(armTexture, 0,
-				0, 64, 64);
+		
 	
 		aimladdersprite = new Sprite(aimLadderTexRegion);
 		aimladdersprite.setPosition(-10, -10);// Gdx.graphics.getWidth()/2-width*32,Gdx.graphics.getHeight()/2);
 		aimladdersprite.scale(1f);
 	
-		armsprite = new Sprite(armTexRegion);
-		armsprite.setSize(1, 1);
-		armsprite.setOrigin(((armsprite.getWidth() * 0.77f)),
-				armsprite.getHeight() / 2);
-		armsprite.setPosition(-10, -10);
+		armuzisprite = new Sprite(armUziTexRegion);
+		armuzisprite.setSize(1, 1);
+		armuzisprite.setOrigin(((armuzisprite.getWidth() * 0.77f)),
+				armuzisprite.getHeight() / 2);
+		armuzisprite.setPosition(-10, -10);
+		
+		armswordsprite = new Sprite(armSwordTexRegion);
+		armswordsprite.setSize(1, 1);
+		armswordsprite.setOrigin(((armswordsprite.getWidth() * 0.77f)),
+				armswordsprite.getHeight() / 2);
+		armswordsprite.setPosition(-10, -10);
 	
 		//armsprite = new Sprite();
 	
@@ -144,7 +161,7 @@ public class HumanSprite {
 		crouchBackTextureAtlas.dispose();
 		upLadderTextureAtlas.dispose();
 		deathTextureAtlas.dispose();
-		armTexture.dispose();
+		armUziTexture.dispose();
 		aimLadderTexture.dispose();
 		 
 	}

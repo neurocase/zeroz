@@ -76,9 +76,6 @@ public class DazContactListener implements ContactListener {
 							System.out.println("---------CopterTurret " + stb + " damage.");
 							if (fa.getBody() != null) { copterTurretToDamage.add(fa.getBody());}
 						}
-						
-						
-						
 					}
 				}
 			

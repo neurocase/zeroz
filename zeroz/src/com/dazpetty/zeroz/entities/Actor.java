@@ -44,6 +44,7 @@ public class Actor {
 	/*
 	 * BOOLEANS
 	 */
+	boolean isMelee = false;
 	public boolean isJump = true;
 	public boolean isAlive = true;
 	public boolean isGrounded = true;
@@ -81,6 +82,7 @@ public class Actor {
 	public float deceleration = 0.6f;
 	public int blinking = 60;
 	public int BLINK_DURATION = 60;
+	
 	/*
 	 * Strings
 	 */
@@ -150,7 +152,7 @@ public class Actor {
 	private GamePhysics physics;
 	public TiledLayerManager tm;
 	public ProjectileManager projMan;
-	public Weapon weapon = new Weapon();
+	public Weapon weapon = new Weapon(1);
 	TiledMapTileLayer collisionLayer = null;
 	/*
 	 * LIBGDX/BOX2D OBJECTS
@@ -175,7 +177,7 @@ public class Actor {
 	/*
 	 * FUNCTIONS
 	 */
-	public void reUseActor(Vector2 actorstart) {
+	public void reUseActor(Vector2 actorstart, Weapon weapon) {
 		body.setActive(true);
 		body.setAwake(true);
 		isDisposed = false;
@@ -195,14 +197,14 @@ public class Actor {
 				projMan.activeproj++;
 				if (projMan.activeproj == projMan.PROJECTILE_LIMIT - 1)
 					projMan.activeproj = 0;
-				float speed = 25;
+				//float speed = 25;
 
 				if (projMan.proj[projMan.activeproj] == null) {
 					projMan.proj[projMan.activeproj] = new Projectile(this,
-							world, projMan.activeproj, ang, speed);
+							world, projMan.activeproj, ang,  weapon);
 				}
 				projMan.proj[projMan.activeproj].reUseProjectile(this, ang,
-						speed);
+						 weapon);
 			}
 		}
 	}
@@ -271,9 +273,12 @@ public class Actor {
 		scenecamera = scam;
 
 		aimLadderTexture = humanSprite.aimLadderTexture;
-
-		armTexture = humanSprite.armTexture;
-
+		
+		if (!isMelee){
+			armTexture = humanSprite.armUziTexture;
+		}else{
+			armTexture = humanSprite.armSwordTexture;
+		}
 		TextureRegion aimLadderTexRegion = new TextureRegion(aimLadderTexture,
 				0, 0, 128, 128);
 		TextureRegion armTexRegion = new TextureRegion(armTexture, 0, 0, 64, 64);

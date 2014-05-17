@@ -49,6 +49,7 @@ import com.dazpetty.zeroz.entities.EnemySpawner;
 import com.dazpetty.zeroz.entities.HUDTarget;
 import com.dazpetty.zeroz.entities.HumanSprite;
 import com.dazpetty.zeroz.entities.Item;
+import com.dazpetty.zeroz.entities.Weapon;
 import com.dazpetty.zeroz.managers.Assets;
 import com.dazpetty.zeroz.managers.DazContactListener;
 import com.dazpetty.zeroz.managers.InputHandler;
@@ -302,8 +303,10 @@ public class GameScene implements Screen {
 				}
 				if (tm.isCellEnemySpawn(w, h)) {
 					String type = (String) tm.getEnemyType(w,h);
-					enemyspawner[enemyspawners] = new EnemySpawner(w, h, type);
-					System.out.println("Spawner Created of Type:" + type + "at" + w + "," + h);
+					int rand = (int) (Math.random() * 10);
+					if (rand == 0) rand = 1;
+					enemyspawner[enemyspawners] = new EnemySpawner(w, h, type,rand);
+					System.out.println("Spawner Created of Type:" + type + "at" + w + "," + h + " with " + rand + " enemies");
 					enemyspawners++;
 				}
 				if (tm.isCellDestroyable(w, h)) {
@@ -400,15 +403,16 @@ public class GameScene implements Screen {
 			if (es.enemyType.equals("footsoldier")){
 				//wtfc();
 			//	System.out.println();
+				Weapon uzi = new Weapon(1);
 				
 				//long a = timenow - es.lasttimespawn;
-				if (timenow - es.lasttimespawn > (50 * 50)
+				if (es.attemptSpawn(timenow)
 						&& (zenemy[enemycount] == null
 								|| zenemy[enemycount].isAlive == false || zenemy[enemycount].isDisposed)) {
 					if (zenemy[enemycount] != null
 							&& zenemy[enemycount].body != null) {
 						System.out.println("destroying enemy body" + enemycount);
-						zenemy[enemycount].reUseActor(startpos);
+						zenemy[enemycount].reUseActor(startpos, uzi);
 						System.out.println("Spawning Renewing Enemy:" + enemycount
 								+ " X:" + startpos.x + "Y" + startpos.y);
 					} else {
@@ -429,15 +433,15 @@ public class GameScene implements Screen {
 					}
 				}
 			}else if (es.enemyType.equals("paratrooper")){
-				
+				Weapon uzi = new Weapon(1);
 					//long a = timenow - es.lasttimespawn;
-					if (timenow - es.lasttimespawn > (50 * 50)
+					if (es.attemptSpawn(timenow)
 							&& (zenemy[enemycount] == null
 									|| zenemy[enemycount].isAlive == false || zenemy[enemycount].isDisposed)) {
 						if (zenemy[enemycount] != null
 								&& zenemy[enemycount].body != null) {
 							System.out.println("destroying enemy body" + enemycount);
-							zenemy[enemycount].reUseActor(startpos);
+							zenemy[enemycount].reUseActor(startpos, uzi);
 							System.out.println("Spawning Renewing Enemy:" + enemycount
 									+ " X:" + startpos.x + "Y" + startpos.y);
 						} else {
@@ -461,7 +465,7 @@ public class GameScene implements Screen {
 			}else if (es.enemyType.equals("drone")){
 				
 				//long a = timenow - es.lasttimespawn;
-				if (timenow - es.lasttimespawn > (50 * 50)
+				if (es.attemptSpawn(timenow)
 						&& (drone[dronecount] == null
 								|| drone[dronecount].isAlive == false )){//|| drone[dronecount].isDisposed)) {
 					if (drone[dronecount] != null
@@ -566,9 +570,11 @@ public class GameScene implements Screen {
 			levelComplete = true;
 		}
 		/*
-		 * UPDATE PLAYER
+		 * UPDATE PLAYER AND PROJECTILES
 		 */
 
+		aiProjMan.updateProjectiles();
+		projMan.updateProjectiles();
 		zplayer.update(inputHandler.giveWorldPos, camera, playerShoot);
 		/*
 		 * SPAWN ENEMIES AT SPAWNPOINT NEAR PLAYER
@@ -876,10 +882,14 @@ public class GameScene implements Screen {
 				Body b = turretbodies.get(i);
 				int t = (Integer) b.getUserData();
 				System.out.println("Destroying Turret :" + b.getUserData());
-				if (copterBoss.copterTurret[t] != null && t < copterBoss.copterTurret.length){
-					if (copterBoss.copterTurret[t].isAlive && t <= turretbodies.size) {
-						copterBoss.copterTurret[t].isAlive = false;
-						copterBoss.copterTurret[t].body.setActive(false);
+				//Seems to be a bug here, or in the contact listener, where a body of
+				// value over array limit will return
+				if (t < copterBoss.TURRET_LIMIT){
+					if (copterBoss.copterTurret[t] != null){
+						if (copterBoss.copterTurret[t].isAlive && t <= turretbodies.size) {
+							copterBoss.copterTurret[t].isAlive = false;
+							copterBoss.copterTurret[t].body.setActive(false);
+						}
 					}
 				}
 			}
@@ -1146,7 +1156,13 @@ public class GameScene implements Screen {
 	}
 }
 /*
- * TODO: ---------- KNOWN BUGS ---------- 1. Arm not appearing on ladder, sprite
+ * TODO:
+ * 
+ *   * IMPLEMENT WEAPON CODE
+ *   * CREATE A DOOR, WHICH OPENS AFTER A SPAWNER HAS DEPLETED ITS ENEMYSPAWN COUNT, AND THOSE
+ *     ENEMIES ARE DEAD
+ * 
+ *  ---------- KNOWN BUGS ---------- 1. Arm not appearing on ladder, sprite
  * not flipping on ladder 2. Ladder movement not that awesome 3. There is a bug
  * where sometimes a health pickup will not "pickup". It does not seem to be
  * registering the collision between itself and the player, shooting the item

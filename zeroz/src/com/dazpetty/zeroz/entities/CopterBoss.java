@@ -44,10 +44,11 @@ public class CopterBoss {
 	
 	public CopterBoss(float x, float y, World world){
 		
-		copterTurret[0] = new CopterTurret(x, y, world, -3.5f, 0);
-		copterTurret[1] = new CopterTurret(x, y, world, -7f, 1);
-		copterTurret[2] = new CopterTurret(x, y, world, 0.5f, 2);
-		
+		for (int i = 0; i < TURRET_LIMIT; i++){
+			copterTurret[i] = new CopterTurret(x, y, world, -3.5f*i, i);
+		//copterTurret[1] = new CopterTurret(x, y, world, -7f, 1);
+		//copterTurret[2] = new CopterTurret(x, y, world, 0.5f, 2);
+		}
 		/*textureAtlas = new TextureAtlas(
 				Gdx.files.internal("data/gfx/drone/drone.atlas"));
 		AtlasRegion atlasTexRegion = textureAtlas.findRegion("0000");*/

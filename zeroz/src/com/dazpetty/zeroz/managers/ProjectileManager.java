@@ -13,6 +13,14 @@ public class ProjectileManager {
 		Projectile[] proj = new Projectile[PROJECTILE_LIMIT];
 	}
 	
+	public void updateProjectiles(){
+		for (int i = 0; i < PROJECTILE_LIMIT; i++){
+			if (proj[i] != null){
+				proj[i].checkAgeKill();
+			}
+		}
+	}
+	
 	public void KillProjectile(int index){
 		proj[index].killProj();
 	}
