@@ -868,7 +868,7 @@ public class GameScene implements Screen {
 						System.out.println("PICKING UP SHOTGUN");
 						System.out.println("PICKING UP SHOTGUN");
 						item[t] = new Item(item[t].worldpos.x, item[t].worldpos.y, t, "uzi", world);
-						zplayer.weapon.setWeapon(2);
+						zplayer.weapon.setWeapon(1);
 						//item[t].isAlive = false;
 						//item[t].body.setActive(false);
 					}else if (item[t].itemType.equals("uzi")){// && zplayer.isCrouching){
@@ -876,7 +876,7 @@ public class GameScene implements Screen {
 						System.out.println("PICKING UP UZI");
 						System.out.println("PICKING UP UZI");
 						item[t] = new Item(item[t].worldpos.x, item[t].worldpos.y, t, "shotgun", world);
-						zplayer.weapon.setWeapon(1);
+						zplayer.weapon.setWeapon(2);
 						//item[t].isAlive = false;
 						//item[t].body.setActive(false);
 					}else{

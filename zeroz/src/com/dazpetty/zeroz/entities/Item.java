@@ -72,7 +72,7 @@ public class Item {
 		TextureRegion itemTexReg = new TextureRegion(texture,
 				0, 0, 64, 64);
 		
-		if(itemType.equalsIgnoreCase("shotgun")){
+		if(itemType.equals("shotgun")){
 			texture = new Texture(
 					Gdx.files.internal("data/gfx/items/shotgun.png"));
 			texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);	
@@ -81,7 +81,7 @@ public class Item {
 			
 		}
 
-		if(itemType.equalsIgnoreCase("uzi")){
+		if(itemType.equals("uzi")){
 			texture = new Texture(
 					Gdx.files.internal("data/gfx/items/uzi.png"));
 			texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);	

@@ -119,7 +119,7 @@
   </tile>
   <tile id="222">
    <properties>
-    <property name="item" value="uzi"/>
+    <property name="item" value="shotgun"/>
    </properties>
   </tile>
   <tile id="256">
