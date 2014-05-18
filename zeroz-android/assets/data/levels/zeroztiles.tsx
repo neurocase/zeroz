@@ -66,11 +66,6 @@
    <property name="solid" value=""/>
   </properties>
  </tile>
- <tile id="158">
-  <properties>
-   <property name="boss" value=""/>
-  </properties>
- </tile>
  <tile id="159">
   <properties>
    <property name="door" value="2"/>
@@ -116,14 +111,14 @@
    <property name="platform" value=""/>
   </properties>
  </tile>
- <tile id="190">
-  <properties>
-   <property name="scrollingmap" value=""/>
-  </properties>
- </tile>
  <tile id="191">
   <properties>
    <property name="levelcomplete" value=""/>
+  </properties>
+ </tile>
+ <tile id="222">
+  <properties>
+   <property name="item" value="shotgun"/>
   </properties>
  </tile>
  <tile id="256">

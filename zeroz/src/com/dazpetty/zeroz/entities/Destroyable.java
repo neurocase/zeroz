@@ -19,7 +19,7 @@ import com.badlogic.gdx.physics.box2d.World;
 
 
 public class Destroyable {
-	
+
 	
 	
 	public Vector2 worldpos = new Vector2(0,0);

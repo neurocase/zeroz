@@ -8,7 +8,11 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 public class MainMenu implements Screen {
 
@@ -23,12 +27,37 @@ public class MainMenu implements Screen {
 	public Texture continueTexture;
 	public TextureRegion continueTextureReg;
 	public Sprite continueSprite;
+	public static final Skin skin = new Skin(Gdx.files.internal("data/gfx/skin/uiskin.json"));
+	
+	public int height = Gdx.graphics.getWidth();
+	public int width = Gdx.graphics.getHeight();
+	
+	float xbuttontouchrange = 200;
+	float ybuttontouchrange = 50;
+	float offsetx = -100;
+	float offsety = -30;
+	private Stage stage;
+	private Stage lsstage;
+	
 
+	
 	public MainMenu(ZerozGame gam) {
+		
+		lsstage = new Stage();
+		stage = new Stage();
 		game = gam;
 
+	
+		createMainButtons();
+	
+		
+		
+
+		
+		Gdx.input.setInputProcessor(stage);
+		
 		camera = new OrthographicCamera();
-		camera.setToOrtho(false, 800, 480);
+		camera.setToOrtho(false, height, width);
 
 		newGameTexture = new Texture(("data/gfx/mainmenu/newgame.png"));
 		TextureRegion newGameTextureReg = new TextureRegion(newGameTexture, 0,
@@ -70,78 +99,118 @@ public class MainMenu implements Screen {
 
 		
 		//y top is high
-		newGameSprite.setPosition(400, 240);
-		newGameSprite.draw(game.batch);
+		//newGameSprite.setPosition(400, 240);
+		//newGameSprite.draw(game.batch);
 		
-		continueSprite.setPosition(400, 190);
-		continueSprite.draw(game.batch);
-		
+		//continueSprite.setPosition(400, 190);
+		//continueSprite.draw(game.batch);
+	
 		game.batch.end();
-		
-		if (Gdx.input.isTouched()) {
-			
-			
-			Vector3 testv = new Vector3 (Gdx.input.getX(), Gdx.input.getY(), 0);
-			//print("regular x:" + testv.x + " y:" + testv.y);
-			//camera.unproject(testv);
-			//print("unprojected x:" + testv.x + " y:" + testv.y);
-			camera.project(testv);
-			print("project x:" + testv.x + " y:" + testv.y);
-			isTouchMenuButton(testv.x, testv.y);
+	
+		if (levelSelect){
+			createLevelSelectButtons();
+			lsstage.draw();
+		}else{
+			stage.draw();
 		}
+		
+	
 	}
 
-	float xbuttontouchrange = 200;
-	float ybuttontouchrange = 50;
-	float offsetx = -100;
-	float offsety = -30;
-	
+	public void createMainButtons(){
+		
+		float buttonWidth =  Gdx.graphics.getWidth()/4;
+		float buttonHeight =  Gdx.graphics.getHeight()/10;
+		
+		TextButton button = new TextButton("New Game", skin, "default");
+		button.setWidth(buttonWidth);
+		button.setHeight(buttonHeight);
+		button.setPosition(Gdx.graphics.getWidth()/2 - (buttonWidth/2), Gdx.graphics.getHeight()/2);
+		
+		button.addListener(new ClickListener(){
+            @Override 
+            public void clicked(InputEvent event, float x, float y){
+               
+                game.setScreen(new GameScene(game));
+        		dispose();
+            }
+        });
+		
+		stage.addActor(button);
+		
+		button = new TextButton("Continue", skin, "default");
+		button.setWidth(buttonWidth);
+		button.setHeight(buttonHeight);
+		button.setPosition(Gdx.graphics.getWidth()/2 - (buttonWidth/2), (float) (Gdx.graphics.getHeight()/2 - (buttonHeight*1.5)));
+		
+		button.addListener(new ClickListener(){
+            @Override 
+            public void clicked(InputEvent event, float x, float y){
+               
+               // game.setScreen(new GameScene(game));
+        	//	dispose();
+            }
+        });
+		stage.addActor(button);
+		
+		button = new TextButton("Level Select", skin, "default");
+		button.setWidth(buttonWidth);
+		button.setHeight(buttonHeight);
+		button.setPosition(Gdx.graphics.getWidth()/2 - (buttonWidth/2), (float) (Gdx.graphics.getHeight()/2 - (buttonHeight*3)));
+		
+		button.addListener(new ClickListener(){
+            @Override 
+            public void clicked(InputEvent event, float x, float y){
+            	levelSelect = true;
+               
+         
+            }
+        });
+		
+		stage.addActor(button);
 
-	public void isTouchMenuButton(float x, float y) {
-		//Vector3 touchPos = new Vector3(x,
-	//			y, 0);
-	//	camera.unproject(touchPos);
-		//print("Touch:" + x + "," + y);
-		//x = -x;
-		//y = -y;
-		Stage stage;
 		
-		Vector3 toucharea = new Vector3 (newGameSprite.getX()-offsetx, newGameSprite.getY()-offsety, 0);
-		camera.project(toucharea);
-		
-		print("toucharea: " + toucharea.x + "," + toucharea.y);
-		
-		if (Math.abs(x - (toucharea.x)) < xbuttontouchrange
-				&& Math.abs(y - toucharea.y) < ybuttontouchrange) {
-			print("TTTTTT" + (Math.abs(x - (toucharea.x-offsetx)) + ","
-				+ Math.abs(y - toucharea.y-offsety)));
-			print("NEW GAME");
+	}
+	public boolean levelSelect = false;
+	
+	public final int[] level = new int[]{0,1,2,3,4,5,6,7,8,9};
+	public void createLevelSelectButtons(){
+		//final int level[] = 0;
+		for (int i = 0; i < game.TOTAL_LEVELS; i++){
+			level[i] = i;
+			float buttonWidth =  Gdx.graphics.getWidth()/10;
+			float buttonHeight =  Gdx.graphics.getHeight()/10;
 			
-			game.setScreen(new GameScene(game));
-			dispose();
+			TextButton lsbutton = new TextButton(""+i, skin, "default");
+			lsbutton.setWidth(buttonWidth);
+			lsbutton.setHeight(buttonHeight);
+			lsbutton.setPosition(0 + buttonWidth + buttonWidth * i, Gdx.graphics.getHeight()/2);
+			
+			
+			lsbutton.addListener(new ClickListener(){
+	            @Override 
+	            public void clicked(InputEvent event, float x, float y){
+	                //game.setLevel(level[i]);
+	             //   game.setScreen(new GameScene(game));
+	        		//dispose();
+	            	print("level select doesn't work");
+	            }
+	        });
+			
+			
+			
+			
+			lsstage.addActor(lsbutton);
 		}
-		
-		toucharea = new Vector3 (continueSprite.getX()-offsetx, continueSprite.getY()-offsety, 0);
-		camera.project(toucharea);
-		
-		if (Math.abs(x - (toucharea.x)) < xbuttontouchrange
-				&& Math.abs(y - toucharea.y) < ybuttontouchrange) {
-			print("TTTTTT" + (Math.abs(x - (toucharea.x-offsetx)) + ","
-				+ Math.abs(y - toucharea.y-offsety)));
-			print("CONTINUE");
-		}
-		//	game.setScreen(new GameScene(game));
-		//	dispose();
-		}
-
-		
-
+	}
 	
+
 	
 
 	@Override
 	public void resize(int width, int height) {
-		// TODO Auto-generated method stub
+		 stage.setViewport(width, height);
+		 camera.setToOrtho(false, width, height);
 
 	}
 

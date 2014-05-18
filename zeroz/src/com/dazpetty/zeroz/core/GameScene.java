@@ -330,7 +330,7 @@ public class GameScene implements Screen {
 				if (tm.isCellItem(w, h)) {
 					if (TOTAL_ITEMS < ITEM_LIMIT) {
 						String value = tm.getItemValue(w, h);
-						item[TOTAL_ITEMS] = new Item(w, h, TOTAL_ITEMS, world);
+						item[TOTAL_ITEMS] = new Item(w, h, TOTAL_ITEMS, value, world);
 						TOTAL_ITEMS++;
 						System.out.println(value + " ITEM ADDED: "
 								+ TOTAL_ITEMS + "at:" + w + "," + h);
@@ -855,12 +855,35 @@ public class GameScene implements Screen {
 				int t = (Integer) b.getUserData();
 				System.out.println("Destroying Item :" + b.getUserData());
 				if (item[t].isAlive) {
-					zplayer.health += item[t].addHealth;
-					item[t].isAlive = false;
-					item[t].body.setActive(false);
-					if (zplayer.health > 150) {
-						zplayer.health = 150;
+					if (item[t].itemType.equalsIgnoreCase("health")){
+						zplayer.health += item[t].addHealth;
+						item[t].isAlive = false;
+						item[t].body.setActive(false);
+						if (zplayer.health > 150) {
+							zplayer.health = 150;
+						}
 					}
+					if (item[t].itemType.equals("shotgun")){// && zplayer.isCrouching){
+						System.out.println("PICKING UP SHOTGUN");
+						System.out.println("PICKING UP SHOTGUN");
+						System.out.println("PICKING UP SHOTGUN");
+						item[t] = new Item(item[t].worldpos.x, item[t].worldpos.y, t, "uzi", world);
+						zplayer.weapon.setWeapon(2);
+						//item[t].isAlive = false;
+						//item[t].body.setActive(false);
+					}else if (item[t].itemType.equals("uzi")){// && zplayer.isCrouching){
+						System.out.println("PICKING UP UZI");
+						System.out.println("PICKING UP UZI");
+						System.out.println("PICKING UP UZI");
+						item[t] = new Item(item[t].worldpos.x, item[t].worldpos.y, t, "shotgun", world);
+						zplayer.weapon.setWeapon(1);
+						//item[t].isAlive = false;
+						//item[t].body.setActive(false);
+					}else{
+						wtfc();
+					}
+				}else{
+					
 				}
 			}
 			itembodies.clear();
@@ -937,7 +960,7 @@ public class GameScene implements Screen {
 			}
 			if (levelComplete){
 				game.nextLevel();
-				game.setScreen(new MainMenu(game));
+				game.setScreen(new GameScene(game));
 			}
 		}
 

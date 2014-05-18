@@ -38,22 +38,69 @@ public class Item {
 		isAlive = false;
 	}
 	
+	/*
+	 *  HEALTH ITEM
+	 *  0 = health
+	 *   
+	 */	
 	
-	public Item(float x, float y, int id, World world){
+	
+	public void changeWeapon(int weaponid){
+		switch (weaponid) {
+			case 1:
+				
+				break;
+			case 2:
+				
+				break;
+			default:
+		}
+		
+	}
+	
+	public String itemType = "";
+	public Item(float x, float y, int id, String itemTypeIn ,World world){
 		/*
 		 *  HEALTH ITEM
-		 */
+		 */	
+		itemType = itemTypeIn;
+		
+
 		texture = new Texture(
 				Gdx.files.internal("data/gfx/items/healthkit.png"));
 		texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		
 		TextureRegion itemTexReg = new TextureRegion(texture,
 				0, 0, 64, 64);
+		
+		if(itemType.equalsIgnoreCase("shotgun")){
+			texture = new Texture(
+					Gdx.files.internal("data/gfx/items/shotgun.png"));
+			texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);	
+			itemTexReg = new TextureRegion(texture,
+					0, 0, 128, 32);
+			
+		}
+
+		if(itemType.equalsIgnoreCase("uzi")){
+			texture = new Texture(
+					Gdx.files.internal("data/gfx/items/uzi.png"));
+			texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);	
+			itemTexReg = new TextureRegion(texture,
+					0, 0, 128, 32);
+			
+		}
+		
+		
 		String str = Integer.toString(id);
 
 		
 		sprite = new Sprite(itemTexReg);
+		if(itemType.equals("shotgun") || itemType.equals("uzi")){
+			sprite.setSize(1.5f, 0.5f);
+			
+		}else{
 		sprite.setSize(1f, 1f);
+		}
 		sprite.setPosition(x, y);
 		//sprite.scale(1f);
 		bodyDef.position.set(worldpos.x+0.5f, worldpos.y+1f);

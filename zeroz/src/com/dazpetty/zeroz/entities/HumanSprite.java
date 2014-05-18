@@ -60,11 +60,11 @@ public class HumanSprite {
 		aimLadderTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 	
 		armUziTexture = new Texture(
-				Gdx.files.internal("data/gfx/zman/arm3.png"));
+				Gdx.files.internal("data/gfx/weapon/armshotgun.png"));
 		armUziTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		
 		TextureRegion armUziTexRegion = new TextureRegion(armUziTexture, 0,
-				0, 64, 64);
+				0, 128, 64);
 		
 		armSwordTexture = new Texture(
 				Gdx.files.internal("data/gfx/zman/armsword.png"));
@@ -83,7 +83,7 @@ public class HumanSprite {
 		aimladdersprite.scale(1f);
 	
 		armuzisprite = new Sprite(armUziTexRegion);
-		armuzisprite.setSize(1, 1);
+		armuzisprite.setSize(2, 1);
 		armuzisprite.setOrigin(((armuzisprite.getWidth() * 0.77f)),
 				armuzisprite.getHeight() / 2);
 		armuzisprite.setPosition(-10, -10);

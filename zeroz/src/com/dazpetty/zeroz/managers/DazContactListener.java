@@ -38,7 +38,7 @@ public class DazContactListener implements ContactListener {
 		if (fa.getUserData().equals(object)|| fb.getUserData().equals(object)){
 			String sb = (String) fb.getUserData();
 			String sa = (String) fa.getUserData();
-			String hold = sa;
+			String hold = new String (sa);
 			int runloop = 0;
 			System.out.println("Collision:"+ sa + " && " + sb);
 			while (runloop < 2){

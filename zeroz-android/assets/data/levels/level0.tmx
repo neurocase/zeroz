@@ -117,6 +117,11 @@
     <property name="levelcomplete" value=""/>
    </properties>
   </tile>
+  <tile id="222">
+   <properties>
+    <property name="item" value="uzi"/>
+   </properties>
+  </tile>
   <tile id="256">
    <properties>
     <property name="solid" value="solid"/>
@@ -196,7 +201,7 @@
  </layer>
  <layer name="miscLayer" width="125" height="25">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3X0QmDMBRAUSexjtIJrAuILlLaUTpKR6ufIlqFaB6150AghBdyf1MUAAAAAPBdGR2ws0t0AKf2jg44wDXhbjfaV2kZTHTrIwBk1kYHkN09OoBdPKIDgCzW/lDPmbPXwmyVErJRn+GNf1cP6zZZTWgR/I4+OgCA0/kA54HfVNQwAAA=
+   H4sIAAAAAAAAA+3XzQnCMBiA4U6iHcUJ1AVKu4joKI7STbqKvQghVHtIzQf1eSCQQ35eckvTAAAAAMB3h+iAjR2jA9i1MTrgB04Fe/tk3pZlkHm/7RRaAUCqiw6gult0AJu4RwcAVaT/02lh/ljY8/xwVlues2qocMe/O8/jko1raBG5fn0JQYboAAB25wXZzUT71DAAAA==
   </data>
  </layer>
  <layer name="top" width="125" height="25">

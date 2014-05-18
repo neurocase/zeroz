@@ -192,19 +192,22 @@ public class Actor {
 		if (isAlive) {
 			long timenow = System.currentTimeMillis();
 			long a = timenow - lasttimeshoot;
-			if (timenow - lasttimeshoot > (50 * 10)) {
-				lasttimeshoot = System.currentTimeMillis();
-				projMan.activeproj++;
-				if (projMan.activeproj == projMan.PROJECTILE_LIMIT - 1)
-					projMan.activeproj = 0;
-				//float speed = 25;
-
-				if (projMan.proj[projMan.activeproj] == null) {
-					projMan.proj[projMan.activeproj] = new Projectile(this,
-							world, projMan.activeproj, ang,  weapon);
+			if (weapon.shoot()) {
+				
+					weapon.lasttimeshoot = System.currentTimeMillis();
+				for (int i = 0; i < weapon.shots; i++){
+					projMan.activeproj++;
+					if (projMan.activeproj == projMan.PROJECTILE_LIMIT - 1)
+						projMan.activeproj = 0;
+					//float speed = 25;
+	
+					if (projMan.proj[projMan.activeproj] == null) {
+						projMan.proj[projMan.activeproj] = new Projectile(this,
+								world, projMan.activeproj, ang,  weapon);
+					}
+					projMan.proj[projMan.activeproj].reUseProjectile(this, ang,
+							 weapon);
 				}
-				projMan.proj[projMan.activeproj].reUseProjectile(this, ang,
-						 weapon);
 			}
 		}
 	}
@@ -281,18 +284,18 @@ public class Actor {
 		}
 		TextureRegion aimLadderTexRegion = new TextureRegion(aimLadderTexture,
 				0, 0, 128, 128);
-		TextureRegion armTexRegion = new TextureRegion(armTexture, 0, 0, 64, 64);
-
+		TextureRegion armTexRegion = new TextureRegion(armTexture, 0, 0, 128, 64);
+		
 		aimladdersprite = new Sprite(aimLadderTexRegion);
 		aimladdersprite.setPosition(-10, -10);
 		aimladdersprite.scale(1f);
 
 		armsprite = new Sprite(armTexRegion);
-		armsprite.setSize(1, 1);
-		armsprite.setOrigin(((armsprite.getWidth() * 0.77f)),
+		armsprite.setSize(2f, 1);
+		armsprite.setOrigin(((1.77f)),
 				armsprite.getHeight() / 2);
-		armsprite.setPosition(-10, -10);
-
+		//armsprite.setPosition(-10-64, -10);
+		
 		runTextureAtlas = humanSprite.runTextureAtlas;
 		idleTextureAtlas = humanSprite.idleTextureAtlas;
 		backWalkTextureAtlas = humanSprite.backWalkTextureAtlas;
@@ -664,7 +667,7 @@ public class Actor {
 		sprite.setOrigin(sprite.getWidth() / 2, 0);
 		sprite.setPosition(worldpos.x - 0.5f, worldpos.y);
 		armsprite.setRotation(aimAngle - 180);
-		armsprite.setPosition(worldpos.x - 0.76f, worldpos.y + 1 + armyadd);
+		armsprite.setPosition(worldpos.x - 1.76f, worldpos.y + 1 + armyadd);
 
 		if (type == "enemy") {
 			sprite.setColor(Color.RED);

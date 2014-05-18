@@ -42,10 +42,14 @@ public class ZerozGame extends Game {
 	  public Texture buttontex;
 	  
 	  public int level = 0;
-	
+	  public int TOTAL_LEVELS = 10;
 	  
 	  public void nextLevel(){
 		  level++;
+	  }
+	  
+	  public void setLevel(int setLevel){
+		  level = setLevel;
 	  }
 	  
 	@Override

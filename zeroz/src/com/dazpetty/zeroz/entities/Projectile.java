@@ -58,11 +58,15 @@ public class Projectile implements Poolable {
 		isAlive = true;
 		isDead = false;
 		
+		//weapon.
+		float scatterammount = (float) (weapon.accuracyscatter * Math.random());
+		
+		angle -= (weapon.accuracyscatter/2);
 		
 		body.setActive(true);
 		body.setAwake(true);
 		
-		rad = (float) Math.toRadians(angle);
+		rad = (float) Math.toRadians(angle+scatterammount);
 		float velx = (float) (speed * Math.cos(rad));
 		float vely = (float) (speed * Math.sin(rad));
 		
