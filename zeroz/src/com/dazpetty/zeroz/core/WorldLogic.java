@@ -46,7 +46,7 @@ public class WorldLogic {
 	
 	private TiledMapRenderer renderer;
 	
-	public DazContactListener cl;
+
 	
 	public OrthographicCamera camera;
 	public World world;
@@ -69,8 +69,7 @@ public class WorldLogic {
 		/*
 		 * SETUP WORLD AND COLLISIONS
 		 */
-		cl = new DazContactListener();
-		world.setContactListener(cl);
+		
 		
 		// CREATE PLAYER
 		actorMan.zplayer = new Actor(camera, world, false, tm,  tm.playerstart, -1,
@@ -139,137 +138,10 @@ public class WorldLogic {
 				}
 			}
 		
-		
-		/*
-		 * DEACTIVATE DOORS, ENEMIES AND DESTROYED OBJECTS
-		 */
-		if (pollCheck(10)){
+			actorMan.clearBodies();
 			huntClosestEnemy();
 			
-			Array<Body> projbodies = cl.getBodies();
-			for (int i = 0; i < projbodies.size; i++) {
-				Body b = projbodies.get(i);
-				System.out.println("Destroying Proj:" + b.getUserData());
-				actorMan.projMan.KillProjectile((Integer) b.getUserData());
-			}
-			projbodies.clear();
-			Array<Body> aiprojbodies = cl.getAiBodies();
-			for (int i = 0; i < aiprojbodies.size; i++) {
-				Body b = aiprojbodies.get(i);
-				System.out.println("Destroying Ai Proj:" + b.getUserData());
-				actorMan.aiProjMan
-						.KillProjectile((Integer) b.getUserData());
-				if (cl.DamagePlayer()) {
-					actorMan.zplayer.takeDamage(5);
-				}
-			}
-			aiprojbodies.clear();
-	
-			Array<Body> enemybodies = cl.getEnemies();
-			for (int i = 0; i < enemybodies.size; i++) {
-				Body b = enemybodies.get(i);
-				int t = (Integer) b.getUserData();
-				System.out.println("Destroying Enemy:" + b.getUserData());
-				actorMan.zenemy[t].isAlive = false;
-				actorMan.zenemy[t].body.setActive(false);
-			}
-			enemybodies.clear();	
-			Array<Body> itembodies = cl.getItems();
-			for (int i = 0; i < itembodies.size; i++) {
-				Body b = itembodies.get(i);
-				int t = (Integer) b.getUserData();
-				System.out.println("Destroying Item :" + b.getUserData());
-				if (actorMan.item[t].isAlive) {
-					if (actorMan.item[t].itemType.equalsIgnoreCase("health")){
-						actorMan.zplayer.health += actorMan.item[t].addHealth;
-						actorMan.item[t].isAlive = false;
-						actorMan.item[t].body.setActive(false);
-						if (actorMan.zplayer.health > 150) {
-							actorMan.zplayer.health = 150;
-						}
-					}
-					if (actorMan.item[t].itemType.equals("shotgun")){// && zplayer.isCrouching){
-						System.out.println("PICKING UP SHOTGUN");
-						System.out.println("PICKING UP SHOTGUN");
-						System.out.println("PICKING UP SHOTGUN");
-						actorMan.item[t] = new Item(actorMan.item[t].worldpos.x, actorMan.item[t].worldpos.y, t, "uzi", world);
-						actorMan.zplayer.weapon.setWeapon(1);
-						//item[t].isAlive = false;
-						//item[t].body.setActive(false);
-					}else if (actorMan.item[t].itemType.equals("uzi")){// && zplayer.isCrouching){
-						System.out.println("PICKING UP UZI");
-						System.out.println("PICKING UP UZI");
-						System.out.println("PICKING UP UZI");
-						actorMan.item[t] = new Item(actorMan.item[t].worldpos.x, actorMan.item[t].worldpos.y, t, "shotgun", world);
-						actorMan.zplayer.weapon.setWeapon(2);
-						//item[t].isAlive = false;
-						//item[t].body.setActive(false);
-					}else{
-						//wtfc();
-					}
-				}else{
-					
-				}
-			}
-			itembodies.clear();
-	
-			Array<Body> dronebodies = cl.getDrones();
-			for (int i = 0; i < dronebodies.size; i++) {
-				Body b = dronebodies.get(i);
-				int t = (Integer) b.getUserData();
-				System.out.println("Destroying Drone :" + b.getUserData());
-				if (actorMan.drone[t].isAlive && actorMan.drone[t] != null) {
-					actorMan.drone[t].isAlive = false;
-					actorMan.drone[t].body.setActive(false);
-				}
-			}
-			dronebodies.clear();
 			
-			Array<Body> turretbodies = cl.getCopterTurret();
-			for (int i = 0; i < turretbodies.size; i++) {
-				Body b = turretbodies.get(i);
-				int t = (Integer) b.getUserData();
-				System.out.println("Destroying Turret :" + b.getUserData());
-				//Seems to be a bug here, or in the contact listener, where a body of
-				// value over array limit will return
-				if (t < actorMan.copterBoss.TURRET_LIMIT){
-					if (actorMan.copterBoss.copterTurret[t] != null){
-						if (actorMan.copterBoss.copterTurret[t].isAlive && t <= turretbodies.size) {
-							actorMan.copterBoss.copterTurret[t].isAlive = false;
-							actorMan.copterBoss.copterTurret[t].body.setActive(false);
-						}
-					}
-				}
-			}
-			turretbodies.clear();
-	
-			int killKeyValue = 0;
-			Array<Body> destroybodies = cl.getDestroyables();
-			for (int i = 0; i < destroybodies.size; i++) {
-				Body b = destroybodies.get(i);
-				int t = (Integer) b.getUserData();
-				System.out.println("Destroying Destroyable:" + b.getUserData()
-						+ "at Address:" + t);
-				if (actorMan.destroyable[t] != null) {
-					actorMan.destroyable[t].isAlive = false;
-					actorMan.destroyable[t].body.setActive(false);
-					actorMan.destroyable[t].Destroy();
-					killKeyValue = actorMan.destroyable[t].keyValue;
-					actorMan.zplayer.tm.keys[killKeyValue] = true;
-					for (int j = 0; j < actorMan.DOOR_LIMIT; j++) {
-						if (actorMan.door[j] != null) {
-							if (actorMan.zplayer.tm.keys[actorMan.door[j].keyValue]) {
-								actorMan.door[j].openDoor();
-							}
-						}
-					}
-				} else {
-					System.out.println("is NULL, destroyable.length ="
-							+ actorMan.destroyable.length);
-				}
-			}
-			destroybodies.clear();
-		}
 		if (actorMan.zplayer.worldpos.y < -15) {
 			actorMan.zplayer.health = 0;
 		}

@@ -60,7 +60,6 @@ import com.dazpetty.zeroz.managers.ProjectileManager;
 import com.dazpetty.zeroz.managers.LevelManager;
 
 public class GameScene implements Screen {
-
 	/*
 	 * ORDINARY VARIABLES
 	 */
@@ -74,9 +73,7 @@ public class GameScene implements Screen {
 	public int TOTAL_DOORS = 0;
 	public int TOTAL_DESTROYABLES = 0;
 	int bulletsadded = 0;
-	
 	private int activeBullet = 0;
-
 	public int activeproj = 0;
 
 	float stateTime;
@@ -93,27 +90,13 @@ public class GameScene implements Screen {
 	 * LIBGDX && BOX2D TYPES
 	 */
 	private static final String TAG = ZerozGame.class.getName();
-
-	
 	World world = new World(new Vector2(0, -10), true);
-
-	
-
-	
-	
-
-	/*
-	 * ARRAYS
-	 */
-
 	/*
 	 * VECTORS
 	 */
 	Vector3 aimlessVec = new Vector3(0, 0, 1);
-
 	private Vector2 enemystart = new Vector2(30, 7);
 	private Vector2 enemystart2 = new Vector2(60, 9);
-	
 	Vector2 levelcompletepos = new Vector2(0,0);
 	Vector3 touchPos = new Vector3(0, 0, 0);
 	Vector3 zeroVector3 = new Vector3(0, 0, 0);
@@ -121,8 +104,6 @@ public class GameScene implements Screen {
 	private Vector2 playerpos = new Vector2(0, 0);
 	private Vector3 screenPosZero = new Vector3(0, 0, 0);
 	Vector3 camVector = new Vector3(0, 0, 0);
-	
-
 	/*
 	 * TILED MAP TYPES
 	 */
@@ -138,21 +119,14 @@ public class GameScene implements Screen {
 	public ActorManager actorMan;
 	public WorldLogic worldLogic;
 	final ZerozGame game;
-
 	private OrthographicCamera camera;
 	private CameraInputController cameraController;
 	public ParralaxCamera pcamera;
 	public OrthoCamController pcamcontroller;
 
-	//Vector2 enemyspawner[] = new Vector2[ENEMY_SPAWN_LIMIT];
-
-	
-	
-
 	public LevelManager tm;
 	public Assets Assets;
 
-	
 	private boolean showDebug = false;
 	public boolean debugOn = false;
 	
@@ -173,23 +147,13 @@ public class GameScene implements Screen {
 		camera = new OrthographicCamera(1, viewheight / viewwidth);
 		camera.setToOrtho(false, (viewwidth / viewheight) * 10, 10);
 		camera.update();
-	
-		
-		
-		
-		
-		
+
 		tm = new LevelManager(game.level, actorMan, world);
 		actorMan = new ActorManager(camera, world, tm);
 		worldLogic = new WorldLogic(camera, actorMan, world, tm);
 		worldRenderer = new WorldRenderer(camera, world, actorMan, tm, worldLogic);
-		tm.	buildLevel(actorMan);
-		
-	
+		tm.buildLevel(actorMan);
 	}
-
-	
-	
 	//public boolean levelComplete = false;
 
 	@Override
@@ -226,14 +190,7 @@ public class GameScene implements Screen {
 				game.setScreen(new GameScene(game));
 			}
 		}
-		
-
-		//drone[0] = new Drone(5, 5, world, 0, camera);
-		
-		
-
 	}
-	
 
 	public void showDebugInfo(boolean show) {
 		game.batch.begin();
@@ -260,9 +217,6 @@ public class GameScene implements Screen {
 		game.font.draw(game.batch, info2, 20, 340);
 		game.batch.end();
 	}
-
-	
-
 
 	@Override
 	public void resize(int width, int height) {
@@ -300,11 +254,7 @@ public class GameScene implements Screen {
 	//	sr.dispose();
 
 	}
-	
-	
-	
-	
-	
+
 }
 /*
  * TODO:
