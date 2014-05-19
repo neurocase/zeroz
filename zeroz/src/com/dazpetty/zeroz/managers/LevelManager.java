@@ -6,8 +6,9 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
+import com.badlogic.gdx.math.Vector2;
 
-public class TiledLayerManager {
+public class LevelManager {
 
 	public TiledMapTileLayer collisionLayer;
 	public TiledMapTileLayer miscLayer;
@@ -30,8 +31,15 @@ public class TiledLayerManager {
 	public boolean[] keys = new boolean[KEYS_LIMIT];
 	
 	
+	public boolean isLevelScrolling = false;
+	public boolean isBossLevel = false;
+	public Vector2 playerstart = new Vector2(0, 0);
 	
-	public TiledLayerManager(int level){
+	public Vector2 levelcompletepos = new Vector2(0,0);
+	
+	public boolean isLevelComplete = false;
+	
+	public LevelManager(int level){
 		
 		String levelstr = Integer.toString(level);
 		map = new TmxMapLoader().load("data/levels/level" + levelstr + ".tmx");
@@ -40,16 +48,6 @@ public class TiledLayerManager {
 		Arrays.fill(keys, Boolean.FALSE);
 	
 	}
-	
-	// This seems to be dead code
-	/*public TiledLayerManager(TiledLayerManager newtm, int level) {
-		collisionLayer = newtm.collisionLayer;
-		miscLayer = newtm.miscLayer;
-		
-		map = new TmxMapLoader().load("data/testmap3.tmx");
-		collisionLayer = (TiledMapTileLayer) map.getLayers().get("collision");
-		miscLayer = (TiledMapTileLayer) map.getLayers().get("miscLayer");
-	}*/
 	
 
 	public boolean isLevelScrolling(float x, float y) {

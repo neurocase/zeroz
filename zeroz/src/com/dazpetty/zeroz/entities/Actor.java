@@ -29,9 +29,10 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.dazpetty.zeroz.managers.ActorManager;
 import com.dazpetty.zeroz.managers.GamePhysics;
 import com.dazpetty.zeroz.managers.ProjectileManager;
-import com.dazpetty.zeroz.managers.TiledLayerManager;
+import com.dazpetty.zeroz.managers.LevelManager;
 
 /*
  * Zactor: Zactor is the Actor class, all game entities which move are actors,
@@ -150,7 +151,7 @@ public class Actor {
 	 * MY OBJECTS
 	 */
 	private GamePhysics physics;
-	public TiledLayerManager tm;
+	public LevelManager tm;
 	public ProjectileManager projMan;
 	public Weapon weapon = new Weapon(1);
 	TiledMapTileLayer collisionLayer = null;
@@ -213,20 +214,21 @@ public class Actor {
 	}
 
 	public Actor(Camera scam, World world, boolean amAI,
-			TiledLayerManager newtm, Vector2 actorstart, int id,
-			HumanSprite humanSprite, ProjectileManager projManIn,
-			String actorType, boolean isLevelScrollingIn) {
+			LevelManager newtm, Vector2 actorstart, int id,
+			ActorManager actorMan,
+			String actorType) {
 		
-		
-		isLevelScrolling = isLevelScrollingIn;
+		tm = newtm;
 
-		projMan = projManIn;
+		isLevelScrolling = tm.isLevelScrolling;
+		projMan = actorMan.projMan;
 		if (tm == null) {
-			tm = (TiledLayerManager) newtm;
+			tm = (LevelManager) newtm;
 			if (newtm == null) {
 				System.out.println("newtm is null");
 			}
 		}
+		
 		if (body == null) {
 			BodyDef bodyDef = new BodyDef();
 			bodyDef.type = BodyType.DynamicBody;
@@ -275,12 +277,12 @@ public class Actor {
 		width = 1.25f;
 		scenecamera = scam;
 
-		aimLadderTexture = humanSprite.aimLadderTexture;
+		aimLadderTexture = actorMan.humanSprite.aimLadderTexture;
 		
 		if (!isMelee){
-			armTexture = humanSprite.armUziTexture;
+			armTexture = actorMan.humanSprite.armUziTexture;
 		}else{
-			armTexture = humanSprite.armSwordTexture;
+			armTexture = actorMan.humanSprite.armSwordTexture;
 		}
 		TextureRegion aimLadderTexRegion = new TextureRegion(aimLadderTexture,
 				0, 0, 128, 128);
@@ -296,13 +298,13 @@ public class Actor {
 				armsprite.getHeight() / 2);
 		//armsprite.setPosition(-10-64, -10);
 		
-		runTextureAtlas = humanSprite.runTextureAtlas;
-		idleTextureAtlas = humanSprite.idleTextureAtlas;
-		backWalkTextureAtlas = humanSprite.backWalkTextureAtlas;
-		crouchTextureAtlas = humanSprite.crouchTextureAtlas;
-		crouchBackTextureAtlas = humanSprite.crouchBackTextureAtlas;
-		upLadderTextureAtlas = humanSprite.upLadderTextureAtlas;
-		deathTextureAtlas = humanSprite.deathTextureAtlas;
+		runTextureAtlas = actorMan.humanSprite.runTextureAtlas;
+		idleTextureAtlas = actorMan.humanSprite.idleTextureAtlas;
+		backWalkTextureAtlas = actorMan.humanSprite.backWalkTextureAtlas;
+		crouchTextureAtlas = actorMan.humanSprite.crouchTextureAtlas;
+		crouchBackTextureAtlas = actorMan.humanSprite.crouchBackTextureAtlas;
+		upLadderTextureAtlas = actorMan.humanSprite.upLadderTextureAtlas;
+		deathTextureAtlas = actorMan.humanSprite.deathTextureAtlas;
 
 		AtlasRegion runTexRegion = runTextureAtlas.findRegion("0000");
 		AtlasRegion idleTexRegion = idleTextureAtlas.findRegion("0000");

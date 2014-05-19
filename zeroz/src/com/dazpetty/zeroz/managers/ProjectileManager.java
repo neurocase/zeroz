@@ -22,7 +22,9 @@ public class ProjectileManager {
 	}
 	
 	public void KillProjectile(int index){
-		proj[index].killProj();
+		if (proj[index] != null){
+			proj[index].killProj();
+		}
 	}
 	
 }

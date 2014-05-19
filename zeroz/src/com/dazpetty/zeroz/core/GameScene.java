@@ -50,13 +50,14 @@ import com.dazpetty.zeroz.entities.HUDTarget;
 import com.dazpetty.zeroz.entities.HumanSprite;
 import com.dazpetty.zeroz.entities.Item;
 import com.dazpetty.zeroz.entities.Weapon;
+import com.dazpetty.zeroz.managers.ActorManager;
 import com.dazpetty.zeroz.managers.Assets;
 import com.dazpetty.zeroz.managers.DazContactListener;
 import com.dazpetty.zeroz.managers.InputHandler;
 import com.dazpetty.zeroz.managers.OrthoCamController;
 import com.dazpetty.zeroz.managers.ParralaxCamera;
 import com.dazpetty.zeroz.managers.ProjectileManager;
-import com.dazpetty.zeroz.managers.TiledLayerManager;
+import com.dazpetty.zeroz.managers.LevelManager;
 
 public class GameScene implements Screen {
 
@@ -68,21 +69,14 @@ public class GameScene implements Screen {
 	static final int BOX_POSITION_ITERATIONS = 2;
 	static final float WORLD_TO_BOX = 0.01f;
 	static final float BOX_TO_WORLD = 100f;
-	public final int PROJECTILE_LIMIT = 20;
-	public final int ENEMY_LIMIT = 10;
-	public final int ENEMY_SPAWN_LIMIT = 20;
-	public final int DESTROYABLE_LIMIT = 10;
-	public final int DOOR_LIMIT = 10;
-	public final int DRONE_LIMIT = ENEMY_LIMIT;
-	public final int ITEM_LIMIT = 20;
+	
 	public int TOTAL_ITEMS = 0;
 	public int TOTAL_DOORS = 0;
 	public int TOTAL_DESTROYABLES = 0;
 	int bulletsadded = 0;
-	float viewwidth = 0;
-	float viewheight = 0;
+	
 	private int activeBullet = 0;
-	public int enemyspawners = 0;
+
 	public int activeproj = 0;
 	private float addextracamx = 0;
 	float stateTime;
@@ -132,16 +126,12 @@ public class GameScene implements Screen {
 	/*
 	 * ARRAYS
 	 */
-	public Actor[] zenemy = new Actor[ENEMY_LIMIT];
-	public Destroyable[] destroyable = new Destroyable[DESTROYABLE_LIMIT];
-	public Door[] door = new Door[DOOR_LIMIT];
-	public Item[] item = new Item[ITEM_LIMIT];
-	public Drone[] drone = new Drone[DRONE_LIMIT];
+
 	/*
 	 * VECTORS
 	 */
 	Vector3 aimlessVec = new Vector3(0, 0, 1);
-	private Vector2 playerstart = new Vector2(0, 0);
+
 	private Vector2 enemystart = new Vector2(30, 7);
 	private Vector2 enemystart2 = new Vector2(60, 9);
 	
@@ -164,25 +154,31 @@ public class GameScene implements Screen {
 	/*
 	 * MANAGERS, HANDLERS, COLLECTIONS, CUSTOM TYPES
 	 */
-	public HUDTarget hudtarget;
-	private Actor zplayer;
-	final ZerozGame game;
-	public ProjectileManager projMan = new ProjectileManager(PROJECTILE_LIMIT);
-	public ProjectileManager aiProjMan = new ProjectileManager(PROJECTILE_LIMIT);
-	public CopterBoss copterBoss;// = new CopterBoss();
-	//Vector2 enemyspawner[] = new Vector2[ENEMY_SPAWN_LIMIT];
-	EnemySpawner enemyspawner[] = new EnemySpawner[ENEMY_SPAWN_LIMIT];
-	
-	private DazContactListener cl;
-	public InputHandler inputHandler = new InputHandler();
-	public TiledLayerManager tm;
-	public Assets Assets;
-	private HumanSprite humanSprite = new HumanSprite();
+	//public HUDTarget hudtarget;
 
+	public ActorManager actorMan;
+	public WorldLogic worldLogic;
+	final ZerozGame game;
+
+
+	//Vector2 enemyspawner[] = new Vector2[ENEMY_SPAWN_LIMIT];
+
+	
+	
+
+	public LevelManager tm;
+	public Assets Assets;
+
+
+	
+	
+	float viewwidth = Gdx.graphics.getWidth();
+	float viewheight = Gdx.graphics.getHeight();
 	/*
 	 * FUNCTIONS
 	 */
 
+	
 	public GameScene(final ZerozGame gam) {
 
 		this.game = gam;
@@ -236,142 +232,28 @@ public class GameScene implements Screen {
 		grentex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		TextureRegion grentexreg = new TextureRegion(grentex, 0, 0, 128, 128);
 		bgbatch = new SpriteBatch();
-		/*
-		 * SETUP CAMERA AND RENDERER
-		 */
-		// Tiled layer manager for cell (not box2d) based collision.
-		TiledLayerManager tm = new TiledLayerManager(game.level);
-		viewwidth = Gdx.graphics.getWidth();
-		viewheight = Gdx.graphics.getHeight();
+		
+		
+		
+		LevelManager tm = new LevelManager(game.level);
+		
 		renderer = new OrthogonalTiledMapRenderer(tm.map, 1f / 32f);
 		camera = new OrthographicCamera(1, viewheight / viewwidth);
 		camera.setToOrtho(false, (viewwidth / viewheight) * 10, 10);
 		camera.update();
+		
+		actorMan = new ActorManager(camera, world, tm);
+		worldLogic = new WorldLogic(camera, actorMan, world, tm);
+		
 		pcamera = new ParralaxCamera(viewheight * 2f, viewwidth * 0.5f);
 		pcamcontroller = new OrthoCamController(pcamera);
 		Gdx.input.setInputProcessor(pcamcontroller);
-		/*
-		 * SETUP WORLD AND COLLISIONS
-		 */
-		cl = new DazContactListener();
-		world.setContactListener(cl);
-		for (int h = 0; h < tm.collisionLayer.getHeight(); h++) {
-			for (int w = 0; w < tm.collisionLayer.getWidth(); w++) {
-
-				if (tm.isCellBlocked(w, h, false)) {
-
-					int c = 0;
-					while (tm.isCellBlocked(w + c, h, false)) {
-						c++;
-					}
-					BodyDef groundBodyDef = new BodyDef();
-					groundBodyDef.position.set(new Vector2(w + c * 0.5f,
-							h + 0.5f));
-					Body groundBody = world.createBody(groundBodyDef);
-					PolygonShape groundBox = new PolygonShape();
-					groundBox.setAsBox(c * 0.5f, 0.5f);
-					groundBody.createFixture(groundBox, 0.0f);
-					FixtureDef fixtureDef = new FixtureDef();
-					fixtureDef.shape = groundBox;
-					fixtureDef.filter.categoryBits = 2;
-					Fixture gfix = groundBody.createFixture(groundBox, 0.0f);
-					gfix.setUserData("ground");
-					for (int d = 0; d < c - 1; d++) {
-						w++;
-					}
-				}
-				if (tm.isCellPlatform(w, h)) {
-					int c = 0;
-					while (tm.isCellPlatform(w + c, h)) {
-						c++;
-					}
-					BodyDef groundBodyDef = new BodyDef();
-					groundBodyDef.position.set(new Vector2(w + c * 0.5f,
-							h + 0.75f));
-					Body groundBody = world.createBody(groundBodyDef);
-					PolygonShape groundBox = new PolygonShape();
-					groundBox.setAsBox(c * 0.5f, 0.2f);
-					groundBody.createFixture(groundBox, 0.0f);
-					FixtureDef fixtureDef = new FixtureDef();
-					fixtureDef.shape = groundBox;
-					fixtureDef.filter.categoryBits = 1;
-					Fixture pfix = groundBody.createFixture(fixtureDef);
-					pfix.setUserData("platform");
-					for (int d = 0; d < c - 1; d++) {
-						w++;
-					}
-				}
-				if (tm.isCellEnemySpawn(w, h)) {
-					String type = (String) tm.getEnemyType(w,h);
-					int rand = (int) (Math.random() * 10);
-					if (rand == 0) rand = 1;
-					enemyspawner[enemyspawners] = new EnemySpawner(w, h, type,rand);
-					System.out.println("Spawner Created of Type:" + type + "at" + w + "," + h + " with " + rand + " enemies");
-					enemyspawners++;
-				}
-				if (tm.isCellDestroyable(w, h)) {
-					int value = tm.getCellValue(w, h);
-					if (TOTAL_DESTROYABLES < DESTROYABLE_LIMIT) {
-						destroyable[value] = new Destroyable(w, h, value, world);
-						System.out.println("DESTROYABLE ADDED: "
-								+ TOTAL_DESTROYABLES);
-						TOTAL_DESTROYABLES++;
-
-					}
-				}
-				if (tm.isCellDoor(w, h)) {
-					if (TOTAL_DOORS < DOOR_LIMIT) {
-						int value = tm.getCellValue(w, h);
-						door[TOTAL_DOORS] = new Door(w, h, value, world);
-						TOTAL_DOORS++;
-						System.out.println("DOOR ADDED: " + TOTAL_DOORS);
-					}
-				}
-				if (tm.isCellItem(w, h)) {
-					if (TOTAL_ITEMS < ITEM_LIMIT) {
-						String value = tm.getItemValue(w, h);
-						item[TOTAL_ITEMS] = new Item(w, h, TOTAL_ITEMS, value, world);
-						TOTAL_ITEMS++;
-						System.out.println(value + " ITEM ADDED: "
-								+ TOTAL_ITEMS + "at:" + w + "," + h);
-					}
-				}
-				if (tm.isCellLevelComplete(w, h)) {
-					System.out.println("LEVEL COMPLETE AT: x:" + w + "y:" + h);
-					levelcompletepos.x = w;
-					levelcompletepos.y = h;
-				}
-				if (tm.isCellPlayerStart(w, h)) {
-					System.out.println("PlayerStart at: x" + w + "y:" + h);
-					playerstart.x = w;
-					playerstart.y = h;
-				}
-				if (!isLevelScrolling){
-					if (tm.isLevelScrolling(w, h)) {
-						isLevelScrolling = true;
-					}
-				}
-				if (!isBossLevel){
-					if (tm.isCellBoss(w, h)) {
-						isBossLevel = true;
-						copterBoss = new CopterBoss(w, h, world);
-						
-					}
-				}
-				
-			}
-		}
+		//}
 		
-		// CREATE PLAYER
-		zplayer = new Actor(camera, world, false, tm, playerstart, 0,
-				humanSprite, projMan, "player", isLevelScrolling);		
-		// INPUTHANDLER
-		inputHandler.LoadInputHandler(viewwidth, viewheight, camera, zplayer);
-		// BOX 2D DEBUG RENDERER
-		debugRenderer = new Box2DDebugRenderer();
-
-		//drone[0] = new Drone(5, 5, world, 0, camera);
-		hudtarget = new HUDTarget();
+		viewwidth = Gdx.graphics.getWidth();
+		viewheight = Gdx.graphics.getHeight();
+		
+	
 	}
 
 	private void wtfc(){
@@ -380,120 +262,7 @@ public class GameScene implements Screen {
 		System.out.println("WHAT THE FUCK CUNT!");
 	}
 	
-	private void createActor(int s, EnemySpawner es) {
-		
 	
-		Vector2 startpos = new Vector2(es.worldpos.x, es.worldpos.y);
-		long timenow = System.currentTimeMillis();
-		
-		if (s == 1) {
-			zplayer = new Actor(camera, world, false, tm, startpos, -1,
-					humanSprite, projMan, es.enemyType, isLevelScrolling);
-		}
-		if (s == 2) {
-		//	if (es.enemyType == null){
-				
-			//}
-		//	System.out.println("Attempting to create " + es.enemyType);
-			/*String enemyType = (String)es.enemyType;
-			if (!enemyType.equals("footsoldier")){
-				System.out.println(enemyType + " is not footsoldier");
-			}*/
-			
-			if (es.enemyType.equals("footsoldier")){
-				//wtfc();
-			//	System.out.println();
-				Weapon uzi = new Weapon(1);
-				
-				//long a = timenow - es.lasttimespawn;
-				if (es.attemptSpawn(timenow)
-						&& (zenemy[enemycount] == null
-								|| zenemy[enemycount].isAlive == false || zenemy[enemycount].isDisposed)) {
-					if (zenemy[enemycount] != null
-							&& zenemy[enemycount].body != null) {
-						System.out.println("destroying enemy body" + enemycount);
-						zenemy[enemycount].reUseActor(startpos, uzi);
-						System.out.println("Spawning Renewing Enemy:" + enemycount
-								+ " X:" + startpos.x + "Y" + startpos.y);
-					} else {
-						System.out.println("Spawning New Enemy:" + es.enemyType + "," + enemycount
-								+ " X:" + startpos.x + "Y" + startpos.y);
-						/*
-						 * I HAVE NO IDEA WHY I NEED TO PASS zplayer.tm INSTEAD OF
-						 * tm, BUT IT WONT WORK OTHERWISE.
-						 */
-						zenemy[enemycount] = new Actor(camera, world, true,
-								zplayer.tm, startpos, enemycount, humanSprite,
-								aiProjMan, es.enemyType, isLevelScrolling);
-					}
-					es.lasttimespawn = System.currentTimeMillis();
-					enemycount++;
-					if (enemycount == ENEMY_LIMIT) {
-						enemycount = 0;
-					}
-				}
-			}else if (es.enemyType.equals("paratrooper")){
-				Weapon uzi = new Weapon(1);
-					//long a = timenow - es.lasttimespawn;
-					if (es.attemptSpawn(timenow)
-							&& (zenemy[enemycount] == null
-									|| zenemy[enemycount].isAlive == false || zenemy[enemycount].isDisposed)) {
-						if (zenemy[enemycount] != null
-								&& zenemy[enemycount].body != null) {
-							System.out.println("destroying enemy body" + enemycount);
-							zenemy[enemycount].reUseActor(startpos, uzi);
-							System.out.println("Spawning Renewing Enemy:" + enemycount
-									+ " X:" + startpos.x + "Y" + startpos.y);
-						} else {
-							System.out.println("Spawning New Enemy:" + es.enemyType + "," + enemycount
-									+ " X:" + startpos.x + "Y" + startpos.y);
-							/*
-							 * I HAVE NO IDEA WHY I NEED TO PASS zplayer.tm INSTEAD OF
-							 * tm, BUT IT WONT WORK OTHERWISE.
-							 */
-							zenemy[enemycount] = new Actor(camera, world, true,
-									zplayer.tm, startpos, enemycount, humanSprite,
-									aiProjMan, es.enemyType, isLevelScrolling);
-						}
-						es.lasttimespawn = System.currentTimeMillis();
-						enemycount++;
-						if (enemycount == ENEMY_LIMIT) {
-							enemycount = 0;
-						}
-					}
-				
-			}else if (es.enemyType.equals("drone")){
-				
-				//long a = timenow - es.lasttimespawn;
-				if (es.attemptSpawn(timenow)
-						&& (drone[dronecount] == null
-								|| drone[dronecount].isAlive == false )){//|| drone[dronecount].isDisposed)) {
-					if (drone[dronecount] != null
-							&& drone[dronecount].body != null) {
-						System.out.println("destroying enemy body" + enemycount);
-						drone[dronecount].reUseDrone(startpos);
-						System.out.println("Spawning Renewing Enemy:" + enemycount
-								+ " X:" + startpos.x + "Y" + startpos.y);
-					} else {
-						System.out.println("Spawning New Enemy:" + es.enemyType + "," + enemycount
-								+ " X:" + startpos.x + "Y" + startpos.y);
-						/*
-						 * I HAVE NO IDEA WHY I NEED TO PASS zplayer.tm INSTEAD OF
-						 * tm, BUT IT WONT WORK OTHERWISE.
-						 */
-						
-						drone[dronecount] = new Drone(startpos.x, startpos.y, world, dronecount, camera);
-					}
-					es.lasttimespawn = System.currentTimeMillis();
-					dronecount++;
-					if (dronecount == DRONE_LIMIT) {
-						dronecount = 0;
-					}
-				}
-			
-		}
-		}
-	}
 
 	public void displayControls() {
 		viewwidth = Gdx.graphics.getWidth();
@@ -504,12 +273,12 @@ public class GameScene implements Screen {
 		game.batch.begin();
 		String info2 = "";
 		if (debugOn) {
-			info2 = " Health:" + zplayer.health + " ZPLAYER X:"
-					+ zplayer.worldpos.x + ", Y:" + zplayer.worldpos.y
-					+ " state:" + zplayer.state;
+			info2 = " Health:" + actorMan.zplayer.health + " actorMan.zplayer X:"
+					+ actorMan.zplayer.worldpos.x + ", Y:" + actorMan.zplayer.worldpos.y
+					+ " state:" + actorMan.zplayer.state;
 		} else {
-			info2 = " Health:" + zplayer.health;
-			if (zplayer.health <= 0) {
+			info2 = " Health:" + actorMan.zplayer.health;
+			if (actorMan.zplayer.health <= 0) {
 				info2 = "GAME OVER: YOU DIED";
 			}
 		}
@@ -534,7 +303,7 @@ public class GameScene implements Screen {
 	}
 
 	public void drawProjectile(ProjectileManager projMan) {
-		for (int i = 0; i < PROJECTILE_LIMIT; i++) {
+		for (int i = 0; i < actorMan.PROJECTILE_LIMIT; i++) {
 			if (projMan.proj[i] != null) {
 				if (projMan.proj[i].isAlive) {
 					if (projMan.proj[i].isAlive) {
@@ -553,42 +322,16 @@ public class GameScene implements Screen {
 	}
 
 	public boolean debugOn = false;
-	public boolean levelComplete = false;
+	//public boolean levelComplete = false;
 
 	@Override
 	public void render(float delta) {
 		
+		actorMan.zplayer.update(worldLogic.inputHandler.giveWorldPos, camera, playerShoot);
+		tm = actorMan.zplayer.tm;
 		
+		//camera = worldLogic.camera;
 		
-		if (Gdx.input.isKeyPressed(Keys.R)) {
-			game.setScreen(new MainMenu(game));
-		}
-		if (Gdx.input.isKeyPressed(Keys.D)) {
-			debugOn = true;
-		}
-		if (Gdx.input.isKeyPressed(Keys.C)) {
-			levelComplete = true;
-		}
-		/*
-		 * UPDATE PLAYER AND PROJECTILES
-		 */
-
-		aiProjMan.updateProjectiles();
-		projMan.updateProjectiles();
-		zplayer.update(inputHandler.giveWorldPos, camera, playerShoot);
-		/*
-		 * SPAWN ENEMIES AT SPAWNPOINT NEAR PLAYER
-		 */
-	//	if (pollCheck(11)){
-			for (int i = 0; i < enemyspawners; i++) {
-				if (Math.abs((double) (enemyspawner[i].worldpos.x - zplayer.worldpos.x)) < 20) {
-					if (enemyspawner[i] != null ){//&& enemyspawner[i].enemyType == "footsoldier") {
-						createActor(2, enemyspawner[i]);
-					} else {
-						System.out.println("ERROR: There are no enemy spawners");
-					}
-				}
-			}
 	//	}
 		/*
 		 * SETUP PARRALAX CAMERA
@@ -641,78 +384,54 @@ public class GameScene implements Screen {
 		batch.setProjectionMatrix(camera.combined);
 		sr.setProjectionMatrix(camera.combined);
 
-		inputHandler.checkKeyboard();
-		inputHandler.checkTouch();
+		worldLogic.inputHandler.checkKeyboard();
+		worldLogic.inputHandler.checkTouch();
 		/*
 		 * ^^^^^^^^^^^^^^^^^^^^^ END BACKGROUND RENDER
 		 */
-		/*
-		 * UPDATE ENEMY AI
-		 */
-		if (pollCheck(6)){
-			for (int i = 0; i < ENEMY_LIMIT; i++) {
-				if (zenemy[i] != null) {
-					zenemy[i].updateAI(zplayer);
-				}
-			}
-			for (int i = 0; i < ENEMY_LIMIT; i++) {
-				if (zenemy[i] != null) {
-					boolean enemyAim = true;
-					if (enemyAim) {
-						zenemy[i].update(true, camera, true);
-					} else {
-						zenemy[i].update(true, camera, true);
-					}
-					// If too far away from player, dispose of enemy
-					if (Math.abs((double) (zenemy[i].worldpos.x - zplayer.worldpos.x)) > 30
-							|| (double) (zenemy[i].worldpos.y - zplayer.worldpos.y) > 30) {
-						zenemy[i].isDisposed = true;
-						zenemy[i].isAlive = false;
-					}
-				}
-			}
-		}
+		
 		/*
 		 * BEGIN CORE SPRITE BATCH RENDER LOOP
 		 */
-		for (int i = 0; i < DRONE_LIMIT; i++) {
-			if (drone[i] != null && drone[i].isAlive) {
-				drone[i].update(zplayer);
+		for (int i = 0; i < actorMan.DRONE_LIMIT; i++) {
+			if (actorMan.drone[i] != null && actorMan.drone[i].isAlive) {
+				actorMan.drone[i].update(actorMan.zplayer);
 			}
 		}
 		renderer.setView(camera);
 		renderer.render();
+		
 		batch.begin();
 		
 		if (isBossLevel){
-			copterBoss.bossSprite.draw(batch);
-			copterBoss.update();
+			actorMan.copterBoss.bossSprite.draw(batch);
+			actorMan.copterBoss.update();
 			
-			for (int i = 0; i < copterBoss.copterTurret.length; i++){
-				if (copterBoss.copterTurret[i] != null && copterBoss.copterTurret[i].isAlive){
-					copterBoss.copterTurret[i].baseSprite.draw(batch);
-					copterBoss.copterTurret[i].barrelSprite.draw(batch);
+			for (int i = 0; i < actorMan.copterBoss.copterTurret.length; i++){
+				if (actorMan.copterBoss.copterTurret[i] != null && actorMan.copterBoss.copterTurret[i].isAlive){
+					actorMan.copterBoss.copterTurret[i].baseSprite.draw(batch);
+					actorMan.copterBoss.copterTurret[i].barrelSprite.draw(batch);
 				}
 			}
 		}
 		
-		for (int i = 0; i < DRONE_LIMIT; i++) {
-			if (drone[i] != null && drone[i].isAlive) {
-				drone[i].sprite.draw(batch);
+		for (int i = 0; i < actorMan.DRONE_LIMIT; i++) {
+			if (actorMan.drone[i] != null && actorMan.drone[i].isAlive) {
+				actorMan.drone[i].sprite.draw(batch);
 			}
 		}
-		// drone[0].sprite.setPosition(zplayer.screenpos.x,
-		// zplayer.screenpos.y);
+		// drone[0].sprite.setPosition(actorMan.zplayer.screenpos.x,
+		// actorMan.zplayer.screenpos.y);
 		dirbuttonssprite.setPosition(camera.position.x - 8,
 				camera.position.y - 5);
 		dirbuttonssprite.draw(batch);
-		Vector3 tmpVec3 = new Vector3((inputHandler.getXInputPosition("jump")),
+		Vector3 tmpVec3 = new Vector3((worldLogic.inputHandler.getXInputPosition("jump")),
 				0, 0);
 		camera.unproject(tmpVec3);
 		tmpVec3.y = camera.position.y - 5;
 		jumpbuttonsprite.setPosition(tmpVec3.x, tmpVec3.y);
 
-		tmpVec3.x = (inputHandler.getXInputPosition("shoot"));
+		tmpVec3.x = (worldLogic.inputHandler.getXInputPosition("shoot"));
 		camera.unproject(tmpVec3);
 		tmpVec3.y = camera.position.y - 5;
 		shootbuttonsprite.setPosition(tmpVec3.x, tmpVec3.y);
@@ -721,250 +440,131 @@ public class GameScene implements Screen {
 		jumpbuttonsprite.draw(batch);
 
 		batch.setColor(Color.RED);
-		for (int i = 0; i < ENEMY_LIMIT; i++) {
-			if (zenemy[i] != null && zenemy[i].sprite != null
-					&& !zenemy[i].isDisposed) {
-				zenemy[i].sprite.draw(batch);
-				if (!zenemy[i].isOnLadder && zenemy[i].isAlive) {
-					zenemy[i].armsprite.draw(batch);
+		for (int i = 0; i < actorMan.ENEMY_LIMIT; i++) {
+			if (actorMan.zenemy[i] != null && actorMan.zenemy[i].sprite != null
+					&& !actorMan.zenemy[i].isDisposed) {
+				actorMan.zenemy[i].sprite.draw(batch);
+				if (!actorMan.zenemy[i].isOnLadder && actorMan.zenemy[i].isAlive) {
+					actorMan.zenemy[i].armsprite.draw(batch);
 				}
-				if (zenemy[i].isOnLadder && zenemy[i].isShooting
-						&& zenemy[i].isAlive) {
-					zenemy[i].armsprite.draw(batch);
+				if (actorMan.zenemy[i].isOnLadder && actorMan.zenemy[i].isShooting
+						&& actorMan.zenemy[i].isAlive) {
+					actorMan.zenemy[i].armsprite.draw(batch);
 				}
 			}
 		}
-		zplayer.sprite.draw(batch);
+		actorMan.zplayer.sprite.draw(batch);
 		/*
 		 * NEED TO FIX ARMSPRITE LOADING/NOT LOADING HERE
 		 */
-		if (!zplayer.isOnLadder && zplayer.isAlive) {
-			zplayer.armsprite.draw(batch);
+		if (!actorMan.zplayer.isOnLadder && actorMan.zplayer.isAlive) {
+			actorMan.zplayer.armsprite.draw(batch);
 		}
-		if (zplayer.isOnLadder && zplayer.isShooting && zplayer.isAlive) {
-			zplayer.armsprite.draw(batch);
+		if (actorMan.zplayer.isOnLadder && actorMan.zplayer.isShooting && actorMan.zplayer.isAlive) {
+			actorMan.zplayer.armsprite.draw(batch);
 		}
 		float extracamx = 0;
-		if (zplayer.aimingdirection == "left") {
+		if (actorMan.zplayer.aimingdirection == "left") {
 			if (addextracamx < viewwidth / 2) {
 				addextracamx += 7;
 				if (addextracamx < 0) {
 					addextracamx += 14;
 				}
-				if (zplayer.velocity.x > 0) {
+				if (actorMan.zplayer.velocity.x > 0) {
 					addextracamx += 7;
 				}
 			}
-		} else if (zplayer.aimingdirection == "right") {
+		} else if (actorMan.zplayer.aimingdirection == "right") {
 			if (addextracamx > -viewwidth / 2) {
 				addextracamx -= 7;
 				if (addextracamx > 0) {
 					addextracamx -= 14;
 				}
-				if (zplayer.velocity.x > 0) {
+				if (actorMan.zplayer.velocity.x > 0) {
 					addextracamx -= 7;
 				}
 			}
 		}
 		if (!isLevelScrolling){
-		camera.position.set(zplayer.worldpos.x + addextracamx / 200,
-				zplayer.worldpos.y + 1.5f, 0);
+		camera.position.set(actorMan.zplayer.worldpos.x + addextracamx / 200,
+				actorMan.zplayer.worldpos.y + 1.5f, 0);
 		}
-		for (int i = 0; i < DESTROYABLE_LIMIT; i++) {
-			if (destroyable[i] != null) {
-				destroyable[i].sprite.draw(batch);
+		for (int i = 0; i < actorMan.DESTROYABLE_LIMIT; i++) {
+			if (actorMan.destroyable[i] != null) {
+				actorMan.destroyable[i].sprite.draw(batch);
 			}
 		}
-		for (int i = 0; i < DOOR_LIMIT; i++) {
-			if (door[i] != null) {
-				door[i].sprite.draw(batch);
+		for (int i = 0; i < actorMan.DOOR_LIMIT; i++) {
+			if (actorMan.door[i] != null) {
+				actorMan.door[i].sprite.draw(batch);
 			}
 		}
-		for (int i = 0; i < ITEM_LIMIT; i++) {
-			if (item[i] != null) {
-				if (item[i].isAlive) {
-					item[i].sprite.draw(batch);
+		for (int i = 0; i < actorMan.ITEM_LIMIT; i++) {
+			if (actorMan.item[i] != null) {
+				if (actorMan.item[i].isAlive) {
+					actorMan.item[i].sprite.draw(batch);
 				}
 			}
 		}
 		/*
 		 * Draw
 		 */
-		drawProjectile(projMan);
-		drawProjectile(aiProjMan);
+		drawProjectile(actorMan.projMan);
+		drawProjectile(actorMan.aiProjMan);
 
-		if (hudtarget.canDraw()){
-			hudtarget.sprite.draw(batch);
+		if (actorMan.hudtarget.canDraw()){
+			actorMan.hudtarget.sprite.draw(batch);
 		}
 		//boolean levelcomplete = false;
 		if (levelcompletepos.x != 0 && levelcompletepos.y != 0){
-			if (Math.abs(levelcompletepos.x - zplayer.worldpos.x) < 3 && Math.abs(levelcompletepos.y - zplayer.worldpos.y) < 3 ){
-				levelComplete = true;
+			if (Math.abs(levelcompletepos.x - actorMan.zplayer.worldpos.x) < 3 && Math.abs(levelcompletepos.y - actorMan.zplayer.worldpos.y) < 3 ){
+				tm.isLevelComplete = true;
 				levelcompletesprite.setPosition(camera.position.x-5, camera.position.y-2);
 				levelcompletesprite.setSize(12f, 6f);
 			}
 		}
 		
-		if (levelComplete) levelcompletesprite.draw(batch);	
+
+		if (tm.isLevelComplete) levelcompletesprite.draw(batch);	
 
 		batch.end();
 		/*
 		 * ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ END CORE SPRITE BATCH RENDER LOOP
 		 */
+		worldLogic.update();
 		displayControls();
 		showDebugInfo(showDebug);
 		box2DRender(debugOn);
 		camera.update();
-		/*
-		 * DEACTIVATE DOORS, ENEMIES AND DESTROYED OBJECTS
-		 */
-		if (pollCheck(10)){
-			huntClosestEnemy();
-			
-			Array<Body> projbodies = cl.getBodies();
-			for (int i = 0; i < projbodies.size; i++) {
-				Body b = projbodies.get(i);
-				System.out.println("Destroying Proj:" + b.getUserData());
-				projMan.KillProjectile((Integer) b.getUserData());
-			}
-			projbodies.clear();
-			Array<Body> aiprojbodies = cl.getAiBodies();
-			for (int i = 0; i < aiprojbodies.size; i++) {
-				Body b = aiprojbodies.get(i);
-				System.out.println("Destroying Ai Proj:" + b.getUserData());
-				aiProjMan
-						.KillProjectile((Integer) b.getUserData());
-				if (cl.DamagePlayer()) {
-					zplayer.takeDamage(5);
-				}
-			}
-			aiprojbodies.clear();
-	
-			Array<Body> enemybodies = cl.getEnemies();
-			for (int i = 0; i < enemybodies.size; i++) {
-				Body b = enemybodies.get(i);
-				int t = (Integer) b.getUserData();
-				System.out.println("Destroying Enemy:" + b.getUserData());
-				zenemy[t].isAlive = false;
-				zenemy[t].body.setActive(false);
-			}
-			enemybodies.clear();	
-			Array<Body> itembodies = cl.getItems();
-			for (int i = 0; i < itembodies.size; i++) {
-				Body b = itembodies.get(i);
-				int t = (Integer) b.getUserData();
-				System.out.println("Destroying Item :" + b.getUserData());
-				if (item[t].isAlive) {
-					if (item[t].itemType.equalsIgnoreCase("health")){
-						zplayer.health += item[t].addHealth;
-						item[t].isAlive = false;
-						item[t].body.setActive(false);
-						if (zplayer.health > 150) {
-							zplayer.health = 150;
-						}
-					}
-					if (item[t].itemType.equals("shotgun")){// && zplayer.isCrouching){
-						System.out.println("PICKING UP SHOTGUN");
-						System.out.println("PICKING UP SHOTGUN");
-						System.out.println("PICKING UP SHOTGUN");
-						item[t] = new Item(item[t].worldpos.x, item[t].worldpos.y, t, "uzi", world);
-						zplayer.weapon.setWeapon(1);
-						//item[t].isAlive = false;
-						//item[t].body.setActive(false);
-					}else if (item[t].itemType.equals("uzi")){// && zplayer.isCrouching){
-						System.out.println("PICKING UP UZI");
-						System.out.println("PICKING UP UZI");
-						System.out.println("PICKING UP UZI");
-						item[t] = new Item(item[t].worldpos.x, item[t].worldpos.y, t, "shotgun", world);
-						zplayer.weapon.setWeapon(2);
-						//item[t].isAlive = false;
-						//item[t].body.setActive(false);
-					}else{
-						wtfc();
-					}
-				}else{
-					
-				}
-			}
-			itembodies.clear();
-	
-			Array<Body> dronebodies = cl.getDrones();
-			for (int i = 0; i < dronebodies.size; i++) {
-				Body b = dronebodies.get(i);
-				int t = (Integer) b.getUserData();
-				System.out.println("Destroying Drone :" + b.getUserData());
-				if (drone[t].isAlive && drone[t] != null) {
-					drone[t].isAlive = false;
-					drone[t].body.setActive(false);
-				}
-			}
-			dronebodies.clear();
-			
-			Array<Body> turretbodies = cl.getCopterTurret();
-			for (int i = 0; i < turretbodies.size; i++) {
-				Body b = turretbodies.get(i);
-				int t = (Integer) b.getUserData();
-				System.out.println("Destroying Turret :" + b.getUserData());
-				//Seems to be a bug here, or in the contact listener, where a body of
-				// value over array limit will return
-				if (t < copterBoss.TURRET_LIMIT){
-					if (copterBoss.copterTurret[t] != null){
-						if (copterBoss.copterTurret[t].isAlive && t <= turretbodies.size) {
-							copterBoss.copterTurret[t].isAlive = false;
-							copterBoss.copterTurret[t].body.setActive(false);
-						}
-					}
-				}
-			}
-			turretbodies.clear();
-	
-			int killKeyValue = 0;
-			Array<Body> destroybodies = cl.getDestroyables();
-			for (int i = 0; i < destroybodies.size; i++) {
-				Body b = destroybodies.get(i);
-				int t = (Integer) b.getUserData();
-				System.out.println("Destroying Destroyable:" + b.getUserData()
-						+ "at Address:" + t);
-				if (destroyable[t] != null) {
-					destroyable[t].isAlive = false;
-					destroyable[t].body.setActive(false);
-					destroyable[t].Destroy();
-					killKeyValue = destroyable[t].keyValue;
-					zplayer.tm.keys[killKeyValue] = true;
-					for (int j = 0; j < DOOR_LIMIT; j++) {
-						if (door[j] != null) {
-							if (zplayer.tm.keys[door[j].keyValue]) {
-								door[j].openDoor();
-							}
-						}
-					}
-				} else {
-					System.out.println("is NULL, destroyable.length ="
-							+ destroyable.length);
-				}
-			}
-			destroybodies.clear();
-		}
-		if (zplayer.worldpos.y < -15) {
-			zplayer.health = 0;
-		}
 		
+		if (Gdx.input.isKeyPressed(Keys.R)) {
+			game.setScreen(new MainMenu(game));
+		}
+		if (Gdx.input.isKeyPressed(Keys.D)) {
+			debugOn = true;
+		}
+		if (Gdx.input.isKeyPressed(Keys.C)) {
+			tm.isLevelComplete = true;
+		}
 		if (Gdx.input.isTouched()) {
-			
-		}
-		
-		
-		if (Gdx.input.isTouched()) {
-			if (!zplayer.isAlive) {
+			if (!actorMan.zplayer.isAlive) {
 				game.setScreen(new MainMenu(game));
 			}
-			if (levelComplete){
+			if (tm.isLevelComplete){
 				game.nextLevel();
 				game.setScreen(new GameScene(game));
 			}
 		}
+		// BOX 2D DEBUG RENDERER
+		debugRenderer = new Box2DDebugRenderer();
+
+		//drone[0] = new Drone(5, 5, world, 0, camera);
+		
+		
 
 	}
+	
+
 
 	@Override
 	public void resize(int width, int height) {
@@ -994,13 +594,10 @@ public class GameScene implements Screen {
 	@Override
 	public void dispose() {
 		// TODO Auto-generated method stub
-		humanSprite.dispose();
+
 		targettex.dispose();
 		batch.dispose();
-		for (int i = 0; i < ENEMY_LIMIT; i++) {
-			zenemy[i].dispose();
-		}
-		zplayer.dispose();
+		actorMan.dispose();
 		tm.map.dispose();
 		sr.dispose();
 
@@ -1009,174 +606,7 @@ public class GameScene implements Screen {
 	
 	
 	
-	public void huntClosestEnemy(){
-		/*
-		 * TODO: CYCLE THROUGH ENEMY ACTORS AND GIVE PLAYER CLOSEST ONE FOR
-		 * QUICK SHOOT
-		 */
-		/*
-		 * 
-		 *  NEED TO FIX HERE, CODE IS UGLY, WANT TO REFACTOR
-		 */
-		
-		float targetPosX = 0;
-		float targetPosY = 0;
-		boolean drawTarget = false;
-		
-		int closest_enemy_right = 0;
-		int closest_enemy_left = 0;
-		
-		float calcdist_right = 999;
-		float calcdist_left = 999;
-		boolean enemyTooFar_right = false;
-		boolean enemyTooFar_left = false;
-		boolean targetIsDrone_right = false;
-		boolean targetIsDrone_left = false;
-
-		int BIG_LIMIT = ENEMY_LIMIT;
-		if (ENEMY_LIMIT < DRONE_LIMIT) {
-			BIG_LIMIT = DRONE_LIMIT;
-		}
-
-		for (int i = 0; i < BIG_LIMIT; i++) {
-			if (zenemy[i] != null && zenemy[i].isAlive
-					&& zenemy[i].worldpos.x > zplayer.worldpos.x) {
-				if (zenemy[i].distanceFromPlayer < calcdist_right) {
-					calcdist_right = zenemy[i].distanceFromPlayer;
-					closest_enemy_right = i;
-				}
-			} else if (zenemy[i] != null && zenemy[i].isAlive
-					&& zenemy[i].worldpos.x < zplayer.worldpos.x) {
-				if (zenemy[i].distanceFromPlayer < calcdist_left) {
-					calcdist_left = zenemy[i].distanceFromPlayer;
-					closest_enemy_left = i;
-				}
-			}
-			if (drone[i] != null && drone[i].isAlive
-					&& drone[i].worldpos.x > zplayer.worldpos.x) {
-				if (drone[i].distanceFromPlayer < calcdist_right) {
-					calcdist_right = drone[i].distanceFromPlayer;
-					closest_enemy_right = i;
-					targetIsDrone_right = true;
-				}
-			} else if (drone[i] != null && drone[i].isAlive
-					&& drone[i].worldpos.x < zplayer.worldpos.x) {
-				if (drone[i].distanceFromPlayer < calcdist_left) {
-					calcdist_left = drone[i].distanceFromPlayer;
-					closest_enemy_left = i;
-					targetIsDrone_left = true;
-				}
-			}
-
-		}
-		if (calcdist_right > 9) {
-			enemyTooFar_right = true;
-
-		} else {
-			enemyTooFar_right = false;
-		}
-		if (calcdist_left > 9) {
-			enemyTooFar_left = true;
-
-		} else {
-			enemyTooFar_left = false;
-		}
-
-		if (!zplayer.isOnLadder && !isLevelScrolling) {
-			if (zplayer.isGoRight) {
-				if (targetIsDrone_right) {
-					if (drone[closest_enemy_right] != null) {
-						zplayer.giveQuickTarget(drone[closest_enemy_right]);
-						hudtarget.setDrawTarget(drone[closest_enemy_right]);
-					}
-					if (enemyTooFar_right || drone[closest_enemy_right] == null) {
-						zplayer.setTargetToNull();
-						hudtarget.dontDraw();
-					}
-				} else {
-					if (zenemy[closest_enemy_right] != null) {
-						zplayer.giveQuickTarget(zenemy[closest_enemy_right]);
-						hudtarget.setDrawTarget(zenemy[closest_enemy_right]);
-					}
-					if (enemyTooFar_right || zenemy[closest_enemy_right] == null) {
-						zplayer.setTargetToNull();
-						hudtarget.dontDraw();
-					}
-				}
-				
-			} else {
-				if (targetIsDrone_left) {
-					if (drone[closest_enemy_left] != null) {
-						zplayer.giveQuickTarget(drone[closest_enemy_left]);
-						hudtarget.setDrawTarget(drone[closest_enemy_left]);
-						
-					}
-					if (enemyTooFar_left || drone[closest_enemy_left] == null) {
-						zplayer.setTargetToNull();
-					}
-				} else {
-					if (zenemy[closest_enemy_left] != null) {
-						zplayer.giveQuickTarget(zenemy[closest_enemy_left]);
-						hudtarget.setDrawTarget(zenemy[closest_enemy_left]);
-					}
-					if (enemyTooFar_left || zenemy[closest_enemy_left] == null) {
-						zplayer.setTargetToNull();
-						hudtarget.dontDraw();
-					}
-				}
-			}
-		} else {
-			if (calcdist_right < calcdist_left) {
-				if (targetIsDrone_right) {
-					if (drone[closest_enemy_right] != null) {
-						zplayer.giveQuickTarget(drone[closest_enemy_right]);
-						hudtarget.setDrawTarget(drone[closest_enemy_right]);
-					}
-					if (enemyTooFar_right || drone[closest_enemy_right] == null) {
-						zplayer.setTargetToNull();
-						hudtarget.dontDraw();
-					}
-				}else{
-					if (zenemy[closest_enemy_right] != null) {
-						zplayer.giveQuickTarget(zenemy[closest_enemy_right]);
-						hudtarget.setDrawTarget(zenemy[closest_enemy_right]);
-					}
-					if (enemyTooFar_right || zenemy[closest_enemy_right] == null) {
-						zplayer.setTargetToNull();
-						hudtarget.dontDraw();
-					}
-				}
-			} else {
-				if (targetIsDrone_left) {
-					if (drone[closest_enemy_left] != null) {
-						zplayer.giveQuickTarget(drone[closest_enemy_left]);
-						hudtarget.setDrawTarget(drone[closest_enemy_left]);
-					}
-					if (enemyTooFar_right || drone[closest_enemy_left] == null) {
-						zplayer.setTargetToNull();
-						hudtarget.dontDraw();
-					}
-				}else{
-					if (zenemy[closest_enemy_left] != null) {
-						zplayer.giveQuickTarget(zenemy[closest_enemy_left]);
-						hudtarget.setDrawTarget(zenemy[closest_enemy_left]);
-					}
-					if (enemyTooFar_left || zenemy[closest_enemy_left] == null) {
-						zplayer.setTargetToNull();
-						hudtarget.dontDraw();
-					}
-				}
-			}
-		}
-	}
 	
-	public int loopcount = 0;
-	public boolean pollCheck(int v){
-		if (loopcount % v == 0){
-			return true;
-		}
-		return false;
-	}
 }
 /*
  * TODO:
