@@ -71,115 +71,7 @@ public class WorldLogic {
 		 */
 		cl = new DazContactListener();
 		world.setContactListener(cl);
-		for (int h = 0; h < tm.collisionLayer.getHeight(); h++) {
-			for (int w = 0; w < tm.collisionLayer.getWidth(); w++) {
-
-				if (tm.isCellBlocked(w, h, false)) {
-
-					int c = 0;
-					while (tm.isCellBlocked(w + c, h, false)) {
-						c++;
-					}
-					BodyDef groundBodyDef = new BodyDef();
-					groundBodyDef.position.set(new Vector2(w + c * 0.5f,
-							h + 0.5f));
-					Body groundBody = world.createBody(groundBodyDef);
-					PolygonShape groundBox = new PolygonShape();
-					groundBox.setAsBox(c * 0.5f, 0.5f);
-					groundBody.createFixture(groundBox, 0.0f);
-					FixtureDef fixtureDef = new FixtureDef();
-					fixtureDef.shape = groundBox;
-					fixtureDef.filter.categoryBits = 2;
-					Fixture gfix = groundBody.createFixture(groundBox, 0.0f);
-					gfix.setUserData("ground");
-					for (int d = 0; d < c - 1; d++) {
-						w++;
-					}
-				}
-				if (tm.isCellPlatform(w, h)) {
-					int c = 0;
-					while (tm.isCellPlatform(w + c, h)) {
-						c++;
-					}
-					BodyDef groundBodyDef = new BodyDef();
-					groundBodyDef.position.set(new Vector2(w + c * 0.5f,
-							h + 0.75f));
-					Body groundBody = world.createBody(groundBodyDef);
-					PolygonShape groundBox = new PolygonShape();
-					groundBox.setAsBox(c * 0.5f, 0.2f);
-					groundBody.createFixture(groundBox, 0.0f);
-					FixtureDef fixtureDef = new FixtureDef();
-					fixtureDef.shape = groundBox;
-					fixtureDef.filter.categoryBits = 1;
-					Fixture pfix = groundBody.createFixture(fixtureDef);
-					pfix.setUserData("platform");
-					for (int d = 0; d < c - 1; d++) {
-						w++;
-					}
-				}
-				if (tm.isCellEnemySpawn(w, h)) {
-					String type = (String) tm.getEnemyType(w,h);
-					int rand = (int) (Math.random() * 10);
-					if (rand == 0) rand = 1;
-					actorMan.enemyspawner[actorMan.enemyspawners] = new EnemySpawner(w, h, type,rand);
-					System.out.println("Spawner Created of Type:" + type + "at" + w + "," + h + " with " + rand + " enemies");
-					actorMan.enemyspawners++;
-				}
-				if (tm.isCellDestroyable(w, h)) {
-					int value = tm.getCellValue(w, h);
-					if (actorMan.TOTAL_DESTROYABLES < actorMan.DESTROYABLE_LIMIT) {
-						actorMan.destroyable[value] = new Destroyable(w, h, value, world);
-						System.out.println("DESTROYABLE ADDED: "
-								+ actorMan.TOTAL_DESTROYABLES);
-						actorMan.TOTAL_DESTROYABLES++;
-
-					}
-				}
-				if (tm.isCellDoor(w, h)) {
-					if (actorMan.TOTAL_DOORS < actorMan.DOOR_LIMIT) {
-						int value = tm.getCellValue(w, h);
-						actorMan.door[actorMan.TOTAL_DOORS] = new Door(w, h, value, world);
-						actorMan.TOTAL_DOORS++;
-						System.out.println("DOOR ADDED: " + actorMan.TOTAL_DOORS);
-					}
-				}
-				if (tm.isCellItem(w, h)) {
-					if (actorMan.TOTAL_ITEMS < actorMan.ITEM_LIMIT) {
-						String value = tm.getItemValue(w, h);
-						actorMan.item[actorMan.TOTAL_ITEMS] = new Item(w, h, actorMan.TOTAL_ITEMS, value, world);
-						actorMan.TOTAL_ITEMS++;
-						System.out.println(value + " ITEM ADDED: "
-								+ actorMan.TOTAL_ITEMS + "at:" + w + "," + h);
-					}
-				}
-				if (tm.isCellLevelComplete(w, h)) {
-					System.out.println("LEVEL COMPLETE AT: x:" + w + "y:" + h);
-					tm.levelcompletepos.x = w;
-					tm.levelcompletepos.y = h;
-				}
-				if (tm.isCellPlayerStart(w, h)) {
-					System.out.println("PlayerStart at: x" + w + "y:" + h);
-					tm.playerstart.x = w;
-					tm.playerstart.y = h;
-				}
-				if (!tm.isLevelScrolling){
-					if (tm.isLevelScrolling(w, h)) {
-						tm.isLevelScrolling = true;
-					}
-				}
-				if (!tm.isBossLevel){
-					if (tm.isCellBoss(w, h)) {
-						tm.isBossLevel = true;
-						actorMan.copterBoss = new CopterBoss(w, h, world);
-						
-					}
-				}
 		
-		
-		
-			}
-		
-		}
 		// CREATE PLAYER
 		actorMan.zplayer = new Actor(camera, world, false, tm,  tm.playerstart, -1,
 				actorMan, "player");
@@ -471,91 +363,57 @@ public class WorldLogic {
 		
 	//	boolean boolCheck = targetIsDrone[0];
 		if (!actorMan.zplayer.isOnLadder && !tm.isLevelScrolling) {
-			if (actorMan.zplayer.isGoRight) {
-				if (targetIsDrone[0]) {
-					if (actorMan.drone[closest_enemy[0]] != null) {
-						actorMan.zplayer.giveQuickTarget(actorMan.drone[closest_enemy[0]]);
-						actorMan.hudtarget.setDrawTarget(actorMan.drone[closest_enemy[0]]);
+			
+			int checkVal = 0;
+			if (!actorMan.zplayer.isGoRight) checkVal = 1;
+				if (targetIsDrone[checkVal]) {
+					if (actorMan.drone[closest_enemy[checkVal]] != null) {
+						actorMan.zplayer.giveQuickTarget(actorMan.drone[closest_enemy[checkVal]]);
+						actorMan.hudtarget.setDrawTarget(actorMan.drone[closest_enemy[checkVal]]);
 					}
-					if (enemyTooFar[0] || actorMan.drone[closest_enemy[0]] == null) {
+					if (enemyTooFar[checkVal] || actorMan.drone[closest_enemy[checkVal]] == null) {
 						actorMan.zplayer.setTargetToNull();
 						actorMan.hudtarget.dontDraw();
 					}
 				} else {
-					if (actorMan.zenemy[closest_enemy[0]] != null) {
-						actorMan.zplayer.giveQuickTarget(actorMan.zenemy[closest_enemy[0]]);
-						actorMan.hudtarget.setDrawTarget(actorMan.zenemy[closest_enemy[0]]);
+					if (actorMan.zenemy[closest_enemy[checkVal]] != null) {
+						actorMan.zplayer.giveQuickTarget(actorMan.zenemy[closest_enemy[checkVal]]);
+						actorMan.hudtarget.setDrawTarget(actorMan.zenemy[closest_enemy[checkVal]]);
 					}
-					if (enemyTooFar[0] || actorMan.zenemy[closest_enemy[0]] == null) {
+					if (enemyTooFar[checkVal] || actorMan.zenemy[closest_enemy[checkVal]] == null) {
 						actorMan.zplayer.setTargetToNull();
 						actorMan.hudtarget.dontDraw();
 					}
 				}
 				
-			} else {
-				if (targetIsDrone[1]) {
-					if (actorMan.drone[closest_enemy[1]] != null) {
-						actorMan.zplayer.giveQuickTarget(actorMan.drone[closest_enemy[1]]);
-						actorMan.hudtarget.setDrawTarget(actorMan.drone[closest_enemy[1]]);
-						
-					}
-					if (enemyTooFar[1] || actorMan.drone[closest_enemy[1]] == null) {
-						actorMan.zplayer.setTargetToNull();
-					}
-				} else {
-					if (actorMan.zenemy[closest_enemy[1]] != null) {
-						actorMan.zplayer.giveQuickTarget(actorMan.zenemy[closest_enemy[1]]);
-						actorMan.hudtarget.setDrawTarget(actorMan.zenemy[closest_enemy[1]]);
-					}
-					if (enemyTooFar[1] || actorMan.zenemy[closest_enemy[1]] == null) {
-						actorMan.zplayer.setTargetToNull();
-						actorMan.hudtarget.dontDraw();
-					}
-				}
-			}
+			
 		} else {
-			if (calcdist[0] < calcdist[1]) {
-				if (targetIsDrone[0]) {
-					if (actorMan.drone[closest_enemy[0]] != null) {
-						actorMan.zplayer.giveQuickTarget(actorMan.drone[closest_enemy[0]]);
-						actorMan.hudtarget.setDrawTarget(actorMan.drone[closest_enemy[0]]);
-					}
-					if (enemyTooFar[0] || actorMan.drone[closest_enemy[0]] == null) {
-						actorMan.zplayer.setTargetToNull();
-						actorMan.hudtarget.dontDraw();
-					}
-				}else{
-					if (actorMan.zenemy[closest_enemy[0]] != null) {
-						actorMan.zplayer.giveQuickTarget(actorMan.zenemy[closest_enemy[0]]);
-						actorMan.hudtarget.setDrawTarget(actorMan.zenemy[closest_enemy[0]]);
-					}
-					if (enemyTooFar[0] || actorMan.zenemy[closest_enemy[0]] == null) {
-						actorMan.zplayer.setTargetToNull();
-						actorMan.hudtarget.dontDraw();
-					}
-				}
-			} else {
-				if (targetIsDrone[1]) {
-					if (actorMan.drone[closest_enemy[1]] != null) {
-						actorMan.zplayer.giveQuickTarget(actorMan.drone[closest_enemy[1]]);
-						actorMan.hudtarget.setDrawTarget(actorMan.drone[closest_enemy[1]]);
-					}
-					if (enemyTooFar[0] || actorMan.drone[closest_enemy[1]] == null) {
-						actorMan.zplayer.setTargetToNull();
-						actorMan.hudtarget.dontDraw();
-					}
-				}else{
-					if (actorMan.zenemy[closest_enemy[1]] != null) {
-						actorMan.zplayer.giveQuickTarget(actorMan.zenemy[closest_enemy[1]]);
-						actorMan.hudtarget.setDrawTarget(actorMan.zenemy[closest_enemy[1]]);
-					}
-					if (enemyTooFar[1] || actorMan.zenemy[closest_enemy[1]] == null) {
-						actorMan.zplayer.setTargetToNull();
-						actorMan.hudtarget.dontDraw();
-					}
-				}
+			int checkVal = 0;
+			if (calcdist[0] > calcdist[1]) {
+				checkVal = 1;
+				
 			}
-		}
+				
+				if (targetIsDrone[checkVal]) {
+					if (actorMan.drone[closest_enemy[checkVal]] != null) {
+						actorMan.zplayer.giveQuickTarget(actorMan.drone[closest_enemy[checkVal]]);
+						actorMan.hudtarget.setDrawTarget(actorMan.drone[closest_enemy[checkVal]]);
+					}
+					if (enemyTooFar[checkVal] || actorMan.drone[closest_enemy[checkVal]] == null) {
+						actorMan.zplayer.setTargetToNull();
+						actorMan.hudtarget.dontDraw();
+					}
+				}else{
+					if (actorMan.zenemy[closest_enemy[checkVal]] != null) {
+						actorMan.zplayer.giveQuickTarget(actorMan.zenemy[closest_enemy[checkVal]]);
+						actorMan.hudtarget.setDrawTarget(actorMan.zenemy[closest_enemy[checkVal]]);
+					}
+					if (enemyTooFar[checkVal] || actorMan.zenemy[closest_enemy[checkVal]] == null) {
+						actorMan.zplayer.setTargetToNull();
+						actorMan.hudtarget.dontDraw();
+					}
+				}
+			} 
 	}
 	
 	public int loopcount = 0;

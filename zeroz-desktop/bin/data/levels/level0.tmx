@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="125" height="25" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="tilemapnew1" tilewidth="32" tileheight="32">
+  <image source="../tilemapnew1.png" trans="fe00fe" width="1024" height="1024"/>
+  <tile id="29">
+   <properties>
+    <property name="enemyspawn" value="drone"/>
+   </properties>
+  </tile>
+  <tile id="30">
+   <properties>
+    <property name="enemyspawn" value="paratrooper"/>
+   </properties>
+  </tile>
+  <tile id="31">
+   <properties>
+    <property name="enemyspawn" value="footsoldier"/>
+   </properties>
+  </tile>
+  <tile id="52">
+   <properties>
+    <property name="solid" value="solid"/>
+   </properties>
+  </tile>
+  <tile id="54">
+   <properties>
+    <property name="solid" value="solid"/>
+   </properties>
+  </tile>
+  <tile id="63">
+   <properties>
+    <property name="destroyable" value="1"/>
+   </properties>
+  </tile>
+  <tile id="64">
+   <properties>
+    <property name="solid" value="solid"/>
+   </properties>
+  </tile>
+  <tile id="87">
+   <properties>
+    <property name="solid" value="solid"/>
+   </properties>
+  </tile>
+  <tile id="94">
+   <properties>
+    <property name="item" value="health"/>
+   </properties>
+  </tile>
+  <tile id="95">
+   <properties>
+    <property name="door" value="1"/>
+   </properties>
+  </tile>
+  <tile id="126">
+   <properties>
+    <property name="playerstart" value=""/>
+   </properties>
+  </tile>
+  <tile id="127">
+   <properties>
+    <property name="destroyable" value="2"/>
+   </properties>
+  </tile>
+  <tile id="134">
+   <properties>
+    <property name="solid" value=""/>
+   </properties>
+  </tile>
+  <tile id="159">
+   <properties>
+    <property name="door" value="2"/>
+   </properties>
+  </tile>
+  <tile id="169">
+   <properties>
+    <property name="platform" value=""/>
+   </properties>
+  </tile>
+  <tile id="170">
+   <properties>
+    <property name="solid" value=""/>
+   </properties>
+  </tile>
+  <tile id="173">
+   <properties>
+    <property name="platform" value="platform"/>
+   </properties>
+  </tile>
+  <tile id="174">
+   <properties>
+    <property name="platform" value="platform"/>
+   </properties>
+  </tile>
+  <tile id="175">
+   <properties>
+    <property name="platform" value="platform"/>
+   </properties>
+  </tile>
+  <tile id="176">
+   <properties>
+    <property name="platform" value="platform"/>
+   </properties>
+  </tile>
+  <tile id="177">
+   <properties>
+    <property name="platform" value="platform"/>
+   </properties>
+  </tile>
+  <tile id="178">
+   <properties>
+    <property name="platform" value=""/>
+   </properties>
+  </tile>
+  <tile id="191">
+   <properties>
+    <property name="levelcomplete" value=""/>
+   </properties>
+  </tile>
+  <tile id="222">
+   <properties>
+    <property name="item" value="shotgun"/>
+   </properties>
+  </tile>
+  <tile id="256">
+   <properties>
+    <property name="solid" value="solid"/>
+   </properties>
+  </tile>
+  <tile id="257">
+   <properties>
+    <property name="solid" value="solid"/>
+   </properties>
+  </tile>
+  <tile id="258">
+   <properties>
+    <property name="solid" value="solid"/>
+   </properties>
+  </tile>
+  <tile id="264">
+   <properties>
+    <property name="solid" value="solid"/>
+   </properties>
+  </tile>
+  <tile id="265">
+   <properties>
+    <property name="solid" value=""/>
+   </properties>
+  </tile>
+  <tile id="266">
+   <properties>
+    <property name="solid" value=""/>
+   </properties>
+  </tile>
+  <tile id="267">
+   <properties>
+    <property name="solid" value=""/>
+   </properties>
+  </tile>
+  <tile id="268">
+   <properties>
+    <property name="solid" value=""/>
+   </properties>
+  </tile>
+  <tile id="269">
+   <properties>
+    <property name="solid" value=""/>
+   </properties>
+  </tile>
+  <tile id="270">
+   <properties>
+    <property name="solid" value=""/>
+   </properties>
+  </tile>
+  <tile id="307">
+   <properties>
+    <property name="ladder" value="ladder"/>
+   </properties>
+  </tile>
+  <tile id="339">
+   <properties>
+    <property name="ladder" value=""/>
+    <property name="platform" value=""/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer name="behind" width="125" height="25">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3WuwkAIAwFQHtXc/95bC38YKXGO0gR0gQehKQEAAAAAACslNMLAFfJgz43RSyzzHtz3ifzGHZ+OLf9P6PMiUvmAABwpwol4Zzh1DAAAA==
+  </data>
+ </layer>
+ <layer name="collision" width="125" height="25">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+2YP0sDMRjGrwpqrW5+FEX8HmpFN0UcxE0cXEXq4uDi4CqKKP7f3ESc3d2KQ+nkVzDBhL68fZK3uV7/XC8PPMS8Sc4398vdJU2SqKioqHyrVBp0BlH9VmRePEXmxVNkXjxF5sVTZF48RebFU1bM53K0dmyu78oVU46a0JxsLCvm8zlg3jTWueqynrTKUROak40h5mn45YF5WeU4rbysPKs8w0rrYdZZBzE7T+SKck31eSB+Tf7vCY3pdSE5D8y1NpNWrrMl7E7m20sj3Ss/KT8qv5i/n0lMlzVirW02b1vWknZxfrqfKxcdp/cxD5KYb4ExKIba7xztO8on4Dq8Ln1rvzwxzvLYcY1OmNtcJpQniafIuhwl5kdgDIqhdh/zG3AdXm8I/+fXE+MsrxzXCGGOlCfmfA/nYn4JxqIYavcxR9fhdc5cv9Nfjel73L7bX0xMt3OWn45c+sV8GM5DdA9XdvDudg8nMZckPech7/YQcX63yruOvog55dsE5loS6lmqkz1cGn14YtdJizla+zTWADG6t9N899h4tA5C1e1zXift/NxQIf0WSLuO8/pil/NwqRfMf4SYZV4H/WisQWJoP6+/3adsPPrGh2o/BXM7psz4lgxLaqtV5argtRReV97wzE9iTvNHa5b2ldp9/VxjbZyfG8ccHhfa0pwXZ1KOk86fK4a7y1UPN77mqA6FMXZ9Dvp8bvOXzub9VMhvBt3qwDhUKJ8LVnf9LpU1c1d+rj7DwnlQOjcOFbpnb6Af+k6Hfs978ZwXWVk+59+gXxbMpTx8z3Jk3a4smSOFMP8Di3EIgdQwAAA=
+  </data>
+ </layer>
+ <layer name="declayer" width="125" height="25">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3WsQmEQBAF0LUBL7GOa0XbMLEUe7KUC+1CBQMRLhDEWdz3YGA3+/AZmJQAAAAAAO7XVNEJgCvqdT77dMFZeMb39O9DUvCUrd9z57yfzsuTS+dTdIACbLdbm/K5237RAV5kOLztUt7mi/PPeHjbJQAASrUAGBJyBdQwAAA=
+  </data>
+ </layer>
+ <layer name="miscLayer" width="125" height="25">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3XzQnCMBiA4U6iHcUJ1AVKu4joKI7STbqKvQghVHtIzQf1eSCQQ35eckvTAAAAAMB3h+iAjR2jA9i1MTrgB04Fe/tk3pZlkHm/7RRaAUCqiw6gult0AJu4RwcAVaT/02lh/ljY8/xwVlues2qocMe/O8/jko1raBG5fn0JQYboAAB25wXZzUT71DAAAA==
+  </data>
+ </layer>
+ <layer name="top" width="125" height="25">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3OwQkAIAwAsU6mk3QUd7cr+JBCSeD+FwEAAAAA71a1q9M9AgAAMFx2DwAAAAB8dAG/hk551DAAAA==
+  </data>
+ </layer>
+</map>
