@@ -12,7 +12,7 @@ public class Weapon {
 	
 	//accuracy: higher=lessaccurate
 	//rateoffire: higher=slower
-	// 1 - Pistol, 2 - Uzi, 3 - Shotgun, 4 - Rifle, 5
+	// 1 - Sword, 2 - Uzi, 3 - Shotgun, 4 - Rifle, 5
 	
 	public int[] bulletspeedary = new int[]{100,50,50,3,4,5,6,7,8,9};
 	public int[] accuracyscatterary = new int[]{10,20,40,3,4,5,6,7,8,40};
@@ -20,7 +20,7 @@ public class Weapon {
 	public int[] shotsary = new int[]{1,1,5,3,4,5,6,7,8,12};
 	public int[] damageary =  new int[]{15,15,2,3,4,5,6,7,8,1};
 	public int[] rateoffiredelayary = new int[]{30,10,60,3,4,5,6,7,8,2};
-	public int[] lifetimeary = new int[]{4000,600,100,3,4,5,6,7,8,9};
+	public int[] lifetimeary = new int[]{5,600,100,3,4,5,6,7,8,9};
 	
 	public int bulletspeed = 0;
 	public int accuracyscatter = 0;
@@ -58,10 +58,8 @@ public class Weapon {
 	
 
 	public boolean shoot(){
-		
 		long timenow = System.currentTimeMillis();
 		long a = timenow - lasttimeshoot; 
-		//System.out.print(a + ",");
 		if (a > (rateoffiredelayary[weaponid] * 10)){
 			lasttimeshoot = System.currentTimeMillis();
 			return true;

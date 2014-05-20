@@ -16,7 +16,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
-import com.dazpetty.zeroz.managers.ActorManager;
+import com.dazpetty.zeroz.managers.EntityManager;
 import com.dazpetty.zeroz.managers.Assets;
 import com.dazpetty.zeroz.managers.LevelManager;
 import com.dazpetty.zeroz.managers.OrthoCamController;
@@ -60,7 +60,7 @@ public class WorldRenderer {
 	public OrthoCamController pcamcontroller;
 	
 	public World world;
-	public ActorManager actorMan;
+	public EntityManager actorMan;
 	public OrthogonalTiledMapRenderer renderer;
 	public WorldLogic worldLogic;
 	
@@ -71,7 +71,7 @@ public class WorldRenderer {
 	
 	ShapeRenderer sr = new ShapeRenderer();
 	
-	public WorldRenderer(OrthographicCamera camera, World world, ActorManager actorMan, LevelManager tm, WorldLogic worldLogic){
+	public WorldRenderer(OrthographicCamera camera, World world, EntityManager actorMan, LevelManager tm, WorldLogic worldLogic){
 		
 		
 		viewwidth = Gdx.graphics.getWidth();
@@ -350,7 +350,7 @@ public class WorldRenderer {
 		
 		displayControls();
 	
-		box2DRender(debugOn);
+		box2DRender(true);
 		camera.update();
 		
 		

@@ -40,7 +40,7 @@ import com.badlogic.gdx.physics.box2d.MassData;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
-import com.dazpetty.zeroz.entities.Actor;
+import com.dazpetty.zeroz.entities.HumanEntity;
 import com.dazpetty.zeroz.entities.CopterBoss;
 import com.dazpetty.zeroz.entities.Destroyable;
 import com.dazpetty.zeroz.entities.Door;
@@ -50,7 +50,7 @@ import com.dazpetty.zeroz.entities.HUDTarget;
 import com.dazpetty.zeroz.entities.HumanSprite;
 import com.dazpetty.zeroz.entities.Item;
 import com.dazpetty.zeroz.entities.Weapon;
-import com.dazpetty.zeroz.managers.ActorManager;
+import com.dazpetty.zeroz.managers.EntityManager;
 import com.dazpetty.zeroz.managers.Assets;
 import com.dazpetty.zeroz.managers.DazContactListener;
 import com.dazpetty.zeroz.managers.InputHandler;
@@ -116,7 +116,7 @@ public class GameScene implements Screen {
 	 */
 	//public HUDTarget hudtarget;
 
-	public ActorManager actorMan;
+	public EntityManager actorMan;
 	public WorldLogic worldLogic;
 	final ZerozGame game;
 	private OrthographicCamera camera;
@@ -127,7 +127,7 @@ public class GameScene implements Screen {
 	public LevelManager tm;
 	public Assets Assets;
 
-	private boolean showDebug = false;
+	private boolean showDebug = true;
 	public boolean debugOn = false;
 	
 	
@@ -149,7 +149,9 @@ public class GameScene implements Screen {
 		camera.update();
 
 		tm = new LevelManager(game.level, actorMan, world);
-		actorMan = new ActorManager(camera, world, tm);
+		
+		
+		actorMan = new EntityManager(camera, world, tm);
 		worldLogic = new WorldLogic(camera, actorMan, world, tm);
 		worldRenderer = new WorldRenderer(camera, world, actorMan, tm, worldLogic);
 		tm.buildLevel(actorMan);
@@ -165,7 +167,7 @@ public class GameScene implements Screen {
 		//camera = worldLogic.camera;
 		
 	//	}
-		showDebugInfo(showDebug);
+		showDebugInfo(true);
 		worldLogic.update();
 		worldRenderer.Render();
 		

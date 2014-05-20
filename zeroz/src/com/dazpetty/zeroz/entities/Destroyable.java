@@ -31,6 +31,7 @@ public class Destroyable {
 	public float width = 1.25f;
 	public TextureRegion textureRegion = null;
 	public boolean isFriendly = true;
+	public boolean isAI = true;
 	public Sprite sprite;
 	public Sprite spritedest;
 	
@@ -38,7 +39,9 @@ public class Destroyable {
 	public Body body;
 	public FixtureDef fixtureDef;
 	public boolean isAlive;
-	public int keyValue;
+	public int id = 0;
+	
+	public int health = 50;
 	
 
 
@@ -48,9 +51,9 @@ public class Destroyable {
 		sprite = spritedest;
 	}
 	
-	public Destroyable(int x, int y, int value, World world){
+	public Destroyable(int x, int y, int id, World world){
 		
-		keyValue = value;
+		this.id = id;
 		texture = new Texture(("data/gfx/objects/keyfuse.png"));
 		texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		
@@ -81,10 +84,19 @@ public class Destroyable {
 	    PolygonShape pBox = new PolygonShape();
 	    pBox.setAsBox(0.5f, 1f);
 	    
-	    body.setUserData(value);
+	    body.setUserData(this);
 	    fixtureDef.shape = pBox;
     	fixtureDef.filter.categoryBits = 2;
 	    Fixture fixture = body.createFixture(fixtureDef);
 	    fixture.setUserData("destroyable");
+	}
+
+	public void damageDestroyable(float damage) {
+		// TODO Auto-generated method stub
+		health -= damage;
+		if (health < 0){
+			Destroy();
+		}
+		
 	}
 }

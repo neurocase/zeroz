@@ -29,10 +29,11 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.dazpetty.zeroz.managers.ActorManager;
+import com.dazpetty.zeroz.managers.EntityManager;
 import com.dazpetty.zeroz.managers.GamePhysics;
 import com.dazpetty.zeroz.managers.ProjectileManager;
 import com.dazpetty.zeroz.managers.LevelManager;
+import com.dazpetty.zeroz.managers.prin;
 
 /*
  * Zactor: Zactor is the Actor class, all game entities which move are actors,
@@ -41,7 +42,7 @@ import com.dazpetty.zeroz.managers.LevelManager;
  * 		Moving
  * 
  */
-public class Actor {
+public class HumanEntity {
 	/*
 	 * BOOLEANS
 	 */
@@ -168,6 +169,7 @@ public class Actor {
 	/*
 	 * AI's VARIABLES
 	 */
+	public int id = 0;
 	public boolean isJumpy = false;
 	public float shootDist = 4;
 	float relativetoplayerx = 0;
@@ -213,11 +215,11 @@ public class Actor {
 		}
 	}
 
-	public Actor(Camera scam, World world, boolean amAI,
+	public HumanEntity(Camera scam, World world, boolean amAI,
 			LevelManager newtm, Vector2 actorstart, int id,
-			ActorManager actorMan,
+			EntityManager actorMan,
 			String actorType) {
-		
+		this.id = id;
 		tm = newtm;
 
 		isLevelScrolling = tm.isLevelScrolling;
@@ -245,7 +247,7 @@ public class Actor {
 		isAI = amAI;
 		this.world = world;
 
-		body.setUserData(id);
+		body.setUserData(this);
 
 		fixtureDef = new FixtureDef();
 		PolygonShape pBox = new PolygonShape();
@@ -565,9 +567,7 @@ public class Actor {
 			isShooting = true;
 		}
 
-		if (health <= 0) {
-			isAlive = false;
-		}
+	
 
 		if (state == "run" || state == "ladderclimb" || state == "runback"
 				|| state == "crouch" || state == "crouchback" || isDead) {
@@ -714,7 +714,7 @@ public class Actor {
 	 */
 	public float distanceFromPlayer = 0;
 
-	public void updateAI(Actor zplayer) {
+	public void updateAI(HumanEntity zplayer) {
 		// attemptShoot(0);
 		if (isAlive && zplayer.isAlive) {
 			isAI = true;
@@ -748,9 +748,21 @@ public class Actor {
 			}
 		}
 	}
+	
+	public void PickUp(Item item){
+		//if (item != null){
+			prin.t("pickingup " + item.itemType);
+		//}
+	}
 
-	public void takeDamage(int i) {
-		health -= i;
+	public void takeDamage(float damage) {
+		health -= damage;
+		if (health <= 0) {
+			isAlive = false;
+			body.setActive(false);
+			body.setAwake(false);
+			isOnLadder = false;
+		}
 	}
 
 	public void dispose() {
@@ -768,7 +780,7 @@ public class Actor {
 	float distanceFromTarget = 0;
 	private boolean targetIsNull = false;
 
-	public void giveQuickTarget(Actor ztarget) {
+	public void giveQuickTarget(HumanEntity ztarget) {
 		float relativetoplayerx = ztarget.worldpos.x - worldpos.x;
 		float relativetoplayery = ztarget.worldpos.y - worldpos.y;
 		targetIsNull = false;

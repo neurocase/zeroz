@@ -3,11 +3,11 @@ package com.dazpetty.zeroz.managers;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
-import com.dazpetty.zeroz.entities.Actor;
+import com.dazpetty.zeroz.entities.HumanEntity;
 
 public class GamePhysics {
 		
-	public void doPhysics(Actor zact) {
+	public void doPhysics(HumanEntity zact) {
 
 		if (zact.tm != null){
 			float oldposx = zact.worldpos.x, oldposy = zact.worldpos.y;

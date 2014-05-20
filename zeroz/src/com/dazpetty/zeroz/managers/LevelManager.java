@@ -50,10 +50,10 @@ public class LevelManager {
 	
 	public boolean isLevelComplete = false;
 	
-	public ActorManager actorMan;
+	public EntityManager actorMan;
 	public World world;
 	
-	public LevelManager(int level, ActorManager actorMan, World world){
+	public LevelManager(int level, EntityManager actorMan, World world){
 		this.actorMan = actorMan;
 		this.world = world;
 		
@@ -156,6 +156,12 @@ public class LevelManager {
 		return Integer.parseInt(value);
 	}
 	
+	
+	
+	
+	
+	
+	
 	public boolean isCellBlocked(float x, float y, boolean isActorLooking) {
 		Cell cell = collisionLayer.getCell((int) (x), (int) (y));
 		if ((isCellDoor(x,y) || isCellDoor(x,y+1))&& isActorLooking){
@@ -184,7 +190,7 @@ public class LevelManager {
 	}
 	
 	
-	public void buildLevel(ActorManager actorMan){
+	public void buildLevel(EntityManager actorMan){
 		this.actorMan = actorMan;
 		for (int h = 0; h < collisionLayer.getHeight(); h++) {
 			for (int w = 0; w < collisionLayer.getWidth(); w++) {
@@ -202,6 +208,7 @@ public class LevelManager {
 					PolygonShape groundBox = new PolygonShape();
 					groundBox.setAsBox(c * 0.5f, 0.5f);
 					groundBody.createFixture(groundBox, 0.0f);
+					groundBody.setUserData("solid");
 					FixtureDef fixtureDef = new FixtureDef();
 					fixtureDef.shape = groundBox;
 					fixtureDef.filter.categoryBits = 2;
@@ -223,6 +230,7 @@ public class LevelManager {
 					PolygonShape groundBox = new PolygonShape();
 					groundBox.setAsBox(c * 0.5f, 0.2f);
 					groundBody.createFixture(groundBox, 0.0f);
+					groundBody.setUserData("platform");
 					FixtureDef fixtureDef = new FixtureDef();
 					fixtureDef.shape = groundBox;
 					fixtureDef.filter.categoryBits = 1;

@@ -33,8 +33,15 @@ public class Projectile implements Poolable {
 	public long lifetime = 4500;
 	public Weapon weapon;
 	
+	
+	public HumanEntity parentEntity;
+	
 	public float speed = 25;
 	
+	
+	public boolean isAI(){
+		return parentEntity.isAI;
+	}
 	
 	public void killProj(){
 		isDead = true;
@@ -48,13 +55,14 @@ public class Projectile implements Poolable {
 		if (nowtime - spawntime > weapon.lifetime) killProj(); 
 	}
 	
-	public void reUseProjectile(Actor act, float angle,  Weapon newweapon){
-		
+	public void reUseProjectile(HumanEntity parentEntity, float angle,  Weapon newweapon){
+		this.parentEntity = parentEntity;
 		weapon = newweapon;
 		speed = weapon.bulletspeed;
 		spawntime = System.currentTimeMillis();
 		killProj();
-		setupFixture(act.isAI);
+		setupFixture(parentEntity.isAI);
+		
 		isAlive = true;
 		isDead = false;
 		
@@ -71,22 +79,24 @@ public class Projectile implements Poolable {
 		float vely = (float) (speed * Math.sin(rad));
 		
 		projsprite.setRotation(angle);
-		body.setTransform(act.worldpos.x, act.worldpos.y+1, angle);
+		body.setTransform(parentEntity.worldpos.x, parentEntity.worldpos.y+1, angle);
 		body.setLinearVelocity(velx,vely);
 	}
 	
-	public Projectile(Actor act, World world, int id, float angle,  Weapon newweapon) {
+	public Projectile(HumanEntity he, World world, int id, float angle,  Weapon newweapon) {
+		
+		this.id = id;
 		weapon = newweapon;
 		speed = weapon.bulletspeed;
 		bodyDef.type = BodyType.DynamicBody;  
 		body = world.createBody(bodyDef);  
-		bodyDef.position.set(act.worldpos.x, act.worldpos.y);  
+		bodyDef.position.set(he.worldpos.x, he.worldpos.y);  
 		isAlive = true;
 		isDead = false;
 		
 		body.setGravityScale(0);
 		int str = id;
-		body.setUserData(str);
+		body.setUserData(this);
 		body.setBullet(true);
 		//bodyDef.
 		rad = (float) Math.toRadians(angle);
@@ -105,11 +115,11 @@ public class Projectile implements Poolable {
 		fixtureDef = new FixtureDef(); 
 	    dynamicCircle = new CircleShape();  
 	    projsprite.setRotation(angle);
-	    body.setTransform(act.worldpos.x, act.worldpos.y+1, angle);
+	    body.setTransform(he.worldpos.x, he.worldpos.y+1, angle);
 	    body.setLinearVelocity(velx,vely);
 	    
 	    dynamicCircle.setRadius(0.2f);  
-	    setupFixture(act.isAI);
+	    setupFixture(he.isAI);
 	}
 	
 	public void setupFixture(boolean isAI){

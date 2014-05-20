@@ -159,7 +159,7 @@ public class Drone {
 	
 	
 	public float rotation = 0;  
-	public void update(Actor zplayer){
+	public void update(HumanEntity zplayer){
 		
 		
 		body.setTransform(worldpos.x+bodyOffset.x, worldpos.y+bodyOffset.y, 0);
@@ -251,6 +251,21 @@ public class Drone {
 	
 	public void dispose(){
 		textureAtlas.dispose();
+	}
+
+	public void takeDamage(float damage) {
+		health -= damage;
+		if (health < 1){
+			killDrone();
+		}
+		
+	}
+
+	private void killDrone() {
+		body.setActive(false);
+    	body.setAwake(false);
+    	isDead = true;
+    	isAlive = false;
 	}
 	
 }

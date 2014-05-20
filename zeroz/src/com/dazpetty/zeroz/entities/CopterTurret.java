@@ -33,7 +33,8 @@ public class CopterTurret {
 	public FixtureDef fixtureDef;
 	public CircleShape dynamicCircle;
 	public float posMult = 0;
-	
+	public boolean isAI = true;
+	public int health = 50;
 	
 	
 	
@@ -58,22 +59,20 @@ public class CopterTurret {
 		barrelSprite.setSize(2, 4);
 		barrelSprite.setOrigin(barrelSprite.getWidth()/2,barrelSprite.getHeight()/2);
 		
-		bodyDef.position.set(worldpos.x+0.5f, worldpos.y+1f);
+	    bodyDef.position.set(worldpos.x+0.5f, worldpos.y+1f);
 		bodyDef.gravityScale = 0;
-		
 		body = world.createBody(bodyDef); 
-		body.setUserData(id);
 		
 		fixtureDef = new FixtureDef(); 
 		fixtureDef.isSensor = true;
-		
-		dynamicCircle = new CircleShape(); 
-		dynamicCircle.setRadius(0.7f);  
-	    fixtureDef.shape = dynamicCircle;  
-    	fixtureDef.filter.categoryBits = 2;
+	    PolygonShape pBox = new PolygonShape();
+	    pBox.setAsBox(0.5f, 1f);
 	    
+	    body.setUserData(this);
+	    fixtureDef.shape = pBox;
+    	fixtureDef.filter.categoryBits = 2;
 	    Fixture fixture = body.createFixture(fixtureDef);
-	    fixture.setUserData("copterturret");
+	    fixture.setUserData("destroyable");
 		
 	}
 	
@@ -109,5 +108,17 @@ public class CopterTurret {
 		barrelSprite.rotate(angle);
 		//body.setTransform(x+(copterBoss.bossSprite.getWidth()/2)+xadj, (float) (y+(relativeY)+1.35),0);
 		body.setTransform(xpos+0.7f, ypos+0.7f,0);
+	}
+
+	public void takeDamage(float damage) {
+		health -= damage;
+		if (health < 0){
+			Destroy();
+		}
+	}
+
+	private void Destroy() {
+		isAlive = false;
+		body.setActive(false);	
 	}
 }

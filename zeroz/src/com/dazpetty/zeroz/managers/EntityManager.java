@@ -6,7 +6,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
-import com.dazpetty.zeroz.entities.Actor;
+import com.dazpetty.zeroz.entities.CopterTurret;
+import com.dazpetty.zeroz.entities.HumanEntity;
 import com.dazpetty.zeroz.entities.CopterBoss;
 import com.dazpetty.zeroz.entities.Destroyable;
 import com.dazpetty.zeroz.entities.Door;
@@ -15,9 +16,10 @@ import com.dazpetty.zeroz.entities.EnemySpawner;
 import com.dazpetty.zeroz.entities.HUDTarget;
 import com.dazpetty.zeroz.entities.HumanSprite;
 import com.dazpetty.zeroz.entities.Item;
+import com.dazpetty.zeroz.entities.Projectile;
 import com.dazpetty.zeroz.entities.Weapon;
 
-public class ActorManager {
+public class EntityManager {
 
 	public final int ENEMY_LIMIT = 10;
 	public final int ENEMY_SPAWN_LIMIT = 20;
@@ -41,7 +43,7 @@ public class ActorManager {
 	public CopterBoss copterBoss;// = new CopterBoss();
 	
 	public EnemySpawner enemyspawner[] = new EnemySpawner[ENEMY_SPAWN_LIMIT];
-	public Actor[] zenemy = new Actor[ENEMY_LIMIT];
+	public HumanEntity[] zenemy = new HumanEntity[ENEMY_LIMIT];
 	public Destroyable[] destroyable = new Destroyable[DESTROYABLE_LIMIT];
 	public Door[] door = new Door[DOOR_LIMIT];
 	public Item[] item = new Item[ITEM_LIMIT];
@@ -49,7 +51,7 @@ public class ActorManager {
 	
 	public HumanSprite humanSprite = new HumanSprite();
 	
-	public Actor zplayer;
+	public HumanEntity zplayer;
 	
 	public OrthographicCamera camera;
 	public World world;
@@ -57,18 +59,35 @@ public class ActorManager {
 	public LevelManager tm;
 	
 	public DazContactListener cl;
+	public ContactHandler ch;
 	
-	public ActorManager(OrthographicCamera camera, World world, LevelManager tm){
+	public EntityManager(OrthographicCamera camera, World world, LevelManager tm){
 		this.camera = camera;
 		this.world = world;
 		this.tm = tm; 
 		hudtarget = new HUDTarget();
 		
-		cl = new DazContactListener();
+		ch = new ContactHandler();
+		cl = new DazContactListener(ch);
 		world.setContactListener(cl);
 	}
 	
-	
+	public void print(String str){
+		System.out.print(str);
+	}
+	public int item_poll = 0;
+	public Item itemAtLoc(Vector2 vec){
+		item_poll++;
+		if (item_poll >= item.length) item_poll = 0;
+			if (item[item_poll] != null){
+				if (Math.abs(item[item_poll].worldpos.x - vec.x) < 2){
+					if (Math.abs(item[item_poll].worldpos.y - vec.y) < 2){			
+						return item[item_poll];
+				}
+		 	}
+		 }
+		return null;
+	}
 	
 	public void createActor(int s, EnemySpawner es) {
 		Vector2 startpos = new Vector2(0, 0);
@@ -78,7 +97,7 @@ public class ActorManager {
 		long timenow = System.currentTimeMillis();
 		
 		if (s == 1) {
-			zplayer = new Actor(camera, world, false, tm, tm.playerstart, -1,
+			zplayer = new HumanEntity(camera, world, false, tm, tm.playerstart, -1,
 					this, "player");
 		}
 		if (s == 2) {
@@ -106,7 +125,7 @@ public class ActorManager {
 						 * I HAVE NO IDEA WHY I NEED TO PASS zplayer.tm INSTEAD OF
 						 * tm, BUT IT WONT WORK OTHERWISE.
 						 */
-						zenemy[enemycount] = new Actor(camera, world, true,
+						zenemy[enemycount] = new HumanEntity(camera, world, true,
 								tm, startpos, enemycount, 
 								 this, es.enemyType);
 					}
@@ -135,7 +154,7 @@ public class ActorManager {
 							 * I HAVE NO IDEA WHY I NEED TO PASS zplayer.tm INSTEAD OF
 							 * tm, BUT IT WONT WORK OTHERWISE.
 							 */
-							zenemy[enemycount] = new Actor(camera, world, true,
+							zenemy[enemycount] = new HumanEntity(camera, world, true,
 									tm, startpos, enemycount, 
 									 this, es.enemyType);
 						}
@@ -149,7 +168,6 @@ public class ActorManager {
 				
 			}else if (es.enemyType.equals("drone")){
 				
-				//long a = timenow - es.lasttimespawn;
 				if (es.attemptSpawn(timenow)
 						&& (drone[dronecount] == null
 								|| drone[dronecount].isAlive == false )){//|| drone[dronecount].isDisposed)) {
@@ -180,152 +198,70 @@ public class ActorManager {
 		
 	}
 	
-	public void clearBodies(){
-		
+	public void checkBodies(){
+
 		/*
 		 * DEACTIVATE DOORS, ENEMIES AND DESTROYED OBJECTS
 		 */
-	//	if (pollCheck(10)){
-			
-			
-			Array<Body> projbodies = cl.getBodies();
-			for (int i = 0; i < projbodies.size; i++) {
-				Body b = projbodies.get(i);
-				System.out.println("Destroying Proj:" + b.getUserData());
-				projMan.KillProjectile((Integer) b.getUserData());
+		float damage = zplayer.weapon.damage;
+		Array<HumanEntity> enemiesToDamage = ch.getEnemiesToDamage();
+		if (enemiesToDamage != null){
+			for (int i = 0; i < enemiesToDamage.size; i++){
+				HumanEntity he = (HumanEntity) enemiesToDamage.get(i);
+				prin.t("AI: " + he.id + " takes " + zplayer.weapon.damage + " damage.");
+				he.takeDamage(damage);
 			}
-			projbodies.clear();
-			Array<Body> aiprojbodies = cl.getAiBodies();
-			for (int i = 0; i < aiprojbodies.size; i++) {
-				Body b = aiprojbodies.get(i);
-				System.out.println("Destroying Ai Proj:" + b.getUserData());
-				aiProjMan
-						.KillProjectile((Integer) b.getUserData());
-				if (cl.DamagePlayer()) {
-					zplayer.takeDamage(5);
-				}
+		}
+		
+		Array<Projectile> projToRemove = ch.getProjToRemove();
+		if (projToRemove != null){
+			for (int i = 0; i < projToRemove.size; i++){
+				Projectile proj = (Projectile) projToRemove.get(i);
+				prin.t("Kill Projectile:" + proj.id);
+				proj.killProj();
 			}
-			aiprojbodies.clear();
-	
-			Array<Body> enemybodies = cl.getEnemies();
-			for (int i = 0; i < enemybodies.size; i++) {
-				Body b = enemybodies.get(i);
-				int t = (Integer) b.getUserData();
-				System.out.println("Destroying Enemy:" + b.getUserData());
-				zenemy[t].isAlive = false;
-				zenemy[t].body.setActive(false);
-			}
-			enemybodies.clear();	
-			Array<Body> itembodies = cl.getItems();
-			for (int i = 0; i < itembodies.size; i++) {
-				Body b = itembodies.get(i);
-				int t = (Integer) b.getUserData();
-				System.out.println("Destroying Item :" + b.getUserData());
-				if (item[t].isAlive) {
-					if (item[t].itemType.equalsIgnoreCase("health")){
-						zplayer.health += item[t].addHealth;
-						item[t].isAlive = false;
-						item[t].body.setActive(false);
-						if (zplayer.health > 150) {
-							zplayer.health = 150;
-						}
-					}
-					if (item[t].itemType.equals("shotgun")){// && zplayer.isCrouching){
-						System.out.println("PICKING UP SHOTGUN");
-						System.out.println("PICKING UP SHOTGUN");
-						System.out.println("PICKING UP SHOTGUN");
-						item[t] = new Item(item[t].worldpos.x, item[t].worldpos.y, t, "uzi", world);
-						zplayer.weapon.setWeapon(1);
-						//item[t].isAlive = false;
-						//item[t].body.setActive(false);
-					}else if (item[t].itemType.equals("uzi")){// && zplayer.isCrouching){
-						System.out.println("PICKING UP UZI");
-						System.out.println("PICKING UP UZI");
-						System.out.println("PICKING UP UZI");
-						item[t] = new Item(item[t].worldpos.x, item[t].worldpos.y, t, "shotgun", world);
-						zplayer.weapon.setWeapon(2);
-						//item[t].isAlive = false;
-						//item[t].body.setActive(false);
-					}else{
-						//wtfc();
-					}
-				}else{
-					
-				}
-			}
-			itembodies.clear();
-	
-			Array<Body> dronebodies = cl.getDrones();
-			for (int i = 0; i < dronebodies.size; i++) {
-				Body b = dronebodies.get(i);
-				int t = (Integer) b.getUserData();
-				System.out.println("Destroying Drone :" + b.getUserData());
-				if (drone[t].isAlive && drone[t] != null) {
-					drone[t].isAlive = false;
-					drone[t].body.setActive(false);
-				}
-			}
-			dronebodies.clear();
-			
-			Array<Body> turretbodies = cl.getCopterTurret();
-			for (int i = 0; i < turretbodies.size; i++) {
-				Body b = turretbodies.get(i);
-				int t = (Integer) b.getUserData();
-				System.out.println("Destroying Turret :" + b.getUserData());
-				//Seems to be a bug here, or in the contact listener, where a body of
-				// value over array limit will return
-				if (t < copterBoss.TURRET_LIMIT){
-					if (copterBoss.copterTurret[t] != null){
-						if (copterBoss.copterTurret[t].isAlive && t <= turretbodies.size) {
-							copterBoss.copterTurret[t].isAlive = false;
-							copterBoss.copterTurret[t].body.setActive(false);
+		}
+		
+		
+		Array<Destroyable> destroyablesToDamage = ch.getDestroyablesToDamage();
+		if (destroyablesToDamage != null){
+			for (int i = 0; i < destroyablesToDamage.size; i++){
+				Destroyable dest = (Destroyable) destroyablesToDamage.get(i);
+				prin.t("Damaging Destroyable "+ dest.id);
+				dest.damageDestroyable(damage);
+				int killKeyValue = dest.id;
+				zplayer.tm.keys[killKeyValue] = true;
+				for (int j = 0; j < DOOR_LIMIT; j++) {
+					if (door[j] != null) {
+						if (zplayer.tm.keys[door[j].keyValue]) {
+							door[j].openDoor();
 						}
 					}
 				}
 			}
-			turretbodies.clear();
-	
-			int killKeyValue = 0;
-			Array<Body> destroybodies = cl.getDestroyables();
-			for (int i = 0; i < destroybodies.size; i++) {
-				Body b = destroybodies.get(i);
-				int t = (Integer) b.getUserData();
-				System.out.println("Destroying Destroyable:" + b.getUserData()
-						+ "at Address:" + t);
-				if (destroyable[t] != null) {
-					destroyable[t].isAlive = false;
-					destroyable[t].body.setActive(false);
-					destroyable[t].Destroy();
-					killKeyValue = destroyable[t].keyValue;
-					zplayer.tm.keys[killKeyValue] = true;
-					for (int j = 0; j < DOOR_LIMIT; j++) {
-						if (door[j] != null) {
-							if (zplayer.tm.keys[door[j].keyValue]) {
-								door[j].openDoor();
-							}
-						}
-					}
-				} else {
-					System.out.println("is NULL, destroyable.length ="
-							+ destroyable.length);
-				}
+		}
+		
+		Array<Drone> droneToDamage = ch.getDronesToDamage();
+		if (droneToDamage != null){
+			for (int i = 0; i< droneToDamage.size; i++){
+				Drone drone = (Drone) droneToDamage.get(i);
+				drone.takeDamage(damage);
 			}
-			destroybodies.clear();
+		}
+		
+		Array<CopterTurret> copterTurretToDamage = ch.getCopterTurretToDamage();
+		if (copterTurretToDamage != null){
+			for (int i = 0; i < copterTurretToDamage.size; i++){
+				CopterTurret tur = (CopterTurret) copterTurretToDamage.get(i);
+				tur.takeDamage(damage);
+			}
+		}
+		
+		ch.clearCollisions();
+
 		}
 		
 	
-
-	
-	
-	
-	
-	
-	
-	
-	
-
-
-
 	public void dispose(){
 		for (int i = 0; i < ENEMY_LIMIT; i++) {
 			zenemy[i].dispose();

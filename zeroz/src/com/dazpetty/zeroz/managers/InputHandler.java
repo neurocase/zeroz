@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.dazpetty.zeroz.core.GameScene;
-import com.dazpetty.zeroz.entities.Actor;
+import com.dazpetty.zeroz.entities.HumanEntity;
 
 public class InputHandler {
 /*
@@ -27,7 +27,7 @@ public class InputHandler {
 	float viewwidth;
 	float viewheight;
 	Camera camera;
-	Actor zplayer;
+	HumanEntity zplayer;
 	Vector3 aimlessVec = new Vector3(0, 0, 1);
 	public GameScene game;
 	
@@ -47,7 +47,7 @@ public class InputHandler {
 	float tshoot = 0.80f;
 	float touchAreaHeight = 96;
 	
-	public void LoadInputHandler(float viewwidthin, float viewheightin, Camera camerain, Actor zplayerin){
+	public void LoadInputHandler(float viewwidthin, float viewheightin, Camera camerain, HumanEntity zplayerin){
 		viewwidth = viewwidthin;
 		viewheight = viewheightin;
 		camera = camerain;
