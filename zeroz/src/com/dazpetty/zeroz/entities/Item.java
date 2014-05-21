@@ -35,8 +35,6 @@ public class Item {
 	public int itemWeaponNumber = 0;
 	
 	public void removeItem(){
-		body.setAwake(false);
-		body.setActive(false);
 		isAlive = false;
 	}
 	
@@ -48,40 +46,34 @@ public class Item {
 	
 	
 	public void dropWeapon(int weaponid){
-		switch (weaponid) {
-			case 1:
-				itemType = "uzi";
-				break;
-			case 2:
-				itemType = "shotgun";
-				break;
-			default:
-		}
 		
 		TextureRegion itemTexReg = new TextureRegion(texture,
 				0, 0, 64, 64);
 		
-		if(itemType.equals("shotgun")){
-			texture = new Texture(
-					Gdx.files.internal("data/gfx/items/shotgun.png"));
-			texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);	
-			itemTexReg = new TextureRegion(texture,
-					0, 0, 128, 32);
-			isWeapon = true;
+		switch (weaponid) {
+			case 1:
+				itemType = "uzi";
+				itemWeaponNumber = 1;
+				texture = new Texture(
+						Gdx.files.internal("data/gfx/items/uzi.png"));
+				texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);	
+				itemTexReg = new TextureRegion(texture,
+						0, 0, 128, 32);
+				isWeapon = true;
+				break;
+			case 2:
+				itemType = "shotgun";
+				itemWeaponNumber = 2;
+				texture = new Texture(
+						Gdx.files.internal("data/gfx/items/shotgun.png"));
+				texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);	
+				itemTexReg = new TextureRegion(texture,
+						0, 0, 128, 32);
+				isWeapon = true;
+				break;
+			default:
 		}
 
-		if(itemType.equals("uzi")){
-			texture = new Texture(
-					Gdx.files.internal("data/gfx/items/uzi.png"));
-			texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);	
-			itemTexReg = new TextureRegion(texture,
-					0, 0, 128, 32);
-			isWeapon = true;
-		}
-		
-
-
-		
 		sprite = new Sprite(itemTexReg);
 		if(itemType.equals("shotgun") || itemType.equals("uzi")){
 			sprite.setSize(1.5f, 0.5f);
@@ -94,10 +86,13 @@ public class Item {
 	}
 	
 	public String itemType = "";
+	public int id = 0;
+	
 	public Item(float x, float y, int id, String itemType ,World world){
 		/*
 		 *  HEALTH ITEM
 		 */	
+		this.id = id;
 		this.itemType = itemType;
 		
 		worldpos = new Vector2(x,y);
@@ -108,6 +103,7 @@ public class Item {
 				0, 0, 64, 64);
 		
 		if(itemType.equals("shotgun")){
+			itemWeaponNumber = 2;
 			texture = new Texture(
 					Gdx.files.internal("data/gfx/items/shotgun.png"));
 			texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);	
@@ -117,6 +113,7 @@ public class Item {
 		}
 
 		if(itemType.equals("uzi")){
+			itemWeaponNumber = 1;
 			texture = new Texture(
 					Gdx.files.internal("data/gfx/items/uzi.png"));
 			texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);	
@@ -143,8 +140,7 @@ public class Item {
 	public void Pickup(HumanEntity zplayer) {
 		if (isWeapon){
 			int holdId = zplayer.weapon.weaponid;
-			zplayer.weapon.weaponid = itemWeaponNumber;
-			itemWeaponNumber = holdId;
+			zplayer.weapon.giveWeapon(this);
 			dropWeapon(holdId);
 		}
 	}

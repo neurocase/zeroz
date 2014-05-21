@@ -199,11 +199,14 @@ public class HumanEntity {
 				
 					weapon.lasttimeshoot = System.currentTimeMillis();
 				for (int i = 0; i < weapon.shots; i++){
+					
+					prin.t("shooting, " + weapon.WeaponName + "," + weapon.shots + " shots, weaponid: " + weapon.weaponid);
 					projMan.activeproj++;
 					if (projMan.activeproj == projMan.PROJECTILE_LIMIT - 1)
 						projMan.activeproj = 0;
-					//float speed = 25;
-	
+
+			
+					
 					if (projMan.proj[projMan.activeproj] == null) {
 						projMan.proj[projMan.activeproj] = new Projectile(this,
 								world, projMan.activeproj, ang,  weapon);
@@ -693,25 +696,6 @@ public class HumanEntity {
 		aimingAt.y = 0;
 	}
 
-	/*
-	 * public void shoot(){ if (isAlive && weapon.shoot()){ RayCastCallback
-	 * callback = new RayCastCallback() {
-	 * 
-	 * @Override public float reportRayFixture(Fixture fixture, Vector2 point,
-	 * Vector2 normal, float fraction) { collision.set(point);
-	 * Actor.this.normal.set(normal).add(point); return 0; } };
-	 * 
-	 * for (int i = 0; i < weapon.shots[weapon.weaponid]; i++){ float
-	 * scatterbullets = (float) (Math.random() *
-	 * weapon.accuracyscatter[weapon.weaponid]
-	 * -(weapon.accuracyscatter[weapon.weaponid]/2)); p1.x = worldpos.x; p1.y =
-	 * worldpos.y+1.75f; //float newy = p1.y + 1;
-	 * 
-	 * float ifCrouch = 0;
-	 * 
-	 * if (isCrouching){ ifCrouch = -0.7f; } if (activeBullet == 100) {
-	 * activeBullet = 0; } world.rayCast(callback, p1,p2); activeBullet++; } } }
-	 */
 	public float distanceFromPlayer = 0;
 
 	public void updateAI(HumanEntity zplayer) {
@@ -749,12 +733,6 @@ public class HumanEntity {
 		}
 	}
 	
-	public void PickUp(Item item){
-		//if (item != null){
-			prin.t("pickingup " + item.itemType);
-		//}
-	}
-
 	public void takeDamage(float damage) {
 		health -= damage;
 		if (health <= 0) {

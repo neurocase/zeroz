@@ -83,14 +83,14 @@ public class Projectile implements Poolable {
 		body.setLinearVelocity(velx,vely);
 	}
 	
-	public Projectile(HumanEntity he, World world, int id, float angle,  Weapon newweapon) {
+	public Projectile(HumanEntity parentEntity, World world, int id, float angle,  Weapon weapon) {
 		
 		this.id = id;
-		weapon = newweapon;
+		this.weapon = weapon;
 		speed = weapon.bulletspeed;
 		bodyDef.type = BodyType.DynamicBody;  
 		body = world.createBody(bodyDef);  
-		bodyDef.position.set(he.worldpos.x, he.worldpos.y);  
+		bodyDef.position.set(parentEntity.worldpos.x, parentEntity.worldpos.y);  
 		isAlive = true;
 		isDead = false;
 		
@@ -99,9 +99,9 @@ public class Projectile implements Poolable {
 		body.setUserData(this);
 		body.setBullet(true);
 		//bodyDef.
-		rad = (float) Math.toRadians(angle);
+		/*rad = (float) Math.toRadians(angle);
 		float velx = (float) (speed * Math.cos(rad));
-		float vely = (float) (speed * Math.sin(rad));
+		float vely = (float) (speed * Math.sin(rad));*/
 		
 		projtex = new Texture(Gdx.files.internal("data/gfx/effects/bullet2.png"));
 		projtex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
@@ -114,12 +114,13 @@ public class Projectile implements Poolable {
 		projsprite.setPosition(0f, 0f);
 		fixtureDef = new FixtureDef(); 
 	    dynamicCircle = new CircleShape();  
-	    projsprite.setRotation(angle);
+	   /* projsprite.setRotation(angle);
 	    body.setTransform(he.worldpos.x, he.worldpos.y+1, angle);
-	    body.setLinearVelocity(velx,vely);
+	    body.setLinearVelocity(velx,vely);*/
 	    
 	    dynamicCircle.setRadius(0.2f);  
-	    setupFixture(he.isAI);
+	   // setupFixture(parentEntity.isAI);
+	    reUseProjectile(parentEntity, angle,  weapon);
 	}
 	
 	public void setupFixture(boolean isAI){

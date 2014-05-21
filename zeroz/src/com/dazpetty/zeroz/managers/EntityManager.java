@@ -269,5 +269,22 @@ public class EntityManager {
 		humanSprite.dispose();
 		zplayer.dispose();
 	}
+
+	public void Pickup(Item pickUpItem) {
+		prin.t("player picking up " + pickUpItem.itemType);
+		if (pickUpItem.isWeapon){
+			int holdId = zplayer.weapon.weaponid;
+			zplayer.weapon.weaponid = pickUpItem.itemWeaponNumber;
+			pickUpItem.itemWeaponNumber = holdId;
+			pickUpItem.dropWeapon(holdId);
+		}else{
+			if (pickUpItem.itemType.equals("health")){
+				prin.t("Give player health" + pickUpItem.addHealth);
+				zplayer.health += pickUpItem.addHealth;
+				pickUpItem.removeItem();
+			}
+		}
+		
+	}
 	
 }

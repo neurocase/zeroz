@@ -97,8 +97,9 @@ public class WorldLogic {
 
 		entityMan.aiProjMan.updateProjectiles();
 		entityMan.projMan.updateProjectiles();
-		if (entityMan.itemAtLoc(entityMan.zplayer.worldpos) != null && entityMan.zplayer.isCrouching){
-			entityMan.zplayer.PickUp(entityMan.itemAtLoc(entityMan.zplayer.worldpos));
+		Item pickUpItem = entityMan.itemAtLoc(entityMan.zplayer.worldpos);
+		if (pickUpItem != null && pickUpItem.isAlive && entityMan.zplayer.isCrouching){
+			entityMan.Pickup(pickUpItem);
 		}
 		/*
 		 * SPAWN ENEMIES AT SPAWNPOINT NEAR PLAYER

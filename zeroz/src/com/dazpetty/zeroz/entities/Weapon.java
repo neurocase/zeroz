@@ -17,7 +17,7 @@ public class Weapon {
 	public int[] bulletspeedary = new int[]{100,50,50,3,4,5,6,7,8,9};
 	public int[] accuracyscatterary = new int[]{10,20,40,3,4,5,6,7,8,40};
 	public int[] ammoary = new int[]{0,1,2,3,4,5,6,7,8,9};
-	public int[] shotsary = new int[]{1,1,5,3,4,5,6,7,8,12};
+	public int[] shotsary = new int[]{1,1,7,3,4,5,6,7,8,12};
 	public int[] damageary =  new int[]{15,15,2,3,4,5,6,7,8,1};
 	public int[] rateoffiredelayary = new int[]{30,10,60,3,4,5,6,7,8,2};
 	public int[] lifetimeary = new int[]{5,600,100,3,4,5,6,7,8,9};
@@ -33,15 +33,16 @@ public class Weapon {
 	public int weaponid = 1;
 	
 	public Weapon(int i){
-		setWeapon(i);
+		newWeapon(i);
 	}
 	
-	public void setWeapon(int i){
+	public void newWeapon(int i){
+		
 		weaponid = i;
+		shots = shotsary[weaponid];
 		bulletspeed = bulletspeedary[weaponid];
 		accuracyscatter = accuracyscatterary[weaponid];;
 		ammo = ammoary[weaponid];
-		shots = shotsary[weaponid];
 		damage =  damageary[weaponid];
 		rateoffiredelay = rateoffiredelayary[weaponid];
 		lifetime = lifetimeary[weaponid];
@@ -66,6 +67,21 @@ public class Weapon {
 		}else{
 			return false;	
 		}
+	}
+
+	public String WeaponName = "none";
+	
+	public void giveWeapon(Item item) {
+		weaponid = item.itemWeaponNumber;
+		WeaponName = item.itemType;
+		shots = shotsary[weaponid];
+		bulletspeed = bulletspeedary[weaponid];
+		accuracyscatter = accuracyscatterary[weaponid];;
+		ammo = ammoary[weaponid];
+		damage =  damageary[weaponid];
+		rateoffiredelay = rateoffiredelayary[weaponid];
+		lifetime = lifetimeary[weaponid];
+		
 	}
 
 }
