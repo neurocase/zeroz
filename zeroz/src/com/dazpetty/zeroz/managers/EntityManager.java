@@ -37,8 +37,8 @@ public class EntityManager {
 	public int dronecount = 0;
 	public int enemyspawners = 0;
 	
-	public ProjectileManager projMan = new ProjectileManager(PROJECTILE_LIMIT);
-	public ProjectileManager aiProjMan = new ProjectileManager(PROJECTILE_LIMIT);
+	public ProjectileManager projMan;
+	public ProjectileManager aiProjMan;
 	
 	public CopterBoss copterBoss;// = new CopterBoss();
 	
@@ -62,6 +62,9 @@ public class EntityManager {
 	public ContactHandler ch;
 	
 	public EntityManager(OrthographicCamera camera, World world, LevelManager tm){
+		
+		projMan = new ProjectileManager(PROJECTILE_LIMIT, world);
+		aiProjMan = new ProjectileManager(PROJECTILE_LIMIT, world);
 		this.camera = camera;
 		this.world = world;
 		this.tm = tm; 

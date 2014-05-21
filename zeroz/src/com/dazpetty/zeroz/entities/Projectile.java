@@ -15,6 +15,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Pool.Poolable;
+import com.dazpetty.zeroz.managers.prin;
 
 public class Projectile implements Poolable {
 	public BodyDef bodyDef = new BodyDef();
@@ -66,6 +67,8 @@ public class Projectile implements Poolable {
 		isAlive = true;
 		isDead = false;
 		
+		prin.t("PROJECTILE:" + weapon.weaponName + "is firing");
+		
 		//weapon.
 		float scatterammount = (float) (weapon.accuracyscatter * Math.random());
 		
@@ -98,10 +101,7 @@ public class Projectile implements Poolable {
 		int str = id;
 		body.setUserData(this);
 		body.setBullet(true);
-		//bodyDef.
-		/*rad = (float) Math.toRadians(angle);
-		float velx = (float) (speed * Math.cos(rad));
-		float vely = (float) (speed * Math.sin(rad));*/
+		
 		
 		projtex = new Texture(Gdx.files.internal("data/gfx/effects/bullet2.png"));
 		projtex.setFilter(TextureFilter.Linear, TextureFilter.Linear);

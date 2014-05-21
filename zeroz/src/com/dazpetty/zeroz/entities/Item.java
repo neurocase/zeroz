@@ -137,13 +137,13 @@ public class Item {
 	}
 
 
-	public void Pickup(HumanEntity zplayer) {
+	/*public void Pickup(HumanEntity zplayer) {
 		if (isWeapon){
 			int holdId = zplayer.weapon.weaponid;
 			zplayer.weapon.giveWeapon(this);
 			dropWeapon(holdId);
 		}
-	}
+	}*/
 	
 	
 }

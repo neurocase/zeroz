@@ -84,7 +84,7 @@ public class HumanEntity {
 	public float deceleration = 0.6f;
 	public int blinking = 60;
 	public int BLINK_DURATION = 60;
-	
+
 	/*
 	 * Strings
 	 */
@@ -154,7 +154,7 @@ public class HumanEntity {
 	private GamePhysics physics;
 	public LevelManager tm;
 	public ProjectileManager projMan;
-	public Weapon weapon = new Weapon(1);
+	public Weapon weapon;
 	TiledMapTileLayer collisionLayer = null;
 	/*
 	 * LIBGDX/BOX2D OBJECTS
@@ -181,6 +181,7 @@ public class HumanEntity {
 	 * FUNCTIONS
 	 */
 	public void reUseActor(Vector2 actorstart, Weapon weapon) {
+		this.weapon = weapon;
 		body.setActive(true);
 		body.setAwake(true);
 		isDisposed = false;
@@ -192,36 +193,20 @@ public class HumanEntity {
 	}
 
 	public void attemptShoot(float ang) {
+		projMan.setWorld(world);
 		if (isAlive) {
-			long timenow = System.currentTimeMillis();
-			long a = timenow - lasttimeshoot;
-			if (weapon.shoot()) {
-				
-					weapon.lasttimeshoot = System.currentTimeMillis();
-				for (int i = 0; i < weapon.shots; i++){
-					
-					prin.t("shooting, " + weapon.WeaponName + "," + weapon.shots + " shots, weaponid: " + weapon.weaponid);
-					projMan.activeproj++;
-					if (projMan.activeproj == projMan.PROJECTILE_LIMIT - 1)
-						projMan.activeproj = 0;
-
-			
-					
-					if (projMan.proj[projMan.activeproj] == null) {
-						projMan.proj[projMan.activeproj] = new Projectile(this,
-								world, projMan.activeproj, ang,  weapon);
-					}
-					projMan.proj[projMan.activeproj].reUseProjectile(this, ang,
-							 weapon);
-				}
-			}
+			projMan.shootProjectile(ang, this);
 		}
 	}
 
 	public HumanEntity(Camera scam, World world, boolean amAI,
 			LevelManager newtm, Vector2 actorstart, int id,
-			EntityManager actorMan,
-			String actorType) {
+			EntityManager actorMan, String actorType) {
+		
+		
+		weapon = new Weapon(1);
+		
+		
 		this.id = id;
 		tm = newtm;
 
@@ -233,7 +218,7 @@ public class HumanEntity {
 				System.out.println("newtm is null");
 			}
 		}
-		
+
 		if (body == null) {
 			BodyDef bodyDef = new BodyDef();
 			bodyDef.type = BodyType.DynamicBody;
@@ -283,26 +268,26 @@ public class HumanEntity {
 		scenecamera = scam;
 
 		aimLadderTexture = actorMan.humanSprite.aimLadderTexture;
-		
-		if (!isMelee){
+
+		if (!isMelee) {
 			armTexture = actorMan.humanSprite.armUziTexture;
-		}else{
+		} else {
 			armTexture = actorMan.humanSprite.armSwordTexture;
 		}
 		TextureRegion aimLadderTexRegion = new TextureRegion(aimLadderTexture,
 				0, 0, 128, 128);
-		TextureRegion armTexRegion = new TextureRegion(armTexture, 0, 0, 128, 64);
-		
+		TextureRegion armTexRegion = new TextureRegion(armTexture, 0, 0, 128,
+				64);
+
 		aimladdersprite = new Sprite(aimLadderTexRegion);
 		aimladdersprite.setPosition(-10, -10);
 		aimladdersprite.scale(1f);
 
 		armsprite = new Sprite(armTexRegion);
 		armsprite.setSize(2f, 1);
-		armsprite.setOrigin(((1.77f)),
-				armsprite.getHeight() / 2);
-		//armsprite.setPosition(-10-64, -10);
-		
+		armsprite.setOrigin(((1.77f)), armsprite.getHeight() / 2);
+		// armsprite.setPosition(-10-64, -10);
+
 		runTextureAtlas = actorMan.humanSprite.runTextureAtlas;
 		idleTextureAtlas = actorMan.humanSprite.idleTextureAtlas;
 		backWalkTextureAtlas = actorMan.humanSprite.backWalkTextureAtlas;
@@ -482,18 +467,17 @@ public class HumanEntity {
 			if (aimless) {
 				aimingdirection = "right";
 			}
-		} else if (velocity.x > 0 ) {
+		} else if (velocity.x > 0) {
 			movingdirection = "left";
 			if (aimless) {
 				aimingdirection = "left";
 			}
 		} else if (velocity.x == 0) {
 		}
-		
-		if (isLevelScrolling){
+
+		if (isLevelScrolling) {
 			movingdirection = "left";
 		}
-		
 
 		targetScreenVec.x = inx;
 		targetScreenVec.y = iny;
@@ -520,10 +504,10 @@ public class HumanEntity {
 		}
 		if (velocity.x == 0 && velocity.y == 0 && !isOnLadder) {
 			state = "idle";
-			if (isLevelScrolling){
+			if (isLevelScrolling) {
 				movingdirection = "left";
 				state = "run";
-				if (aimingdirection == "left"){
+				if (aimingdirection == "left") {
 					state = "runback";
 				}
 			}
@@ -550,14 +534,14 @@ public class HumanEntity {
 			}
 		} else if (velocity.x == 0 && velocity.y == 0) {
 			state = "idle";
-			if (isLevelScrolling){
-				state = "run";	
+			if (isLevelScrolling) {
+				state = "run";
 				movingdirection = "left";
 			}
 			if (isCrouching) {
 				state = "crouchidle";
-				if (isLevelScrolling){
-					state = "crouchrun";	
+				if (isLevelScrolling) {
+					state = "crouchrun";
 				}
 			}
 		}
@@ -569,8 +553,6 @@ public class HumanEntity {
 			state = "ladderaim";
 			isShooting = true;
 		}
-
-	
 
 		if (state == "run" || state == "ladderclimb" || state == "runback"
 				|| state == "crouch" || state == "crouchback" || isDead) {
@@ -732,7 +714,7 @@ public class HumanEntity {
 			}
 		}
 	}
-	
+
 	public void takeDamage(float damage) {
 		health -= damage;
 		if (health <= 0) {
@@ -799,5 +781,16 @@ public class HumanEntity {
 		// TODO Auto-generated method stub
 
 	}
+
+	public void Pickup(Item pickUpItem) {
+		if (pickUpItem.isWeapon){
+			int holdId = weapon.weaponid;
+			weapon.setWeapon(pickUpItem.itemWeaponNumber);
+			pickUpItem.dropWeapon(holdId);
+		}
+	}
+	
+		
+	//}
 
 }

@@ -366,7 +366,7 @@ public class WorldRenderer {
 		if (debug) {
 			debugRenderer.render(world, camera.combined);
 		}
-		world.step(1 / 45f, 6, 2);
+		world.step(1 / 30f, 1, 1);
 	}
 
 
