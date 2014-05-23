@@ -2,8 +2,8 @@ package com.dazpetty.zeroz.entities;
 
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Timer;
+import com.dazpetty.zeroz.core.DazDebug;
 import com.dazpetty.zeroz.managers.ProjectileManager;
-import com.dazpetty.zeroz.managers.prin;
 
 public class Weapon {
 

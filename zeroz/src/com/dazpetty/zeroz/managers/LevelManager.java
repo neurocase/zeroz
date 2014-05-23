@@ -19,6 +19,16 @@ import com.dazpetty.zeroz.entities.Door;
 import com.dazpetty.zeroz.entities.EnemySpawner;
 import com.dazpetty.zeroz.entities.Item;
 
+
+/*	The LevelManager contains functions for searching the tiled map filetype for playerstart , enemyspawner, door and  item locations.
+ *  the levels may also contain special tiles which indicate whether the level is a boss level or a scrolling level (a level where the
+ *  player is continuosly running forward), it also helps set up the level for collision
+ * 
+ *  
+ */
+
+
+
 public class LevelManager {
 
 	public TiledMapTileLayer collisionLayer;
@@ -269,7 +279,7 @@ public class LevelManager {
 				if (isCellItem(w, h)) {
 					if (actorMan.TOTAL_ITEMS < actorMan.ITEM_LIMIT) {
 						String value = getItemValue(w, h);
-						actorMan.item[actorMan.TOTAL_ITEMS] = new Item(w, h, actorMan.TOTAL_ITEMS, value, world);
+						actorMan.item[actorMan.TOTAL_ITEMS] = new Item(w, h, actorMan.TOTAL_ITEMS, value);
 						actorMan.TOTAL_ITEMS++;
 						System.out.println(value + " ITEM ADDED: "
 								+ actorMan.TOTAL_ITEMS + "at:" + w + "," + h);

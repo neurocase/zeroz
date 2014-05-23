@@ -88,7 +88,7 @@ public class Item {
 	public String itemType = "";
 	public int id = 0;
 	
-	public Item(float x, float y, int id, String itemType ,World world){
+	public Item(float x, float y, int id, String itemType){
 		/*
 		 *  HEALTH ITEM
 		 */	
@@ -137,13 +137,5 @@ public class Item {
 	}
 
 
-	/*public void Pickup(HumanEntity zplayer) {
-		if (isWeapon){
-			int holdId = zplayer.weapon.weaponid;
-			zplayer.weapon.giveWeapon(this);
-			dropWeapon(holdId);
-		}
-	}*/
-	
 	
 }

@@ -16,6 +16,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
+import com.dazpetty.zeroz.entities.Explosion;
 import com.dazpetty.zeroz.managers.EntityManager;
 import com.dazpetty.zeroz.managers.Assets;
 import com.dazpetty.zeroz.managers.LevelManager;
@@ -67,18 +68,22 @@ public class WorldRenderer {
 	public float viewwidth = 0;
 	public float viewheight = 0;
 	private float addextracamx = 0;
-	LevelManager tm;
+	LevelManager levelMan;
 	
 	ShapeRenderer sr = new ShapeRenderer();
 	
-	public WorldRenderer(OrthographicCamera camera, World world, EntityManager actorMan, LevelManager tm, WorldLogic worldLogic){
+	
+	
+	public Explosion explosion;
+	
+	public WorldRenderer(OrthographicCamera camera, World world, EntityManager actorMan, LevelManager levelMan, WorldLogic worldLogic){
 		
 		
 		viewwidth = Gdx.graphics.getWidth();
 		viewheight = Gdx.graphics.getHeight();
 		
 		this.worldLogic = worldLogic;
-		this.tm = tm;
+		this.levelMan = levelMan;
 		this.actorMan = actorMan;
 		this.camera = camera;
 		this.world = world;
@@ -135,7 +140,7 @@ public class WorldRenderer {
 		
 
 		
-		renderer = new OrthogonalTiledMapRenderer(tm.map, 1f / 32f);
+		renderer = new OrthogonalTiledMapRenderer(levelMan.map, 1f / 32f);
 		
 		
 		pcamera = new ParralaxCamera(viewheight * 2f, viewwidth * 0.5f);
@@ -145,14 +150,19 @@ public class WorldRenderer {
 		
 		// BOX 2D DEBUG RENDERER
 				debugRenderer = new Box2DDebugRenderer();
+				
+				//explosion = new Explosion(7f,7f,1,0);
 		
 		
 	}
+	
+	
 	
 	public void Render(){
 		/*
 		 * SETUP PARRALAX CAMERA
 		 */
+		
 		boolean updatePCamera = false;
 		pcamera.position.x = camera.position.x;
 		pcamera.position.y = camera.position.y;
@@ -219,7 +229,9 @@ public class WorldRenderer {
 		
 		batch.begin();
 		
-		if (tm.isBossLevel){
+		
+		
+		if (levelMan.isBossLevel){
 			actorMan.copterBoss.bossSprite.draw(batch);
 			actorMan.copterBoss.update();
 			
@@ -228,6 +240,12 @@ public class WorldRenderer {
 					actorMan.copterBoss.copterTurret[i].baseSprite.draw(batch);
 					actorMan.copterBoss.copterTurret[i].barrelSprite.draw(batch);
 				}
+			}
+		}
+		
+		for (int i = 0; i < actorMan.EXPLOSION_LIMIT; i++) {
+			if (actorMan.explosion[i] != null && actorMan.explosion[i].isAlive) {
+				actorMan.explosion[i].sprite.draw(batch);
 			}
 		}
 		
@@ -301,7 +319,7 @@ public class WorldRenderer {
 				}
 			}
 		}
-		if (!tm.isLevelScrolling){
+		if (!levelMan.isLevelScrolling){
 		camera.position.set(actorMan.zplayer.worldpos.x + addextracamx / 200,
 				actorMan.zplayer.worldpos.y + 1.5f, 0);
 		}
@@ -328,20 +346,21 @@ public class WorldRenderer {
 		drawProjectile(actorMan.projMan);
 		drawProjectile(actorMan.aiProjMan);
 
+		
 		if (actorMan.hudtarget.canDraw()){
 			actorMan.hudtarget.sprite.draw(batch);
 		}
 		//boolean levelcomplete = false;
-		if (tm.levelcompletepos.x != 0 && tm.levelcompletepos.y != 0){
-			if (Math.abs(tm.levelcompletepos.x - actorMan.zplayer.worldpos.x) < 3 && Math.abs(tm.levelcompletepos.y - actorMan.zplayer.worldpos.y) < 3 ){
-				tm.isLevelComplete = true;
+		if (levelMan.levelcompletepos.x != 0 && levelMan.levelcompletepos.y != 0){
+			if (Math.abs(levelMan.levelcompletepos.x - actorMan.zplayer.worldpos.x) < 3 && Math.abs(levelMan.levelcompletepos.y - actorMan.zplayer.worldpos.y) < 3 ){
+				levelMan.isLevelComplete = true;
 				levelcompletesprite.setPosition(camera.position.x-5, camera.position.y-2);
 				levelcompletesprite.setSize(12f, 6f);
 			}
 		}
 		
 
-		if (tm.isLevelComplete) levelcompletesprite.draw(batch);	
+		if (levelMan.isLevelComplete) levelcompletesprite.draw(batch);	
 
 		batch.end();
 		/*
@@ -350,7 +369,7 @@ public class WorldRenderer {
 		
 		displayControls();
 	
-		box2DRender(true);
+		box2DRender(false);
 		camera.update();
 		
 		
@@ -367,15 +386,16 @@ public class WorldRenderer {
 			debugRenderer.render(world, camera.combined);
 		}
 		world.step(1 / 30f, 1, 1);
+		
 	}
 
-
+//werd
 
 	public boolean debugOn = false;
 	
 	
 	public void drawProjectile(ProjectileManager projMan) {
-		for (int i = 0; i < actorMan.PROJECTILE_LIMIT; i++) {
+		for (int i = 0; i < projMan.PROJECTILE_LIMIT; i++) {
 			if (projMan.proj[i] != null) {
 				if (projMan.proj[i].isAlive) {
 					if (projMan.proj[i].isAlive) {
@@ -391,6 +411,20 @@ public class WorldRenderer {
 				}
 			}
 		}
+		for (int i = 0; i < projMan.MUZZLE_FLASH_LIMIT; i++) {
+			if (projMan.muzzleflash[i] != null) {
+				if (projMan.muzzleflash[i].isAlive) {
+					projMan.muzzleflash[i].sprite.draw(batch);
+				}
+				
+			}
+			
+		}
+		
+		
+		dazdebug.tick();
+		
 	}
-	
+	DazDebug dazdebug = new DazDebug();
+	long ticker = 0;
 }

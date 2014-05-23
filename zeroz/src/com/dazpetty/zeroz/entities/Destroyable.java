@@ -19,7 +19,7 @@ import com.badlogic.gdx.physics.box2d.World;
 
 
 public class Destroyable {
-
+	
 	
 	
 	public Vector2 worldpos = new Vector2(0,0);
@@ -38,7 +38,7 @@ public class Destroyable {
 	public BodyDef bodyDef = new BodyDef();
 	public Body body;
 	public FixtureDef fixtureDef;
-	public boolean isAlive;
+	public boolean isAlive = true;
 	public int id = 0;
 	
 	public int health = 50;
@@ -46,13 +46,14 @@ public class Destroyable {
 
 
 	public void Destroy(){
+		isAlive = false;
 		body.setAwake(false);
 		body.setActive(false);
 		sprite = spritedest;
 	}
 	
 	public Destroyable(int x, int y, int id, World world){
-		
+		isAlive = true;
 		this.id = id;
 		texture = new Texture(("data/gfx/objects/keyfuse.png"));
 		texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);

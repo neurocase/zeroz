@@ -14,7 +14,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
-import com.dazpetty.zeroz.entities.HumanEntity;
+import com.dazpetty.zeroz.entities.PawnEntity;
 import com.dazpetty.zeroz.entities.CopterBoss;
 import com.dazpetty.zeroz.entities.Destroyable;
 import com.dazpetty.zeroz.entities.Door;
@@ -28,7 +28,6 @@ import com.dazpetty.zeroz.managers.OrthoCamController;
 import com.dazpetty.zeroz.managers.ParralaxCamera;
 import com.dazpetty.zeroz.managers.ProjectileManager;
 import com.dazpetty.zeroz.managers.LevelManager;
-import com.dazpetty.zeroz.managers.prin;
 
 
 
@@ -45,21 +44,21 @@ public class WorldLogic {
 	
 	public EntityManager entityMan;
 	
-	private TiledMapRenderer renderer;
+	//private TiledMapRenderer renderer;
 	
 
 	
 	public OrthographicCamera camera;
 	public World world;
-	public LevelManager tm;
+	public LevelManager levelMan;
 	
-	public WorldLogic(OrthographicCamera camera, EntityManager entityMan, World world, LevelManager tm){
+	public WorldLogic(OrthographicCamera camera, EntityManager entityMan, World world, LevelManager levelMan){
 		
 		
 		this.entityMan = entityMan;
 		this.camera = camera;
 		this.world = world;
-		this.tm = tm;
+		this.levelMan = levelMan;
 		/*
 		 * SETUP CAMERA AND RENDERER
 		 */
@@ -73,7 +72,7 @@ public class WorldLogic {
 		
 		
 		// CREATE PLAYER
-		entityMan.zplayer = new HumanEntity(camera, world, false, tm,  tm.playerstart, -1,
+		entityMan.zplayer = new PawnEntity(camera, world, false, levelMan,  levelMan.playerstart, -1,
 				entityMan, "player");
 		//entityMan.createActor(1,entityMan.es.enemyspawner);
 		// INPUTHANDLER
@@ -94,7 +93,15 @@ public class WorldLogic {
 		/*
 		 * UPDATE PLAYER AND PROJECTILES
 		 */
+		//entityMan.createExplosion(7, 7, 0, 0);
+		
+		/*for (int i = 0; i < entityMan.TOTAL_EXPLOSIONS; i++){
+			if (entityMan.explosion[i] != null && entityMan.explosion[i].isAlive){
+				entityMan.explosion[i].update();
+			}
+		}*/
 
+		
 		entityMan.aiProjMan.updateProjectiles();
 		entityMan.projMan.updateProjectiles();
 		Item pickUpItem = entityMan.itemAtLoc(entityMan.zplayer.worldpos);
@@ -104,7 +111,7 @@ public class WorldLogic {
 		/*
 		 * SPAWN ENEMIES AT SPAWNPOINT NEAR PLAYER
 		 */
-	//	if (pollCheck(11)){
+		if (pollCheck(11)){
 			for (int i = 0; i < entityMan.enemyspawners; i++) {
 				if (Math.abs((double) (entityMan.enemyspawner[i].worldpos.x - entityMan.zplayer.worldpos.x)) < 20) {
 					if (entityMan.enemyspawner[i] != null ){//&& entityMan.enemyspawner[i].enemyType == "footsoldier") {
@@ -114,6 +121,7 @@ public class WorldLogic {
 					}
 				}
 			}
+		}
 			
 			/*
 			 * UPDATE ENEMY AI
@@ -238,7 +246,7 @@ public class WorldLogic {
 
 		
 	//	boolean boolCheck = targetIsDrone[0];
-		if (!entityMan.zplayer.isOnLadder && !tm.isLevelScrolling) {
+		if (!entityMan.zplayer.isOnLadder && !levelMan.isLevelScrolling) {
 			
 			int checkVal = 0;
 			if (!entityMan.zplayer.isGoRight) checkVal = 1;

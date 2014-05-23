@@ -11,7 +11,7 @@ import com.badlogic.gdx.utils.Array;
 import com.dazpetty.zeroz.entities.CopterTurret;
 import com.dazpetty.zeroz.entities.Destroyable;
 import com.dazpetty.zeroz.entities.Drone;
-import com.dazpetty.zeroz.entities.HumanEntity;
+import com.dazpetty.zeroz.entities.PawnEntity;
 import com.dazpetty.zeroz.entities.Item;
 import com.dazpetty.zeroz.entities.Projectile;
 

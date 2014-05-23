@@ -159,7 +159,7 @@ public class Drone {
 	
 	
 	public float rotation = 0;  
-	public void update(HumanEntity zplayer){
+	public void update(PawnEntity zplayer){
 		
 		
 		body.setTransform(worldpos.x+bodyOffset.x, worldpos.y+bodyOffset.y, 0);

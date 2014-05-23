@@ -35,7 +35,7 @@ public class HUDTarget {
 		sprite.setPosition(worldpos.x, worldpos.y);
 	}
 	
-	public void setDrawTarget(HumanEntity actor){
+	public void setDrawTarget(PawnEntity actor){
 		worldpos.x = actor.worldpos.x - (actor.width/2);
 		worldpos.y = actor.worldpos.y + (actor.height/2);
 		sprite.setPosition(worldpos.x, worldpos.y);

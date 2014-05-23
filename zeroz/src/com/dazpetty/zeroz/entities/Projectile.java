@@ -15,7 +15,21 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Pool.Poolable;
-import com.dazpetty.zeroz.managers.prin;
+import com.dazpetty.zeroz.core.DazDebug;
+import com.dazpetty.zeroz.managers.MyAssetManager;
+
+
+/* The Projectile class holds data regarding the type, position and who owns each projectile,
+ * projectiles are put into a circular array, managed by the ProjectileManager.
+ * 
+ * The Projectile class requires the following data:
+ * 
+ * 		HumanEntity pawn: The entity firing the projectile, for its position and whether or nor it is friendly to 
+ * 		the player.
+ * 
+ * 
+ */
+
 
 public class Projectile implements Poolable {
 	public BodyDef bodyDef = new BodyDef();
@@ -26,22 +40,22 @@ public class Projectile implements Poolable {
 	private Texture projtex;
 	public boolean isAlive = true;
 	public boolean isDead = false;
-	//public boolean isAI = false;
 	public int id = 0;
 	float rad = 0;
 	public long spawntime = System.currentTimeMillis();
 	public long nowtime = System.currentTimeMillis();
 	public long lifetime = 4500;
 	public Weapon weapon;
+	public MyAssetManager assetMan;
 	
 	
-	public HumanEntity parentEntity;
+	public PawnEntity pawn;
 	
 	public float speed = 25;
 	
 	
 	public boolean isAI(){
-		return parentEntity.isAI;
+		return pawn.isAI;
 	}
 	
 	public void killProj(){
@@ -56,18 +70,18 @@ public class Projectile implements Poolable {
 		if (nowtime - spawntime > weapon.lifetime) killProj(); 
 	}
 	
-	public void reUseProjectile(HumanEntity parentEntity, float angle,  Weapon newweapon){
-		this.parentEntity = parentEntity;
+	public void reUseProjectile(PawnEntity pawn, float angle,  Weapon newweapon){
+		this.pawn = pawn;
 		weapon = newweapon;
 		speed = weapon.bulletspeed;
 		spawntime = System.currentTimeMillis();
 		killProj();
-		setupFixture(parentEntity.isAI);
+		setupFixture(pawn.isAI);
 		
 		isAlive = true;
 		isDead = false;
 		
-		prin.t("PROJECTILE:" + weapon.weaponName + "is firing");
+		DazDebug.print("PROJECTILE:" + weapon.weaponName + "is firing");
 		
 		//weapon.
 		float scatterammount = (float) (weapon.accuracyscatter * Math.random());
@@ -82,18 +96,18 @@ public class Projectile implements Poolable {
 		float vely = (float) (speed * Math.sin(rad));
 		
 		projsprite.setRotation(angle);
-		body.setTransform(parentEntity.worldpos.x, parentEntity.worldpos.y+1, angle);
+		body.setTransform(pawn.worldpos.x, pawn.worldpos.y+1, angle);
 		body.setLinearVelocity(velx,vely);
 	}
 	
-	public Projectile(HumanEntity parentEntity, World world, int id, float angle,  Weapon weapon) {
-		
+	public Projectile(PawnEntity pawn, World world, int id, float angle,  Weapon weapon, MyAssetManager assetMan) {
+		this.assetMan = assetMan;
 		this.id = id;
 		this.weapon = weapon;
 		speed = weapon.bulletspeed;
 		bodyDef.type = BodyType.DynamicBody;  
 		body = world.createBody(bodyDef);  
-		bodyDef.position.set(parentEntity.worldpos.x, parentEntity.worldpos.y);  
+		bodyDef.position.set(pawn.worldpos.x, pawn.worldpos.y);  
 		isAlive = true;
 		isDead = false;
 		
@@ -101,26 +115,21 @@ public class Projectile implements Poolable {
 		int str = id;
 		body.setUserData(this);
 		body.setBullet(true);
+				
 		
-		
-		projtex = new Texture(Gdx.files.internal("data/gfx/effects/bullet2.png"));
-		projtex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		
-		TextureRegion projtexreg = new TextureRegion(projtex, 0, 0,16,
+		TextureRegion projtexreg = new TextureRegion(assetMan.projtex, 0, 0,16,
 				8);
+		
 		projsprite = new Sprite(projtexreg);
 		projsprite.setSize(0.5f, 0.25f);
 		projsprite.setOrigin(projsprite.getWidth() / 2, projsprite.getHeight() / 2);
 		projsprite.setPosition(0f, 0f);
 		fixtureDef = new FixtureDef(); 
 	    dynamicCircle = new CircleShape();  
-	   /* projsprite.setRotation(angle);
-	    body.setTransform(he.worldpos.x, he.worldpos.y+1, angle);
-	    body.setLinearVelocity(velx,vely);*/
+	 
 	    
 	    dynamicCircle.setRadius(0.2f);  
-	   // setupFixture(parentEntity.isAI);
-	    reUseProjectile(parentEntity, angle,  weapon);
+	    reUseProjectile(pawn, angle,  weapon);
 	}
 	
 	public void setupFixture(boolean isAI){

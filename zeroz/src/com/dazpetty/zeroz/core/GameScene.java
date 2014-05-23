@@ -40,7 +40,7 @@ import com.badlogic.gdx.physics.box2d.MassData;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
-import com.dazpetty.zeroz.entities.HumanEntity;
+import com.dazpetty.zeroz.entities.PawnEntity;
 import com.dazpetty.zeroz.entities.CopterBoss;
 import com.dazpetty.zeroz.entities.Destroyable;
 import com.dazpetty.zeroz.entities.Door;
@@ -116,7 +116,7 @@ public class GameScene implements Screen {
 	 */
 	//public HUDTarget hudtarget;
 
-	public EntityManager actorMan;
+	public EntityManager entityMan;
 	public WorldLogic worldLogic;
 	final ZerozGame game;
 	private OrthographicCamera camera;
@@ -125,7 +125,7 @@ public class GameScene implements Screen {
 	public OrthoCamController pcamcontroller;
 
 	public LevelManager tm;
-	public Assets Assets;
+	public Assets assetMan;
 
 	private boolean showDebug = true;
 	public boolean debugOn = false;
@@ -141,28 +141,28 @@ public class GameScene implements Screen {
 	public GameScene(final ZerozGame gam) {
 
 		this.game = gam;
-		Assets.load();
-		Assets.manager.finishLoading();
+		assetMan.load();
+		assetMan.manager.finishLoading();
 		
 		camera = new OrthographicCamera(1, viewheight / viewwidth);
 		camera.setToOrtho(false, (viewwidth / viewheight) * 10, 10);
 		camera.update();
 
-		tm = new LevelManager(game.level, actorMan, world);
+		tm = new LevelManager(game.level, entityMan, world);
 		
 		
-		actorMan = new EntityManager(camera, world, tm);
-		worldLogic = new WorldLogic(camera, actorMan, world, tm);
-		worldRenderer = new WorldRenderer(camera, world, actorMan, tm, worldLogic);
-		tm.buildLevel(actorMan);
+		entityMan = new EntityManager(camera, world, tm);
+		worldLogic = new WorldLogic(camera, entityMan, world, tm);
+		worldRenderer = new WorldRenderer(camera, world, entityMan, tm, worldLogic);
+		tm.buildLevel(entityMan);
 	}
 	//public boolean levelComplete = false;
 
 	@Override
 	public void render(float delta) {
 		
-		actorMan.zplayer.update(worldLogic.inputHandler.giveWorldPos, camera, playerShoot);
-		tm = actorMan.zplayer.tm;
+		entityMan.zplayer.update(worldLogic.inputHandler.giveWorldPos, camera, playerShoot);
+		tm = entityMan.zplayer.levelMan;
 		
 		//camera = worldLogic.camera;
 		
@@ -184,7 +184,7 @@ public class GameScene implements Screen {
 			tm.isLevelComplete = true;
 		}
 		if (Gdx.input.isTouched()) {
-			if (!actorMan.zplayer.isAlive) {
+			if (!entityMan.zplayer.isAlive) {
 				game.setScreen(new MainMenu(game));
 			}
 			if (tm.isLevelComplete){
@@ -198,12 +198,12 @@ public class GameScene implements Screen {
 		game.batch.begin();
 		String info2 = "";
 		if (debugOn) {
-			info2 = " Health:" + actorMan.zplayer.health + " actorMan.zplayer X:"
-					+ actorMan.zplayer.worldpos.x + ", Y:" + actorMan.zplayer.worldpos.y
-					+ " state:" + actorMan.zplayer.state;
+			info2 = " Health:" + entityMan.zplayer.health + " entityMan.zplayer X:"
+					+ entityMan.zplayer.worldpos.x + ", Y:" + entityMan.zplayer.worldpos.y
+					+ " state:" + entityMan.zplayer.state;
 		} else {
-			info2 = " Health:" + actorMan.zplayer.health;
-			if (actorMan.zplayer.health <= 0) {
+			info2 = " Health:" + entityMan.zplayer.health;
+			if (entityMan.zplayer.health <= 0) {
 				info2 = "GAME OVER: YOU DIED";
 			}
 		}
@@ -251,7 +251,7 @@ public class GameScene implements Screen {
 
 	//	targettex.dispose();
 		//batch.dispose();
-		actorMan.dispose();
+		entityMan.dispose();
 		tm.map.dispose();
 	//	sr.dispose();
 
@@ -266,11 +266,7 @@ public class GameScene implements Screen {
  *     ENEMIES ARE DEAD
  * 
  *  ---------- KNOWN BUGS ---------- 1. Arm not appearing on ladder, sprite
- * not flipping on ladder 2. Ladder movement not that awesome 3. There is a bug
- * where sometimes a health pickup will not "pickup". It does not seem to be
- * registering the collision between itself and the player, shooting the item
- * seems to increase the chance of this bug occurring. In all cases it seems if
- * the player returns to the item later, he is able to pick it up. 4. Sometimes
+ * not flipping on ladder 2. Ladder movement not that awesome 3. Sometimes
  * after comming off a ladder a player seems to get stuck in a wierd sliding
  * state, and cannot receive input(shoot, jump, left, right etc).
  * 

@@ -3,87 +3,99 @@ package com.dazpetty.zeroz.managers;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
-import com.dazpetty.zeroz.entities.HumanEntity;
+import com.dazpetty.zeroz.entities.PawnEntity;
+
+/*
+ *  The game physics class checks the tiles of the map, it provides collision detection for the player and other entities,
+ *  it does not use box2d and was implimented prior to box2d being integrated into the project, it may be replaced by 
+ *  box 2d sometime later.
+ *  
+ *  This class modifies the velocity of PawnEntity(s) with the help of the LevelManager
+ * 
+ * 
+ */
+
+
 
 public class GamePhysics {
-		
-	public void doPhysics(HumanEntity zact) {
+	
+	public void doPhysics(PawnEntity pawn) {
 
-		if (zact.tm != null){
-			float oldposx = zact.worldpos.x, oldposy = zact.worldpos.y;
-			Vector2 newposition = new Vector2(zact.worldpos.x, zact.worldpos.y);
+		if (pawn.levelMan != null){
+			float oldposx = pawn.worldpos.x, oldposy = pawn.worldpos.y;
+			Vector2 newposition = new Vector2(pawn.worldpos.x, pawn.worldpos.y);
 	
-			if (zact.velocity.x > 0f && zact.isGrounded)
-				zact.velocity.x -= zact.deceleration;
-			if (zact.velocity.x < 0f && zact.isGrounded)
-				zact.velocity.x += zact.deceleration;
-			if (Math.abs(zact.velocity.x) < 0.5)
-				zact.velocity.x = 0;
+			if (pawn.velocity.x > 0f && pawn.isGrounded)
+				pawn.velocity.x -= pawn.deceleration;
+			if (pawn.velocity.x < 0f && pawn.isGrounded)
+				pawn.velocity.x += pawn.deceleration;
+			if (Math.abs(pawn.velocity.x) < 0.5)
+				pawn.velocity.x = 0;
 	
-			newposition.x += (zact.velocity.x * Gdx.graphics.getDeltaTime());
+			newposition.x += (pawn.velocity.x * Gdx.graphics.getDeltaTime());
 	
-			if (!zact.isFlying) {
+			if (!pawn.isFlying) {
 	
-				if (!zact.isGrounded) {
+				if (!pawn.isGrounded) {
 					boolean fall = true;
-					if (zact.state == "ladderaim") {
+					if (pawn.state == "ladderaim") {
 						fall = false;
-						zact.velocity.y = 0;
+						pawn.velocity.y = 0;
 					}
 					if (fall) {
-						if (zact.state == "ladderslide") {
-							zact.velocity.y -= (zact.gravMass / 2);
+						if (pawn.state == "ladderslide") {
+							pawn.velocity.y -= (pawn.gravMass / 2);
 						} else {
-							zact.velocity.y -= zact.gravMass;
+							pawn.velocity.y -= pawn.gravMass;
 						}
 					}
 				}
-				newposition.y += (zact.velocity.y * Gdx.graphics.getDeltaTime());
+				newposition.y += (pawn.velocity.y * Gdx.graphics.getDeltaTime());
 			}
 			boolean blocked = false;
 	
-			for (int i = 0; i < (int) zact.height; i++) {		
-					if (zact.tm.isCellBlocked(newposition.x, zact.worldpos.y + 0.1f + i, true)) {
+			for (int i = 0; i < (int) pawn.height; i++) {		
+					if (pawn.levelMan.isCellBlocked(newposition.x, pawn.worldpos.y + 0.1f + i, true)) {
 		
-						zact.velocity.x = 0;
+						pawn.velocity.x = 0;
 						blocked = true;
 				}
 			}
-			if (!blocked && zact.state != "ladderaim") {
-				zact.worldpos.x = newposition.x;
+			if (!blocked && pawn.state != "ladderaim") {
+				pawn.worldpos.x = newposition.x;
 			}
 	
-			if (!zact.goThruPlatform
-					&& zact.tm.isCellPlatform(zact.worldpos.x, newposition.y)
-					&& zact.velocity.y <= 0 && !zact.isOnLadder) {
-				zact.velocity.y = 0;
-				zact.isGrounded = true;
+			if (!pawn.goThruPlatform
+					&& pawn.levelMan.isCellPlatform(pawn.worldpos.x, newposition.y)
+					&& pawn.velocity.y <= 0 && !pawn.isOnLadder) {
+				pawn.velocity.y = 0;
+				pawn.isGrounded = true;
 			}
-			if (zact.tm.isCellBlocked(zact.worldpos.x, newposition.y + 2, true)
-					&& !zact.isGrounded && zact.velocity.y > 0) {
-				zact.velocity.y = 0;
+			if (pawn.levelMan.isCellBlocked(pawn.worldpos.x, newposition.y + 2, true)
+					&& !pawn.isGrounded && pawn.velocity.y > 0) {
+				pawn.velocity.y = 0;
 			}
 	
-			if (!zact.tm.isCellBlocked(zact.worldpos.x, newposition.y, true)
-					&& !zact.isGrounded) {
-				zact.worldpos.y = newposition.y;
+			if (!pawn.levelMan.isCellBlocked(pawn.worldpos.x, newposition.y, true)
+					&& !pawn.isGrounded) {
+				pawn.worldpos.y = newposition.y;
 			} else {
-				if (!zact.tm.isCellBlocked(zact.worldpos.x, (int) (zact.worldpos.y),  blocked)) {
-					zact.worldpos.y = (int) (zact.worldpos.y);
+				if (!pawn.levelMan.isCellBlocked(pawn.worldpos.x, (int) (pawn.worldpos.y),  blocked)) {
+					pawn.worldpos.y = (int) (pawn.worldpos.y);
 					blocked = true;
-					zact.velocity.y = 0;
-					if (!zact.tm.isCellBlocked(zact.worldpos.x,
-							(int) (zact.worldpos.y + 1f), true)) {
-						zact.isGrounded = true;
+					pawn.velocity.y = 0;
+					if (!pawn.levelMan.isCellBlocked(pawn.worldpos.x,
+							(int) (pawn.worldpos.y + 1f), true)) {
+						pawn.isGrounded = true;
 					} else {
 						System.out.println("Donk!");
 					}
 				}
 			}
 			if (!Gdx.input.isKeyPressed(Input.Keys.UP)
-					&& !zact.tm.isCellBlocked(zact.worldpos.x, zact.worldpos.y - 0.1f, true)
-					&& !zact.tm.isCellPlatform(zact.worldpos.x, zact.worldpos.y - 0.1f)) {
-				zact.isGrounded = false;
+					&& !pawn.levelMan.isCellBlocked(pawn.worldpos.x, pawn.worldpos.y - 0.1f, true)
+					&& !pawn.levelMan.isCellPlatform(pawn.worldpos.x, pawn.worldpos.y - 0.1f)) {
+				pawn.isGrounded = false;
 			}
 		}
 

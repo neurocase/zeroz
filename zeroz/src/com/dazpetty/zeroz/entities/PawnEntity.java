@@ -29,20 +29,18 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.dazpetty.zeroz.core.DazDebug;
 import com.dazpetty.zeroz.managers.EntityManager;
 import com.dazpetty.zeroz.managers.GamePhysics;
 import com.dazpetty.zeroz.managers.ProjectileManager;
 import com.dazpetty.zeroz.managers.LevelManager;
-import com.dazpetty.zeroz.managers.prin;
 
-/*
- * Zactor: Zactor is the Actor class, all game entities which move are actors,
- * actor is the base class for enemies, ai and the player.
- * 
- * 		Moving
+/* 
+ * Pawn Entity is the base class for entities controlled by the player or ai, 
  * 
  */
-public class HumanEntity {
+
+public class PawnEntity {
 	/*
 	 * BOOLEANS
 	 */
@@ -50,7 +48,6 @@ public class HumanEntity {
 	public boolean isJump = true;
 	public boolean isAlive = true;
 	public boolean isGrounded = true;
-	// isDisposed is for clearing away enemies that are not near the player
 	public boolean isDisposed = false;
 	public boolean isOnLadder = false;
 	public boolean canDoubleJump = false;
@@ -152,7 +149,7 @@ public class HumanEntity {
 	 * MY OBJECTS
 	 */
 	private GamePhysics physics;
-	public LevelManager tm;
+	public LevelManager levelMan;
 	public ProjectileManager projMan;
 	public Weapon weapon;
 	TiledMapTileLayer collisionLayer = null;
@@ -180,7 +177,7 @@ public class HumanEntity {
 	/*
 	 * FUNCTIONS
 	 */
-	public void reUseActor(Vector2 actorstart, Weapon weapon) {
+	public void reUseEntity(Vector2 actorstart, Weapon weapon) {
 		this.weapon = weapon;
 		body.setActive(true);
 		body.setAwake(true);
@@ -199,8 +196,8 @@ public class HumanEntity {
 		}
 	}
 
-	public HumanEntity(Camera scam, World world, boolean amAI,
-			LevelManager newtm, Vector2 actorstart, int id,
+	public PawnEntity(Camera scam, World world, boolean amAI,
+			LevelManager levelMan, Vector2 actorstart, int id,
 			EntityManager actorMan, String actorType) {
 		
 		
@@ -208,14 +205,14 @@ public class HumanEntity {
 		
 		
 		this.id = id;
-		tm = newtm;
+		this.levelMan = levelMan;
 
-		isLevelScrolling = tm.isLevelScrolling;
+		isLevelScrolling = levelMan.isLevelScrolling;
 		projMan = actorMan.projMan;
-		if (tm == null) {
-			tm = (LevelManager) newtm;
-			if (newtm == null) {
-				System.out.println("newtm is null");
+		if (levelMan == null) {
+			levelMan = (LevelManager) levelMan;
+			if (levelMan == null) {
+				System.out.println("levelMan is null");
 			}
 		}
 
@@ -306,15 +303,12 @@ public class HumanEntity {
 		AtlasRegion deathTexRegion = deathTextureAtlas.findRegion("0000");
 
 		runsprite = new Sprite(runTexRegion);
-		// runsprite.setPosition(-10, -10);
 		runsprite.scale(1f);
 
 		idlesprite = new Sprite(idleTexRegion);
-		// idlesprite.setPosition(-10, -10);
 		idlesprite.scale(1f);
 
 		crouchbacksprite = new Sprite(crouchBackTexRegion);
-		// crouchbacksprite.setPosition(-10, -10);
 		crouchbacksprite.scale(1f);
 
 		crouchsprite = new Sprite(crouchTexRegion);
@@ -378,15 +372,15 @@ public class HumanEntity {
 	}
 
 	public void goJump() {
-		if (tm != null) {
+		if (levelMan != null) {
 			if (isAlive) {
 				for (float i = -0.55f; i < 0.55f; i += 0.55f) {
-					if (tm.isCellLadder(worldpos.x + i, worldpos.y)) {
+					if (levelMan.isCellLadder(worldpos.x + i, worldpos.y)) {
 						worldpos.x = (int) worldpos.x + i + 0.4f;
 					}
 				}
 
-				if (tm.isCellLadder(worldpos.x, worldpos.y)) {
+				if (levelMan.isCellLadder(worldpos.x, worldpos.y)) {
 					isGrounded = false;
 					velocity.y = 4f;
 					isOnLadder = true;
@@ -405,9 +399,9 @@ public class HumanEntity {
 					}
 					isGrounded = false;
 					isOnLadder = false;
-				} else if ((velocity.x >= 0 && tm.isCellBlocked(
+				} else if ((velocity.x >= 0 && levelMan.isCellBlocked(
 						worldpos.x + 0.5f, worldpos.y, true))
-						|| (velocity.x <= 0 && tm.isCellBlocked(
+						|| (velocity.x <= 0 && levelMan.isCellBlocked(
 								worldpos.x - 0.5f, worldpos.y, true))) {
 					if (canDoubleJump && velocity.y < (jumpSpeed / 2)) {
 						if (velocity.x > 0) {
@@ -667,8 +661,8 @@ public class HumanEntity {
 			isShooting = false;
 		}
 		body.setTransform(worldpos.x, worldpos.y + 1, 0f);
-		if (tm == null) {
-			System.out.println("TM IN ACTOR IS NULL");
+		if (levelMan == null) {
+			System.out.println("levelMan IN ACTOR IS NULL");
 		}
 		physics.doPhysics(this);
 		goThruPlatform = false;
@@ -680,7 +674,7 @@ public class HumanEntity {
 
 	public float distanceFromPlayer = 0;
 
-	public void updateAI(HumanEntity zplayer) {
+	public void updateAI(PawnEntity zplayer) {
 		// attemptShoot(0);
 		if (isAlive && zplayer.isAlive) {
 			isAI = true;
@@ -740,7 +734,7 @@ public class HumanEntity {
 	float distanceFromTarget = 0;
 	private boolean targetIsNull = false;
 
-	public void giveQuickTarget(HumanEntity ztarget) {
+	public void giveQuickTarget(PawnEntity ztarget) {
 		float relativetoplayerx = ztarget.worldpos.x - worldpos.x;
 		float relativetoplayery = ztarget.worldpos.y - worldpos.y;
 		targetIsNull = false;
