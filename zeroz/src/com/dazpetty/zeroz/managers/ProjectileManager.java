@@ -62,6 +62,22 @@ public class ProjectileManager {
 	public void shootProjectile(float ang, PawnEntity entityShooting) {
 		if (entityShooting.weapon.ready()) {
 			createMuzzFlash(entityShooting);
+			long soundId = 1;
+			switch (entityShooting.weapon.weaponid){
+			//assetMan.pistolSound.setVolume(soundId, 0f);
+			
+				case 0:
+					
+					break;
+				case 1:
+					assetMan.pistolSound.play();
+					break;
+				case 2:
+					assetMan.shotgunSound.play();
+					break;
+				default:
+					assetMan.pistolSound.play();
+			}
 			for (int i = 0; i < entityShooting.weapon.shots; i++) {
 
 				DazDebug.print("shooting, " + entityShooting.weapon.weaponName + "," + entityShooting.weapon.shots

@@ -19,14 +19,16 @@ public class Weapon {
 	
 	public String weaponName = "none";
 	
-	public String[] weaponnameary = new String[]{"sword","pistol","shotgun","uzi","rocket","five","six","seven","eight","nine"};
-	public int[] bulletspeedary = new int[]{100,50,50,3,4,5,6,7,8,9};
-	public int[] accuracyscatterary = new int[]{10,20,40,3,4,5,6,7,8,40};
-	public int[] ammoary = new int[]{0,1,2,3,4,5,6,7,8,9};
-	public int[] shotsary = new int[]{1,1,3,3,4,5,6,7,8,12};
-	public int[] damageary =  new int[]{15,15,15,3,4,5,6,7,8,1};
-	public int[] rateoffiredelayary = new int[]{30,25,60,3,4,5,6,7,8,2};
-	public int[] lifetimeary = new int[]{5,600,100,3,4,5,6,7,8,9};
+	public String[] weaponnameary = new String[]{"sword","pistol","shotgun","uzi","grenade","five","six","seven","eight","nine"};
+	
+											//  0   1   2   3   4    5
+	public int[] bulletspeedary = new int[]	   {100,20 ,20 ,3   ,10  ,10  ,6,7,8,9};
+	public int[] accuracyscatterary = new int[]{10 ,20 ,40 ,3   ,1   ,5   ,6,7,8,40};
+	public int[] ammoary = new int[]           {0  ,1  ,2  ,3   ,4   ,5   ,6,7,8,9};
+	public int[] shotsary = new int[]          {1  ,1  ,3  ,3   ,1   ,1   ,6,7,8,12};
+	public int[] damageary =  new int[]        {15 ,15 ,50 ,3   ,40  ,50  ,6,7,8,1};
+	public int[] rateoffiredelayary = new int[]{30 ,25 ,60 ,3   ,60  ,60  ,6,7,8,2};
+	public int[] lifetimeary = new int[]       {5  ,200,200,1000,1000,10000,6,7,8,9};
 	
 	public int bulletspeed = 0;
 	public int accuracyscatter = 0;
@@ -47,6 +49,12 @@ public class Weapon {
 	public void newWeapon(int i){
 	//	this.projMan = projMan;
 		weaponid = i;
+		
+		if (weaponid == 5){
+			hasGravity = true;
+		}else{
+			hasGravity = false;
+		}
 		weaponName = weaponnameary[weaponid];
 		shots = shotsary[weaponid];
 		bulletspeed = bulletspeedary[weaponid];
@@ -64,6 +72,7 @@ public class Weapon {
 	
 	public long lasttimeshoot = System.currentTimeMillis();
 	//texture
+	public boolean hasGravity = false;
 	
 	
 

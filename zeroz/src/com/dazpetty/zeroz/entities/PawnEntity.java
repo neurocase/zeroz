@@ -303,13 +303,7 @@ public class PawnEntity {
 		armuzisprite.setSize(2f, 1);
 		armuzisprite.setOrigin(((1.77f)), armuzisprite.getHeight() / 2);
 		
-		
-		armsprite = armuzisprite;
-	/*	armsprite = new Sprite(armTexRegion);
-		armsprite.setSize(2f, 1);
-		armsprite.setOrigin(((1.77f)), armsprite.getHeight() / 2);*/
-		
-		
+		armsprite = armuzisprite;	
 		
 		TextureRegion aimLadderTexRegion = new TextureRegion(aimLadderTexture,
 				0, 0, 128, 128);

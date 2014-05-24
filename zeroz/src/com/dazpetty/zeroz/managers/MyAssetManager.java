@@ -1,6 +1,7 @@
 package com.dazpetty.zeroz.managers;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -18,15 +19,27 @@ public class MyAssetManager {
 
 	public Texture projtexreg;
 	
+	public Sound pistolSound;
+	public Sound shotgunSound;
+	
 	/*
 	 *  INPUT // HUD TEXTURES
 	 */
+	public static Texture healthtex;
 	public static Texture dirbuttonstex;
 	public static Texture shootbuttontex;
 	public static Texture jumpbuttontex;
 	
 	
 	public MyAssetManager(){
+		
+		pistolSound = Gdx.audio.newSound(Gdx.files.internal("data/sound/weapon/pistol.mp3"));
+		shotgunSound = Gdx.audio.newSound(Gdx.files.internal("data/sound/weapon/shotgun.mp3"));
+		shotgunSound.setPitch(0, 0.5f);
+		
+		healthtex = new Texture(
+				Gdx.files.internal("data/gfx/hud/health.png"));
+		healthtex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		
 		dirbuttonstex = new Texture(
 				Gdx.files.internal("data/gfx/hud/dirbuttons.png"));

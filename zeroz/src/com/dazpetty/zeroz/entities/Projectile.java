@@ -114,6 +114,9 @@ public class Projectile implements Poolable {
 		isDead = false;
 		
 		body.setGravityScale(0);
+		if (weapon.hasGravity){
+			body.setGravityScale(1);
+		}
 		int str = id;
 		body.setUserData(this);
 		body.setBullet(true);

@@ -33,6 +33,8 @@ public class Explosion {
 	private float angle = 0;
 	public boolean isAlive = true;
 	private MyAssetManager assetMan;
+	
+	String type = "";
 
 	public Explosion(float x, float y, int id, float angle, MyAssetManager assetMan){
 		this.assetMan = assetMan;
@@ -56,14 +58,19 @@ public class Explosion {
 		switch (explosionid){
 			case 0:
 				sprite = projexsprite;
+				type = "projexsprite";
 				break;
 			case 1:
 				sprite = fuseexsprite;
+				type = "fuseexsprite";
 				break;
 			default:
 				sprite = projexsprite;
+				type = "default";
+				
 			
 		}	
+		
 		
 				
 				
@@ -118,13 +125,18 @@ public class Explosion {
 					alpha -= 0.05;
 			
 				}
+				if (currentFrame > 49 ){
+					currentFrame = 1;	
+					//alpha = 1;
+					//sprite.setColor(1, 1, 1, 1);
+				}
 				
 				if (currentFrame % 2 == 0){
 					currentFrame++;
 				}
 				break;
 			default:
-				if (currentFrame > 50 ){
+				if (currentFrame > 49 ){
 					currentFrame = 1;	
 					//alpha = 1;
 					//sprite.setColor(1, 1, 1, 1);
@@ -135,7 +147,7 @@ public class Explosion {
 		sprite.setColor(1, 1, 1, alpha);
 				
 		currentAtlasKey = String.format("%04d", currentFrame);
-		DazDebug.print("currentAtlasKey:" + currentAtlasKey);
+		DazDebug.print("currentAtlasKey:" + currentAtlasKey + "explosionID: " + explosionid + "default:" + type);
 		sprite.setRegion(projExplosionTexAtlas.findRegion(currentAtlasKey));
 	}
 

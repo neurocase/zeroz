@@ -38,6 +38,9 @@ public class WorldRenderer {
 	private Sprite playersprite;
 	private Sprite bgCityBackSprite;
 	
+	public Texture healthtex;
+	public Sprite healthsprite;
+	
 	public Texture dirbuttonstex;
 	public Sprite dirbuttonssprite;
 	
@@ -49,7 +52,7 @@ public class WorldRenderer {
 	private SpriteBatch batch;
 	private SpriteBatch bgbatch;
 	
-	private boolean showDebug = false;
+	private boolean showDebug = true;
 	
 	Box2DDebugRenderer debugRenderer;
 	private Texture levelCompleteTex;
@@ -62,7 +65,7 @@ public class WorldRenderer {
 	public OrthoCamController pcamcontroller;
 	
 	public World world;
-	public EntityManager actorMan;
+	public EntityManager entityMan;
 	public OrthogonalTiledMapRenderer renderer;
 	public WorldLogic worldLogic;
 	
@@ -77,7 +80,7 @@ public class WorldRenderer {
 	
 	public Explosion explosion;
 	
-	public WorldRenderer(OrthographicCamera camera, World world, EntityManager actorMan, LevelManager levelMan, WorldLogic worldLogic){
+	public WorldRenderer(OrthographicCamera camera, World world, EntityManager entityMan, LevelManager levelMan, WorldLogic worldLogic){
 		
 		
 		viewwidth = Gdx.graphics.getWidth();
@@ -85,13 +88,23 @@ public class WorldRenderer {
 		
 		this.worldLogic = worldLogic;
 		this.levelMan = levelMan;
-		this.actorMan = actorMan;
+		this.entityMan = entityMan;
 		this.camera = camera;
 		this.world = world;
 		
 		/*
 		 * SETUP SPRITES AND TEXTURES
 		 */
+		
+		
+		 TextureRegion healthtexreg = new TextureRegion(MyAssetManager.healthtex, 0, 0, 64,
+				 64);
+		 
+		healthsprite = new Sprite(healthtexreg);
+		healthsprite.setSize(2f, 2f);
+		healthsprite.setOrigin(0, healthsprite.getHeight());
+		healthsprite.setPosition(30, 0);
+
 		 
 		 TextureRegion dirbuttontexreg = new TextureRegion(MyAssetManager.dirbuttonstex, 0, 0, 512,
 				 128);
@@ -173,8 +186,32 @@ public class WorldRenderer {
 		
 		
 	}
-	
-	
+	/*
+	public void showDebugInfo(boolean show) {
+		game.batch.begin();
+		String info2 = "";
+		if (debugOn) {
+			info2 = " Health:" + entityMan.zplayer.health + " entityMan.zplayer X:"
+					+ entityMan.zplayer.worldpos.x + ", Y:" + entityMan.zplayer.worldpos.y
+					+ " state:" + entityMan.zplayer.state;
+		} else {
+			info2 = " Health:" + entityMan.zplayer.health;
+			if (entityMan.zplayer.health <= 0) {
+				info2 = "GAME OVER: YOU DIED";
+			}
+		}
+		if (Gdx.input.isTouched()) {
+			Vector3 touchPos = new Vector3(Gdx.input.getX(), Gdx.input.getY(),
+					0);
+			String info4 = "ScreenTouch X:" + touchPos.x + " Y:" + touchPos.y;
+			camera.unproject(touchPos);
+			String info5 = "ScreenTouch X:" + touchPos.x + " Y:" + touchPos.y;
+			game.font.draw(game.batch, info4, 20, 300);
+			game.font.draw(game.batch, info5, 20, 280);
+		}
+		game.font.draw(game.batch, info2, 20, 340);
+		game.batch.end();
+	}*/
 	
 	public void Render(){
 		/*
@@ -237,9 +274,9 @@ public class WorldRenderer {
 		/*
 		 * BEGIN CORE SPRITE BATCH RENDER LOOP
 		 */
-		for (int i = 0; i < actorMan.DRONE_LIMIT; i++) {
-			if (actorMan.drone[i] != null && actorMan.drone[i].isAlive) {
-				actorMan.drone[i].update(actorMan.zplayer);
+		for (int i = 0; i < entityMan.DRONE_LIMIT; i++) {
+			if (entityMan.drone[i] != null && entityMan.drone[i].isAlive) {
+				entityMan.drone[i].update(entityMan.zplayer);
 			}
 		}
 		renderer.setView(camera);
@@ -250,30 +287,36 @@ public class WorldRenderer {
 		
 		
 		if (levelMan.isBossLevel){
-			actorMan.copterBoss.bossSprite.draw(batch);
-			actorMan.copterBoss.update();
+			entityMan.copterBoss.bossSprite.draw(batch);
+			entityMan.copterBoss.update();
 			
-			for (int i = 0; i < actorMan.copterBoss.copterTurret.length; i++){
-				if (actorMan.copterBoss.copterTurret[i] != null && actorMan.copterBoss.copterTurret[i].isAlive){
-					actorMan.copterBoss.copterTurret[i].baseSprite.draw(batch);
-					actorMan.copterBoss.copterTurret[i].barrelSprite.draw(batch);
+			for (int i = 0; i < entityMan.copterBoss.copterTurret.length; i++){
+				if (entityMan.copterBoss.copterTurret[i] != null && entityMan.copterBoss.copterTurret[i].isAlive){
+					entityMan.copterBoss.copterTurret[i].baseSprite.draw(batch);
+					entityMan.copterBoss.copterTurret[i].barrelSprite.draw(batch);
 				}
 			}
 		}
 		
-		for (int i = 0; i < actorMan.EXPLOSION_LIMIT; i++) {
-			if (actorMan.explosion[i] != null && actorMan.explosion[i].isAlive) {
-				actorMan.explosion[i].sprite.draw(batch);
+		for (int i = 0; i < entityMan.EXPLOSION_LIMIT; i++) {
+			if (entityMan.explosion[i] != null && entityMan.explosion[i].isAlive) {
+				entityMan.explosion[i].sprite.draw(batch);
 			}
 		}
 		
-		for (int i = 0; i < actorMan.DRONE_LIMIT; i++) {
-			if (actorMan.drone[i] != null && actorMan.drone[i].isAlive) {
-				actorMan.drone[i].sprite.draw(batch);
+		for (int i = 0; i < entityMan.DRONE_LIMIT; i++) {
+			if (entityMan.drone[i] != null && entityMan.drone[i].isAlive) {
+				entityMan.drone[i].sprite.draw(batch);
 			}
 		}
 		// drone[0].sprite.setPosition(actorMan.zplayer.screenpos.x,
 		// actorMan.zplayer.screenpos.y);
+		
+		healthsprite.setPosition(camera.position.x - camera.viewportWidth/2.5f,
+				camera.position.y + camera.viewportHeight/4);// - camera.viewportHeight + 10);
+		//dazdebug.print("camera.viewportHeight: " + camera.viewportHeight + 14);
+		healthsprite.draw(batch);
+		
 		dirbuttonssprite.setPosition(camera.position.x - 8,
 				camera.position.y - 6);
 		dirbuttonssprite.draw(batch);
@@ -292,85 +335,85 @@ public class WorldRenderer {
 		jumpbuttonsprite.draw(batch);
 
 		batch.setColor(Color.RED);
-		for (int i = 0; i < actorMan.ENEMY_LIMIT; i++) {
-			if (actorMan.zenemy[i] != null && actorMan.zenemy[i].sprite != null
-					&& !actorMan.zenemy[i].isDisposed) {
-				actorMan.zenemy[i].sprite.draw(batch);
-				if (!actorMan.zenemy[i].isOnLadder && actorMan.zenemy[i].isAlive) {
-					actorMan.zenemy[i].armsprite.draw(batch);
+		for (int i = 0; i < entityMan.ENEMY_LIMIT; i++) {
+			if (entityMan.zenemy[i] != null && entityMan.zenemy[i].sprite != null
+					&& !entityMan.zenemy[i].isDisposed) {
+				entityMan.zenemy[i].sprite.draw(batch);
+				if (!entityMan.zenemy[i].isOnLadder && entityMan.zenemy[i].isAlive) {
+					entityMan.zenemy[i].armsprite.draw(batch);
 				}
-				if (actorMan.zenemy[i].isOnLadder && actorMan.zenemy[i].isShooting
-						&& actorMan.zenemy[i].isAlive) {
-					actorMan.zenemy[i].armsprite.draw(batch);
+				if (entityMan.zenemy[i].isOnLadder && entityMan.zenemy[i].isShooting
+						&& entityMan.zenemy[i].isAlive) {
+					entityMan.zenemy[i].armsprite.draw(batch);
 				}
 			}
 		}
-		actorMan.zplayer.sprite.draw(batch);
+		entityMan.zplayer.sprite.draw(batch);
 		/*
 		 * NEED TO FIX ARMSPRITE LOADING/NOT LOADING HERE
 		 */
-		if (!actorMan.zplayer.isOnLadder && actorMan.zplayer.isAlive) {
-			actorMan.zplayer.armsprite.draw(batch);
+		if (!entityMan.zplayer.isOnLadder && entityMan.zplayer.isAlive) {
+			entityMan.zplayer.armsprite.draw(batch);
 		}
-		if (actorMan.zplayer.isOnLadder && actorMan.zplayer.isShooting && actorMan.zplayer.isAlive) {
-			actorMan.zplayer.armsprite.draw(batch);
+		if (entityMan.zplayer.isOnLadder && entityMan.zplayer.isShooting && entityMan.zplayer.isAlive) {
+			entityMan.zplayer.armsprite.draw(batch);
 		}
 		float extracamx = 0;
-		if (actorMan.zplayer.aimingdirection == "left") {
+		if (entityMan.zplayer.aimingdirection == "left") {
 			if (addextracamx < viewwidth / 2) {
 				addextracamx += 7;
 				if (addextracamx < 0) {
 					addextracamx += 14;
 				}
-				if (actorMan.zplayer.velocity.x > 0) {
+				if (entityMan.zplayer.velocity.x > 0) {
 					addextracamx += 7;
 				}
 			}
-		} else if (actorMan.zplayer.aimingdirection == "right") {
+		} else if (entityMan.zplayer.aimingdirection == "right") {
 			if (addextracamx > -viewwidth / 2) {
 				addextracamx -= 7;
 				if (addextracamx > 0) {
 					addextracamx -= 14;
 				}
-				if (actorMan.zplayer.velocity.x > 0) {
+				if (entityMan.zplayer.velocity.x > 0) {
 					addextracamx -= 7;
 				}
 			}
 		}
 		if (!levelMan.isLevelScrolling){
-		camera.position.set(actorMan.zplayer.worldpos.x + addextracamx / 200,
-				actorMan.zplayer.worldpos.y + 1.5f, 0);
+		camera.position.set(entityMan.zplayer.worldpos.x + addextracamx / 200,
+				entityMan.zplayer.worldpos.y + 1.5f, 0);
 		}
-		for (int i = 0; i < actorMan.DESTROYABLE_LIMIT; i++) {
-			if (actorMan.destroyable[i] != null) {
-				actorMan.destroyable[i].sprite.draw(batch);
+		for (int i = 0; i < entityMan.DESTROYABLE_LIMIT; i++) {
+			if (entityMan.destroyable[i] != null) {
+				entityMan.destroyable[i].sprite.draw(batch);
 			}
 		}
-		for (int i = 0; i < actorMan.DOOR_LIMIT; i++) {
-			if (actorMan.door[i] != null) {
-				actorMan.door[i].sprite.draw(batch);
+		for (int i = 0; i < entityMan.DOOR_LIMIT; i++) {
+			if (entityMan.door[i] != null) {
+				entityMan.door[i].sprite.draw(batch);
 			}
 		}
-		for (int i = 0; i < actorMan.ITEM_LIMIT; i++) {
-			if (actorMan.item[i] != null) {
-				if (actorMan.item[i].isAlive) {
-					actorMan.item[i].sprite.draw(batch);
+		for (int i = 0; i < entityMan.ITEM_LIMIT; i++) {
+			if (entityMan.item[i] != null) {
+				if (entityMan.item[i].isAlive) {
+					entityMan.item[i].sprite.draw(batch);
 				}
 			}
 		}
 		/*
 		 * Draw
 		 */
-		drawProjectile(actorMan.projMan);
-		drawProjectile(actorMan.aiProjMan);
+		drawProjectile(entityMan.projMan);
+		drawProjectile(entityMan.aiProjMan);
 
 		
-		if (actorMan.hudtarget.canDraw()){
-			actorMan.hudtarget.sprite.draw(batch);
+		if (entityMan.hudtarget.canDraw()){
+			entityMan.hudtarget.sprite.draw(batch);
 		}
 		//boolean levelcomplete = false;
 		if (levelMan.levelcompletepos.x != 0 && levelMan.levelcompletepos.y != 0){
-			if (Math.abs(levelMan.levelcompletepos.x - actorMan.zplayer.worldpos.x) < 3 && Math.abs(levelMan.levelcompletepos.y - actorMan.zplayer.worldpos.y) < 3 ){
+			if (Math.abs(levelMan.levelcompletepos.x - entityMan.zplayer.worldpos.x) < 3 && Math.abs(levelMan.levelcompletepos.y - entityMan.zplayer.worldpos.y) < 3 ){
 				levelMan.isLevelComplete = true;
 				levelcompletesprite.setPosition(camera.position.x-5, camera.position.y-2);
 				levelcompletesprite.setSize(12f, 6f);
@@ -387,7 +430,7 @@ public class WorldRenderer {
 		
 		displayControls();
 	
-		box2DRender(false);
+		box2DRender(showDebug);
 		camera.update();
 		
 		
