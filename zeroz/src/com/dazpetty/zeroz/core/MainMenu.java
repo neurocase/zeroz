@@ -59,20 +59,23 @@ public class MainMenu implements Screen {
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, height, width);
 
-		newGameTexture = new Texture(("data/gfx/mainmenu/newgame.png"));
+		newGameTexture = new Texture(("data/gfx/mainmenu/title.png"));
 		TextureRegion newGameTextureReg = new TextureRegion(newGameTexture, 0,
-				0, 512, 128);
+				0, 2048, 512);
 
 		newGameSprite = new Sprite(newGameTextureReg);
-		newGameSprite.setSize(256f, 64f);
+		
+		float imageSize = Gdx.graphics.getWidth()*0.8f;
+		newGameSprite.setSize(imageSize, imageSize/4);
 		
 		
-		continueTexture = new Texture(("data/gfx/mainmenu/continue.png"));
+		continueTexture = new Texture(("data/gfx/background/cityp1.png"));
 		TextureRegion continueTextureReg = new TextureRegion(continueTexture, 0,
-				0, 512, 128);
+				0, 1024, 512);
 
 		continueSprite = new Sprite(continueTextureReg);
-		continueSprite.setSize(256f, 64f);
+		imageSize = Gdx.graphics.getWidth();
+		continueSprite.setSize(imageSize, imageSize/2);
 		//newGameSprite.setOrigin(newGameSprite.getWidth()/2, newGameSprite.getHeight()/2);
 	}
 
@@ -82,7 +85,7 @@ public class MainMenu implements Screen {
 
 	@Override
 	public void render(float delta) {
-		Gdx.gl.glClearColor(0.06f, 0f, 0.2f, 1);
+		Gdx.gl.glClearColor(0.075f, 0.0f, 0.3f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		camera.update();
@@ -99,11 +102,13 @@ public class MainMenu implements Screen {
 
 		
 		//y top is high
-		//newGameSprite.setPosition(400, 240);
-		//newGameSprite.draw(game.batch);
+		continueSprite.setPosition(0, 0);
+		continueSprite.draw(game.batch);
+	
+		//newGameSprite.setOrigin(0, newGameSprite.getHeight());
+		newGameSprite.setPosition((Gdx.graphics.getWidth()/2 - (newGameSprite.getWidth()/2) )+ Gdx.graphics.getWidth()/17 , (Gdx.graphics.getHeight()-newGameSprite.getHeight()));
+		newGameSprite.draw(game.batch);
 		
-		//continueSprite.setPosition(400, 190);
-		//continueSprite.draw(game.batch);
 	
 		game.batch.end();
 	

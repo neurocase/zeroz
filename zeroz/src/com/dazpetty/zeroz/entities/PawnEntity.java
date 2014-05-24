@@ -54,7 +54,7 @@ public class PawnEntity {
 	public boolean goThruPlatform = false;
 	public boolean isCrouching = false;
 	public boolean isAI = false;
-	public boolean isDead = false;
+	//public boolean isDead = false;
 	public boolean initialized = false;
 	public boolean isFlying = false;
 	public boolean isGoRight = true;
@@ -94,17 +94,18 @@ public class PawnEntity {
 	/*
 	 * Vectors
 	 */
-	public Vector2 screenpos = new Vector2(0, 0);
+	
+	//public Vector2 screenpos = new Vector2(0, 0);
 	public Vector2 worldpos = new Vector2(0, 0);
 	public Vector2 velocity = new Vector2(0, 0);
 	public Vector3 targetWorldVec = new Vector3(0, 0, 0);
 	public Vector3 targetScreenVec = new Vector3(0, 0, 0);
-	public Vector3 enemyWorldVec = new Vector3(0, 0, 0);
-	public Vector3 enemyScreenVec = new Vector3(0, 0, 0);
+	//public Vector3 enemyWorldVec = new Vector3(0, 0, 0);
+	//public Vector3 enemyScreenVec = new Vector3(0, 0, 0);
 	public Vector3 aimingAt = new Vector3(0, 0, 0);
 	public Vector2 actorTarget = new Vector2(0, 0);
-	public Vector2 p1 = new Vector2(), p2 = new Vector2(),
-			collision = new Vector2(), normal = new Vector2();
+	//public Vector2 p1 = new Vector2(), p2 = new Vector2(),
+		//	collision = new Vector2(), normal = new Vector2();
 	int wantGoDirection = 0;
 	public float aimAtPlayer = 0;
 	public int activeBullet = 0;
@@ -119,7 +120,7 @@ public class PawnEntity {
 	private static final int FRAME_COLS = 5; // #1
 	private static final int FRAME_ROWS = 5; // #2
 	private String currentAtlasKey = new String("0000");
-	float stateTime;
+	//float stateTime;
 	private int currentFrame = 1;
 
 	public Sprite rightarmsprite;
@@ -183,7 +184,7 @@ public class PawnEntity {
 		body.setAwake(true);
 		isDisposed = false;
 		isOnLadder = false;
-		isDead = false;
+		//isDead = false;
 		isAlive = true;
 		worldpos = actorstart;
 		health = startinghealth;
@@ -549,7 +550,7 @@ public class PawnEntity {
 		}
 
 		if (state == "run" || state == "ladderclimb" || state == "runback"
-				|| state == "crouch" || state == "crouchback" || isDead) {
+				|| state == "crouch" || state == "crouchback" || !isAlive) {
 			if (currentFrame > 24) {
 				currentFrame = 0;
 			}

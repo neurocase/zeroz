@@ -20,6 +20,7 @@ import com.dazpetty.zeroz.entities.Explosion;
 import com.dazpetty.zeroz.managers.EntityManager;
 import com.dazpetty.zeroz.managers.Assets;
 import com.dazpetty.zeroz.managers.LevelManager;
+import com.dazpetty.zeroz.managers.MyAssetManager;
 import com.dazpetty.zeroz.managers.OrthoCamController;
 import com.dazpetty.zeroz.managers.ParralaxCamera;
 import com.dazpetty.zeroz.managers.ProjectileManager;
@@ -91,22 +92,39 @@ public class WorldRenderer {
 		/*
 		 * SETUP SPRITES AND TEXTURES
 		 */
-		dirbuttonssprite = new Sprite(Assets.manager.get(Assets.dirbuttons,
-				Texture.class));
-		dirbuttonssprite.setSize(7.5f, 1f);
-		dirbuttonssprite.setOrigin(0, 0);
-		dirbuttonssprite.setPosition(30, 30);
+		 
+		 TextureRegion dirbuttontexreg = new TextureRegion(MyAssetManager.dirbuttonstex, 0, 0, 512,
+				 128);
+		 
+		dirbuttonssprite = new Sprite(dirbuttontexreg);
+		dirbuttonssprite.setSize(15f, 2f);
+		dirbuttonssprite.setOrigin(0, dirbuttonssprite.getHeight());
+		dirbuttonssprite.setPosition(30, 0);
 
-		jumpbuttonsprite = new Sprite(Assets.manager.get(Assets.jumpbutton,
-				Texture.class));
-		jumpbuttonsprite.setSize(1f, 1f);
+		
+		 TextureRegion jumpbuttontexreg = new TextureRegion(MyAssetManager.jumpbuttontex, 0, 0, 64,
+				 64);
+		
+		jumpbuttonsprite = new Sprite(jumpbuttontexreg);
+		jumpbuttonsprite.setSize(1f,1f);
 		jumpbuttonsprite.setOrigin(0, 0);
+		
+		 TextureRegion shootbuttontexreg = new TextureRegion(MyAssetManager.shootbuttontex, 0, 0, 64,
+				 64);
 
-		shootbuttonsprite = new Sprite(Assets.manager.get(Assets.shootbutton,
-				Texture.class));
-		shootbuttonsprite.setSize(1f, 1f);
+		shootbuttonsprite = new Sprite(shootbuttontexreg);
+		shootbuttonsprite.setSize(1f,1f);
 		shootbuttonsprite.setOrigin(0, 0);
 		shootbuttonsprite.setPosition(0f, 0f);
+		
+		
+		
+		
+		
+		
+		
+		
+		
 
 		levelCompleteTex = new Texture(
 				Gdx.files.internal("data/gfx/hud/levelcomplete.png"));
@@ -257,7 +275,7 @@ public class WorldRenderer {
 		// drone[0].sprite.setPosition(actorMan.zplayer.screenpos.x,
 		// actorMan.zplayer.screenpos.y);
 		dirbuttonssprite.setPosition(camera.position.x - 8,
-				camera.position.y - 5);
+				camera.position.y - 6);
 		dirbuttonssprite.draw(batch);
 		Vector3 tmpVec3 = new Vector3((worldLogic.inputHandler.getXInputPosition("jump")),
 				0, 0);

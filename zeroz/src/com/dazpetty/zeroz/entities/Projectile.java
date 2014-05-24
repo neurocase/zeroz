@@ -26,7 +26,9 @@ import com.dazpetty.zeroz.managers.MyAssetManager;
  * 
  * 		HumanEntity pawn: The entity firing the projectile, for its position and whether or nor it is friendly to 
  * 		the player.
+ * 			
  * 
+ * 		Projectile Body handles transformations and sprite is assigned to that
  * 
  */
 
