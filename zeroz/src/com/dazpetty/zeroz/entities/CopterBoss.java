@@ -46,12 +46,8 @@ public class CopterBoss {
 		
 		for (int i = 0; i < TURRET_LIMIT; i++){
 			copterTurret[i] = new CopterTurret(x, y, world, -3.5f*i, i);
-		//copterTurret[1] = new CopterTurret(x, y, world, -7f, 1);
-		//copterTurret[2] = new CopterTurret(x, y, world, 0.5f, 2);
 		}
-		/*textureAtlas = new TextureAtlas(
-				Gdx.files.internal("data/gfx/drone/drone.atlas"));
-		AtlasRegion atlasTexRegion = textureAtlas.findRegion("0000");*/
+
 		
 		bossTexture = new Texture(("data/gfx/battlecopter/bossmain.png"));
 		TextureRegion bossTextureReg = new TextureRegion(bossTexture, 0, 0, 2048,
@@ -60,9 +56,7 @@ public class CopterBoss {
 		bossSprite = new Sprite(bossTextureReg);
 		bossSprite.setSize(18, 9);
 		bossSprite.setOrigin(bossSprite.getWidth()/2, 0);
-		//bossSprite.setOrigin(originX, originY);
-		
-		//x = x + bossSprite.getOriginX()/2;
+
 		screenpos.x = x;
 		screenpos.y = y;
 		

@@ -23,20 +23,16 @@ public class HumanSprite {
 	public Sprite crouchsprite;
 	public Sprite crouchbacksprite;
 	public Sprite upladdersprite;
-	
-	
 	public Sprite deathsprite;
-
 	public Sprite sprite;
+	
 	public TextureRegion armTexRegion;
 
 	public Texture armSwordTexture;
 	public Texture armUziTexture;
 	public Texture aimLadderTexture;
+	public Texture armShotgunTexture;
 
-	//private String currentAtlasKey = new String("0000");
-
-	//publi int currentFrame = 1;
 	public TextureAtlas runTextureAtlas;
 	public TextureAtlas idleTextureAtlas;
 	public TextureAtlas backWalkTextureAtlas;
@@ -44,23 +40,24 @@ public class HumanSprite {
 	public TextureAtlas crouchBackTextureAtlas;
 	public TextureAtlas upLadderTextureAtlas;
 	public TextureAtlas deathTextureAtlas;
-	
-	
-	
-	
-
 
 	float stateTime;
 
-	
-	
 	public HumanSprite(){
 		aimLadderTexture = new Texture(
 				Gdx.files.internal("data/gfx/zman/ladderlean.png"));
 		aimLadderTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-	
-		armUziTexture = new Texture(
+		
+		armShotgunTexture = new Texture(
 				Gdx.files.internal("data/gfx/weapon/armshotgun.png"));
+		armShotgunTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		
+		TextureRegion armShotgunTextureRegion = new TextureRegion(armShotgunTexture, 0,
+				0, 128, 64);
+		
+		
+		armUziTexture = new Texture(
+				Gdx.files.internal("data/gfx/weapon/armuzi.png"));
 		armUziTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		
 		TextureRegion armUziTexRegion = new TextureRegion(armUziTexture, 0,

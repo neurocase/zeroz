@@ -124,7 +124,17 @@ public class PawnEntity {
 	private int currentFrame = 1;
 
 	public Sprite rightarmsprite;
+	/*
+	 * Armsprites
+	 */
+	
 	public Sprite armsprite;
+	public Sprite armswordsprite;
+	public Sprite armuzisprite;
+	public Sprite armshotgunsprite;
+	
+	
+	
 	public Sprite aimladdersprite;
 	public String type = null;
 	public Sprite idlesprite;
@@ -267,23 +277,49 @@ public class PawnEntity {
 
 		aimLadderTexture = actorMan.humanSprite.aimLadderTexture;
 
-		if (!isMelee) {
-			armTexture = actorMan.humanSprite.armUziTexture;
-		} else {
-			armTexture = actorMan.humanSprite.armSwordTexture;
-		}
+		
+
+		Texture armSwordTexture = actorMan.humanSprite.armSwordTexture;
+		TextureRegion armSwordTexRegion = new TextureRegion(armSwordTexture, 0, 0, 128,
+				64);
+			
+		Texture armUziTexture = actorMan.humanSprite.armUziTexture;
+		TextureRegion armUziTexRegion = new TextureRegion(armUziTexture, 0, 0, 128,
+				64);
+
+		Texture armShotgunTexture = actorMan.humanSprite.armShotgunTexture;
+		TextureRegion armShotgunTexRegion = new TextureRegion(armShotgunTexture, 0, 0, 128,
+				64);
+		
+		armshotgunsprite = new Sprite(armShotgunTexRegion);
+		armshotgunsprite.setSize(2f, 1);
+		armshotgunsprite.setOrigin(((1.77f)), armshotgunsprite.getHeight() / 2);
+		
+		armswordsprite = new Sprite(armSwordTexRegion);
+		armswordsprite.setSize(2f, 1);
+		armswordsprite.setOrigin(((1.77f)), armswordsprite.getHeight() / 2);
+		
+		armuzisprite = new Sprite(armUziTexRegion);
+		armuzisprite.setSize(2f, 1);
+		armuzisprite.setOrigin(((1.77f)), armuzisprite.getHeight() / 2);
+		
+		
+		armsprite = armuzisprite;
+	/*	armsprite = new Sprite(armTexRegion);
+		armsprite.setSize(2f, 1);
+		armsprite.setOrigin(((1.77f)), armsprite.getHeight() / 2);*/
+		
+		
+		
 		TextureRegion aimLadderTexRegion = new TextureRegion(aimLadderTexture,
 				0, 0, 128, 128);
-		TextureRegion armTexRegion = new TextureRegion(armTexture, 0, 0, 128,
-				64);
+		
 
 		aimladdersprite = new Sprite(aimLadderTexRegion);
 		aimladdersprite.setPosition(-10, -10);
 		aimladdersprite.scale(1f);
 
-		armsprite = new Sprite(armTexRegion);
-		armsprite.setSize(2f, 1);
-		armsprite.setOrigin(((1.77f)), armsprite.getHeight() / 2);
+	
 		// armsprite.setPosition(-10-64, -10);
 
 		runTextureAtlas = actorMan.humanSprite.runTextureAtlas;
@@ -645,6 +681,27 @@ public class PawnEntity {
 		} else {
 			aimAngle = tmpAimVec.angle();
 		}
+		switch (weapon.weaponid){
+			case 0:
+				armsprite = armswordsprite;
+			break;
+			case 1:
+				armsprite = armuzisprite;
+			break;
+			case 2:
+				armsprite = armshotgunsprite;
+			break;
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		sprite.setSize(1f, 1f);
 		sprite.setOrigin(sprite.getWidth() / 2, 0);
 		sprite.setPosition(worldpos.x - 0.5f, worldpos.y);

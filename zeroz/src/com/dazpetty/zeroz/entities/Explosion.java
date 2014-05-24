@@ -133,11 +133,9 @@ public class Explosion {
 		}
 		
 		sprite.setColor(1, 1, 1, alpha);
-		
-	
-
-		
+				
 		currentAtlasKey = String.format("%04d", currentFrame);
+		DazDebug.print("currentAtlasKey:" + currentAtlasKey);
 		sprite.setRegion(projExplosionTexAtlas.findRegion(currentAtlasKey));
 	}
 

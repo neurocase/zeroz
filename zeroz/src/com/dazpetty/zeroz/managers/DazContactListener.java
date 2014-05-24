@@ -56,9 +56,7 @@ public class DazContactListener implements ContactListener {
 		Object objB = fb.getBody().getUserData();
 		
 		ch.handleCollision(objA, objB);
-		//Object objBb = fb.getBody().getUserData();
-
-		
+	
 	}
 
 	@Override
