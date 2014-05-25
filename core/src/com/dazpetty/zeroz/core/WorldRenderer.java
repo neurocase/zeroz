@@ -2,6 +2,7 @@ package com.dazpetty.zeroz.core;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
@@ -128,15 +129,6 @@ public class WorldRenderer {
 		shootbuttonsprite.setSize(1f,1f);
 		shootbuttonsprite.setOrigin(0, 0);
 		shootbuttonsprite.setPosition(0f, 0f);
-		
-		
-		
-		
-		
-		
-		
-		
-		
 
 		levelCompleteTex = new Texture(
 				Gdx.files.internal("data/gfx/hud/levelcomplete.png"));
@@ -185,32 +177,7 @@ public class WorldRenderer {
 		
 		
 	}
-	/*
-	public void showDebugInfo(boolean show) {
-		game.batch.begin();
-		String info2 = "";
-		if (debugOn) {
-			info2 = " Health:" + entityMan.zplayer.health + " entityMan.zplayer X:"
-					+ entityMan.zplayer.worldpos.x + ", Y:" + entityMan.zplayer.worldpos.y
-					+ " state:" + entityMan.zplayer.state;
-		} else {
-			info2 = " Health:" + entityMan.zplayer.health;
-			if (entityMan.zplayer.health <= 0) {
-				info2 = "GAME OVER: YOU DIED";
-			}
-		}
-		if (Gdx.input.isTouched()) {
-			Vector3 touchPos = new Vector3(Gdx.input.getX(), Gdx.input.getY(),
-					0);
-			String info4 = "ScreenTouch X:" + touchPos.x + " Y:" + touchPos.y;
-			camera.unproject(touchPos);
-			String info5 = "ScreenTouch X:" + touchPos.x + " Y:" + touchPos.y;
-			game.font.draw(game.batch, info4, 20, 300);
-			game.font.draw(game.batch, info5, 20, 280);
-		}
-		game.font.draw(game.batch, info2, 20, 340);
-		game.batch.end();
-	}*/
+	
 	
 	public void Render(){
 		/*
@@ -242,8 +209,8 @@ public class WorldRenderer {
 		/*
 		 * CLEAR BUFFER
 		 */
-		Gdx.gl.glClearColor(0.4f, 0.25f, 1, 1);
-		//Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+		Gdx.gl.glClearColor(0.075f, 0.0f, 0.3f, 1);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		/*
 		 * BEGIN BACKGROUND RENDER
 		 */
