@@ -17,6 +17,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.dazpetty.zeroz.entities.Explosion;
+import com.dazpetty.zeroz.entities.HUD;
 import com.dazpetty.zeroz.managers.EntityManager;
 import com.dazpetty.zeroz.managers.Assets;
 import com.dazpetty.zeroz.managers.LevelManager;
@@ -38,16 +39,6 @@ public class WorldRenderer {
 	private Sprite playersprite;
 	private Sprite bgCityBackSprite;
 	
-	public Texture healthtex;
-	public Sprite healthsprite;
-	
-	public Texture dirbuttonstex;
-	public Sprite dirbuttonssprite;
-	
-	public Texture jumpbuttontex;
-	public Sprite jumpbuttonsprite;
-	public Texture shootbuttontex;
-	public Sprite shootbuttonsprite;
 	Texture grentex;
 	private SpriteBatch batch;
 	private SpriteBatch bgbatch;
@@ -68,20 +59,17 @@ public class WorldRenderer {
 	public EntityManager entityMan;
 	public OrthogonalTiledMapRenderer renderer;
 	public WorldLogic worldLogic;
-	
+	public Explosion explosion;
 	public float viewwidth = 0;
 	public float viewheight = 0;
 	private float addextracamx = 0;
+	private HUD hud;
 	LevelManager levelMan;
 	
 	ShapeRenderer sr = new ShapeRenderer();
 	
 	
-	
-	public Explosion explosion;
-	
 	public WorldRenderer(OrthographicCamera camera, World world, EntityManager entityMan, LevelManager levelMan, WorldLogic worldLogic){
-		
 		
 		viewwidth = Gdx.graphics.getWidth();
 		viewheight = Gdx.graphics.getHeight();
@@ -95,40 +83,7 @@ public class WorldRenderer {
 		/*
 		 * SETUP SPRITES AND TEXTURES
 		 */
-		
-		
-		 TextureRegion healthtexreg = new TextureRegion(MyAssetManager.healthtex, 0, 0, 64,
-				 64);
 		 
-		healthsprite = new Sprite(healthtexreg);
-		healthsprite.setSize(2f, 2f);
-		healthsprite.setOrigin(0, healthsprite.getHeight());
-		healthsprite.setPosition(30, 0);
-
-		 
-		 TextureRegion dirbuttontexreg = new TextureRegion(MyAssetManager.dirbuttonstex, 0, 0, 512,
-				 128);
-		 
-		dirbuttonssprite = new Sprite(dirbuttontexreg);
-		dirbuttonssprite.setSize(15f, 2f);
-		dirbuttonssprite.setOrigin(0, dirbuttonssprite.getHeight());
-		dirbuttonssprite.setPosition(30, 0);
-
-		
-		 TextureRegion jumpbuttontexreg = new TextureRegion(MyAssetManager.jumpbuttontex, 0, 0, 64,
-				 64);
-		
-		jumpbuttonsprite = new Sprite(jumpbuttontexreg);
-		jumpbuttonsprite.setSize(1f,1f);
-		jumpbuttonsprite.setOrigin(0, 0);
-		
-		 TextureRegion shootbuttontexreg = new TextureRegion(MyAssetManager.shootbuttontex, 0, 0, 64,
-				 64);
-
-		shootbuttonsprite = new Sprite(shootbuttontexreg);
-		shootbuttonsprite.setSize(1f,1f);
-		shootbuttonsprite.setOrigin(0, 0);
-		shootbuttonsprite.setPosition(0f, 0f);
 
 		levelCompleteTex = new Texture(
 				Gdx.files.internal("data/gfx/hud/levelcomplete.png"));
@@ -174,10 +129,21 @@ public class WorldRenderer {
 				debugRenderer = new Box2DDebugRenderer();
 				
 				//explosion = new Explosion(7f,7f,1,0);
+				
+				
 		
+			
+			float camheight = 16;
+			camera.viewportWidth = 24;
+			int height = (int)Gdx.graphics.getHeight();
+			int width = (int) Gdx.graphics.getWidth();
+			float ratio = (viewheight / viewwidth);
+			int camh = (int) (camera.viewportWidth /2);
+			camera.viewportHeight = camera.viewportWidth * ratio;
+			hud = new HUD(camera, worldLogic.inputHandler);
 		
 	}
-	
+	boolean dynamicCamera = false;
 	
 	public void Render(){
 		/*
@@ -278,27 +244,16 @@ public class WorldRenderer {
 		// drone[0].sprite.setPosition(actorMan.zplayer.screenpos.x,
 		// actorMan.zplayer.screenpos.y);
 		
-		healthsprite.setPosition(camera.position.x - camera.viewportWidth/2.5f,
-				camera.position.y + camera.viewportHeight/4);// - camera.viewportHeight + 10);
+		hud.update(camera);
 		//dazdebug.print("camera.viewportHeight: " + camera.viewportHeight + 14);
-		healthsprite.draw(batch);
+		hud.healthsprite.draw(batch);
 		
-		dirbuttonssprite.setPosition(camera.position.x - 8,
-				camera.position.y - 6);
-		dirbuttonssprite.draw(batch);
-		Vector3 tmpVec3 = new Vector3((worldLogic.inputHandler.getXInputPosition("jump")),
-				0, 0);
-		camera.unproject(tmpVec3);
-		tmpVec3.y = camera.position.y - 5;
-		jumpbuttonsprite.setPosition(tmpVec3.x, tmpVec3.y);
+		
+		hud.dirbuttonssprite.draw(batch);
+	
+		hud.shootbuttonsprite.draw(batch);
 
-		tmpVec3.x = (worldLogic.inputHandler.getXInputPosition("shoot"));
-		camera.unproject(tmpVec3);
-		tmpVec3.y = camera.position.y - 5;
-		shootbuttonsprite.setPosition(tmpVec3.x, tmpVec3.y);
-		shootbuttonsprite.draw(batch);
-
-		jumpbuttonsprite.draw(batch);
+		hud.jumpbuttonsprite.draw(batch);
 
 		batch.setColor(Color.RED);
 		for (int i = 0; i < entityMan.ENEMY_LIMIT; i++) {
@@ -346,9 +301,14 @@ public class WorldRenderer {
 				}
 			}
 		}
+		if (!dynamicCamera){
+			addextracamx = 0;
+		}
 		if (!levelMan.isLevelScrolling){
 		camera.position.set(entityMan.zplayer.worldpos.x + addextracamx / 200,
-				entityMan.zplayer.worldpos.y + 1.5f, 0);
+				entityMan.zplayer.worldpos.y + 1.5f, 100);
+		//camera.rotate(1);
+		
 		}
 		for (int i = 0; i < entityMan.DESTROYABLE_LIMIT; i++) {
 			if (entityMan.destroyable[i] != null) {

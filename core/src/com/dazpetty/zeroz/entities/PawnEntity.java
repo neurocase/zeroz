@@ -30,8 +30,8 @@ import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.dazpetty.zeroz.core.DazDebug;
+import com.dazpetty.zeroz.core.GamePhysics;
 import com.dazpetty.zeroz.managers.EntityManager;
-import com.dazpetty.zeroz.managers.GamePhysics;
 import com.dazpetty.zeroz.managers.ProjectileManager;
 import com.dazpetty.zeroz.managers.LevelManager;
 
@@ -67,6 +67,7 @@ public class PawnEntity {
 	public boolean run = false;
 	public boolean blinkOn = false;
 	public boolean isLevelScrolling = false;
+	public boolean pressJump =false;
 	/*
 	 * ORDINARY VARIABLES
 	 */
@@ -403,6 +404,7 @@ public class PawnEntity {
 	}
 
 	public void goJump() {
+		pressJump = true;
 		if (levelMan != null) {
 			if (isAlive) {
 				for (float i = -0.55f; i < 0.55f; i += 0.55f) {
@@ -454,7 +456,7 @@ public class PawnEntity {
 	}
 
 	public void update(boolean isWorldCoord, Camera camera, boolean shoot) {
-
+	
 		float inx = aimingAt.x;
 		float iny = aimingAt.y;
 
@@ -717,6 +719,7 @@ public class PawnEntity {
 			System.out.println("levelMan IN ACTOR IS NULL");
 		}
 		physics.doPhysics(this);
+		pressJump = false;
 		goThruPlatform = false;
 		isShooting = false;
 

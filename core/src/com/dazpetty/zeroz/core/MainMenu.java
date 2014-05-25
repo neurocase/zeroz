@@ -61,7 +61,8 @@ public class MainMenu implements Screen {
 		Gdx.input.setInputProcessor(stage);
 		
 		camera = new OrthographicCamera();
-		camera.setToOrtho(false, height, width);
+		camera.setToOrtho(false, height*2, width*2);
+		
 
 		newGameTexture = new Texture(("data/gfx/mainmenu/title.png"));
 		TextureRegion newGameTextureReg = new TextureRegion(newGameTexture, 0,

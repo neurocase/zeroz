@@ -1,4 +1,4 @@
-package com.dazpetty.zeroz.managers;
+package com.dazpetty.zeroz.core;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -43,9 +43,18 @@ public class GamePhysics {
 						pawn.velocity.y = 0;
 					}
 					if (fall) {
-						if (pawn.state == "ladderslide") {
-							pawn.velocity.y -= (pawn.gravMass / 2);
-						} else {
+						if (pawn.isOnLadder) {
+							if (pawn.isCrouching){
+								pawn.velocity.y = -2;
+							}else if (pawn.isJump && pawn.pressJump){
+								pawn.velocity.y = 2;
+								//System.out.print("ON A LADDER AND JUMPING");
+							}else if (!pawn.pressJump){
+								if (pawn.velocity.y > 0){
+									pawn.velocity.y = 0;
+								}
+							}
+						} else if (!pawn.isOnLadder){
 							pawn.velocity.y -= pawn.gravMass;
 						}
 					}
@@ -76,8 +85,20 @@ public class GamePhysics {
 				pawn.velocity.y = 0;
 			}
 	
+			if (pawn.levelMan.isCellBlocked(pawn.worldpos.x, newposition.y + 2, true)
+					&& !pawn.isGrounded && pawn.velocity.y > 0) {
+				pawn.velocity.y = 0;
+			}
+			
+			
+			//isGrounded prevents jumping, it also prevents calculating gravity when negative
+			
+			
+			
+			
+			
 			if (!pawn.levelMan.isCellBlocked(pawn.worldpos.x, newposition.y, true)
-					&& !pawn.isGrounded) {
+					&& !pawn.isGrounded ) {
 				pawn.worldpos.y = newposition.y;
 			} else {
 				if (!pawn.levelMan.isCellBlocked(pawn.worldpos.x, (int) (pawn.worldpos.y),  blocked)) {
@@ -97,6 +118,7 @@ public class GamePhysics {
 					&& !pawn.levelMan.isCellPlatform(pawn.worldpos.x, pawn.worldpos.y - 0.1f)) {
 				pawn.isGrounded = false;
 			}
+		
 		}
 
 	}

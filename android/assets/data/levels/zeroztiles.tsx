@@ -171,6 +171,21 @@
    <property name="solid" value=""/>
   </properties>
  </tile>
+ <tile id="288">
+  <properties>
+   <property name="diagonal" value="left"/>
+  </properties>
+ </tile>
+ <tile id="289">
+  <properties>
+   <property name="" value=""/>
+  </properties>
+ </tile>
+ <tile id="291">
+  <properties>
+   <property name="diagonal" value="right"/>
+  </properties>
+ </tile>
  <tile id="307">
   <properties>
    <property name="ladder" value="ladder"/>

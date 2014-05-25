@@ -47,11 +47,11 @@ public class InputHandler {
 	float tshoot = 0.80f;
 	float touchAreaHeight = 96;
 	
-	public void LoadInputHandler(float viewwidthin, float viewheightin, Camera camerain, PawnEntity zplayerin){
+	public void LoadInputHandler(float viewwidthin, float viewheightin, Camera camera, PawnEntity zplayer){
 		viewwidth = viewwidthin;
 		viewheight = viewheightin;
-		camera = camerain;
-		zplayer = zplayerin;
+		this.camera = camera;
+		this.zplayer = zplayer;
 		InputHandlerLoaded = true;
 	}
 	
@@ -141,8 +141,7 @@ public class InputHandler {
 					zplayer.aimingAt.x = newAimVec.x;
 					zplayer.aimingAt.y = newAimVec.y;
 					
-				//	System.out.println("Z" + zplayer.aimingAt.x + " : " + zplayer.aimingAt.y);
-					
+		
 					newAimVec.y -= 1;
 					float ang = newAimVec.angle();
 

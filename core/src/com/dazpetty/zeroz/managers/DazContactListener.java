@@ -52,6 +52,8 @@ public class DazContactListener implements ContactListener {
 		if (fa.getUserData() == null || fb.getUserData() == null)
 			return;
 
+
+		
 		Object objA = fa.getBody().getUserData();
 		Object objB = fb.getBody().getUserData();
 		
