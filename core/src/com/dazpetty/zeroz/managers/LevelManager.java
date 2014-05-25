@@ -234,6 +234,7 @@ public class LevelManager {
 					for (int d = 0; d < c - 1; d++) {
 						w++;
 					}
+					groundBox.dispose();
 				}
 				if (isCellDiagonal(w, h)) {
 
@@ -290,6 +291,7 @@ public class LevelManager {
 					for (int d = 0; d < c - 1; d++) {
 						w++;
 					}
+					groundBox.dispose();
 				}
 				if (isCellEnemySpawn(w, h)) {
 					String type = (String) getEnemyType(w, h);
