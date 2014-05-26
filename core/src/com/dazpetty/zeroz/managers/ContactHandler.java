@@ -44,11 +44,6 @@ public class ContactHandler {
 		boolean removeProj = false;
 		for (int i = 0; i < 2; i++){
 			Object objBb = objB;
-			
-			
-	
-			
-			
 
 			if ((objA instanceof String || objA instanceof CopterTurret
 					|| objA instanceof PawnEntity || objA instanceof Destroyable || objA instanceof Drone)

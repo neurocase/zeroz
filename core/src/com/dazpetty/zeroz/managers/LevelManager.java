@@ -271,6 +271,11 @@ public class LevelManager {
 					groundShape.dispose();
 				}
 				if (isCellPlatform(w, h)) {
+					/*
+					 * 	PLATFORMS ARE NOT WORKING
+					 */
+					boolean THIS_CODE_IS_FIXED = false;
+					if (THIS_CODE_IS_FIXED){
 					int c = 0;
 					while (isCellPlatform(w + c, h)) {
 						c++;
@@ -304,6 +309,7 @@ public class LevelManager {
 						w++;
 					}
 					groundBox.dispose();
+					}
 				}
 				if (isCellEnemySpawn(w, h)) {
 					String type = (String) getEnemyType(w, h);
