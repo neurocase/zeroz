@@ -22,6 +22,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
@@ -29,15 +30,17 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.physics.box2d.WorldManifold;
+import com.badlogic.gdx.utils.Array;
 import com.dazpetty.zeroz.core.DazDebug;
 import com.dazpetty.zeroz.core.GamePhysics;
 import com.dazpetty.zeroz.managers.EntityManager;
 import com.dazpetty.zeroz.managers.ProjectileManager;
 import com.dazpetty.zeroz.managers.LevelManager;
 
-/* 
- * Pawn Entity is the base class for entities controlled by the player or ai, 
- * 
+/*
+ * Pawn Entity is the base class for entities controlled by the player or ai,
+ *
  */
 
 public class PawnEntity {
@@ -54,7 +57,7 @@ public class PawnEntity {
 	public boolean goThruPlatform = false;
 	public boolean isCrouching = false;
 	public boolean isAI = false;
-	//public boolean isDead = false;
+	// public boolean isDead = false;
 	public boolean initialized = false;
 	public boolean isFlying = false;
 	public boolean isGoRight = true;
@@ -67,7 +70,7 @@ public class PawnEntity {
 	public boolean run = false;
 	public boolean blinkOn = false;
 	public boolean isLevelScrolling = false;
-	public boolean pressJump =false;
+	public boolean pressJump = false;
 	/*
 	 * ORDINARY VARIABLES
 	 */
@@ -95,18 +98,18 @@ public class PawnEntity {
 	/*
 	 * Vectors
 	 */
-	
-	//public Vector2 screenpos = new Vector2(0, 0);
+
+	// public Vector2 screenpos = new Vector2(0, 0);
 	public Vector2 worldpos = new Vector2(0, 0);
 	public Vector2 velocity = new Vector2(0, 0);
 	public Vector3 targetWorldVec = new Vector3(0, 0, 0);
 	public Vector3 targetScreenVec = new Vector3(0, 0, 0);
-	//public Vector3 enemyWorldVec = new Vector3(0, 0, 0);
-	//public Vector3 enemyScreenVec = new Vector3(0, 0, 0);
+	// public Vector3 enemyWorldVec = new Vector3(0, 0, 0);
+	// public Vector3 enemyScreenVec = new Vector3(0, 0, 0);
 	public Vector3 aimingAt = new Vector3(0, 0, 0);
 	public Vector2 actorTarget = new Vector2(0, 0);
-	//public Vector2 p1 = new Vector2(), p2 = new Vector2(),
-		//	collision = new Vector2(), normal = new Vector2();
+	// public Vector2 p1 = new Vector2(), p2 = new Vector2(),
+	// collision = new Vector2(), normal = new Vector2();
 	int wantGoDirection = 0;
 	public float aimAtPlayer = 0;
 	public int activeBullet = 0;
@@ -121,21 +124,19 @@ public class PawnEntity {
 	private static final int FRAME_COLS = 5; // #1
 	private static final int FRAME_ROWS = 5; // #2
 	private String currentAtlasKey = new String("0000");
-	//float stateTime;
+	// float stateTime;
 	private int currentFrame = 1;
 
 	public Sprite rightarmsprite;
 	/*
 	 * Armsprites
 	 */
-	
+
 	public Sprite armsprite;
 	public Sprite armswordsprite;
 	public Sprite armuzisprite;
 	public Sprite armshotgunsprite;
-	
-	
-	
+
 	public Sprite aimladdersprite;
 	public String type = null;
 	public Sprite idlesprite;
@@ -165,16 +166,19 @@ public class PawnEntity {
 	public ProjectileManager projMan;
 	public Weapon weapon;
 	TiledMapTileLayer collisionLayer = null;
+	public PawnFoot pawnFoot;
 	/*
 	 * LIBGDX/BOX2D OBJECTS
 	 */
 	protected Camera scenecamera;
 	public World world;
 	public BodyDef bodyDef = new BodyDef();
-	public Body body;
+
+	public Body mainbody;
 	public Sprite grensprite;
 	public FixtureDef fixtureDef;
-	public CircleShape dynamicCircle;
+
+	// public CircleShape dynamicCircle;
 	/*
 	 * AI's VARIABLES
 	 */
@@ -191,11 +195,11 @@ public class PawnEntity {
 	 */
 	public void reUseEntity(Vector2 actorstart, Weapon weapon) {
 		this.weapon = weapon;
-		body.setActive(true);
-		body.setAwake(true);
+		mainbody.setActive(true);
+		mainbody.setAwake(true);
 		isDisposed = false;
 		isOnLadder = false;
-		//isDead = false;
+		// isDead = false;
 		isAlive = true;
 		worldpos = actorstart;
 		health = startinghealth;
@@ -211,11 +215,9 @@ public class PawnEntity {
 	public PawnEntity(Camera scam, World world, boolean amAI,
 			LevelManager levelMan, Vector2 actorstart, int id,
 			EntityManager actorMan, String actorType) {
-		
-		
+
 		weapon = new Weapon(1);
-		
-		
+
 		this.id = id;
 		this.levelMan = levelMan;
 
@@ -228,13 +230,16 @@ public class PawnEntity {
 			}
 		}
 
-		if (body == null) {
+		if (mainbody == null) {
+			pawnFoot = new PawnFoot(this, world);
+
 			BodyDef bodyDef = new BodyDef();
-			bodyDef.type = BodyType.DynamicBody;
-			body = world.createBody(bodyDef);
+			bodyDef.type = BodyType.KinematicBody;
+			mainbody = world.createBody(bodyDef);
 		} else {
-			body.setActive(true);
-			body.setAwake(true);
+			mainbody.setActive(true);
+			mainbody.setAwake(true);
+
 		}
 
 		worldpos = actorstart;
@@ -244,25 +249,24 @@ public class PawnEntity {
 		isAI = amAI;
 		this.world = world;
 
-		body.setUserData(this);
-
 		fixtureDef = new FixtureDef();
 		PolygonShape pBox = new PolygonShape();
-		pBox.setAsBox(0.5f, 1f);
+		pBox.setAsBox(0.25f, 0.8f);
 		fixtureDef.shape = pBox;
-		Fixture fixture = body.createFixture(fixtureDef);
+		fixtureDef.isSensor = true;
+		Fixture fixture = mainbody.createFixture(fixtureDef);
+
+		// footfixture.isSensor();
+
+		mainbody.setUserData(this);
 
 		if (isAI) {
 			fixture.setUserData("ai");
 		} else {
 			fixture.setUserData("player");
 		}
-		body.setLinearVelocity(0, 0);
+		mainbody.setLinearVelocity(0, 0);
 
-		fixtureDef.shape = pBox;
-		fixtureDef.density = 0.5f;
-		fixtureDef.friction = 0.3f;
-		fixtureDef.restitution = 0.6f;
 		if (!isAI) {
 			fixtureDef.filter.maskBits = 7;
 			fixtureDef.filter.categoryBits = 8;
@@ -270,51 +274,48 @@ public class PawnEntity {
 			fixtureDef.filter.maskBits = 9;
 			fixtureDef.filter.categoryBits = 4;
 		}
-		body.createFixture(fixtureDef);
+		mainbody.createFixture(fixtureDef);
 
+		// footfixture.
 		height = 2;
 		width = 1.25f;
 		scenecamera = scam;
 
 		aimLadderTexture = actorMan.humanSprite.aimLadderTexture;
 
-		
-
 		Texture armSwordTexture = actorMan.humanSprite.armSwordTexture;
-		TextureRegion armSwordTexRegion = new TextureRegion(armSwordTexture, 0, 0, 128,
-				64);
-			
+		TextureRegion armSwordTexRegion = new TextureRegion(armSwordTexture, 0,
+				0, 128, 64);
+
 		Texture armUziTexture = actorMan.humanSprite.armUziTexture;
-		TextureRegion armUziTexRegion = new TextureRegion(armUziTexture, 0, 0, 128,
-				64);
+		TextureRegion armUziTexRegion = new TextureRegion(armUziTexture, 0, 0,
+				128, 64);
 
 		Texture armShotgunTexture = actorMan.humanSprite.armShotgunTexture;
-		TextureRegion armShotgunTexRegion = new TextureRegion(armShotgunTexture, 0, 0, 128,
-				64);
-		
+		TextureRegion armShotgunTexRegion = new TextureRegion(
+				armShotgunTexture, 0, 0, 128, 64);
+
 		armshotgunsprite = new Sprite(armShotgunTexRegion);
 		armshotgunsprite.setSize(2f, 1);
 		armshotgunsprite.setOrigin(((1.77f)), armshotgunsprite.getHeight() / 2);
-		
+
 		armswordsprite = new Sprite(armSwordTexRegion);
 		armswordsprite.setSize(2f, 1);
 		armswordsprite.setOrigin(((1.77f)), armswordsprite.getHeight() / 2);
-		
+
 		armuzisprite = new Sprite(armUziTexRegion);
 		armuzisprite.setSize(2f, 1);
 		armuzisprite.setOrigin(((1.77f)), armuzisprite.getHeight() / 2);
-		
-		armsprite = armuzisprite;	
-		
+
+		armsprite = armuzisprite;
+
 		TextureRegion aimLadderTexRegion = new TextureRegion(aimLadderTexture,
 				0, 0, 128, 128);
-		
 
 		aimladdersprite = new Sprite(aimLadderTexRegion);
 		aimladdersprite.setPosition(-10, -10);
 		aimladdersprite.scale(1f);
 
-	
 		// armsprite.setPosition(-10-64, -10);
 
 		runTextureAtlas = actorMan.humanSprite.runTextureAtlas;
@@ -355,7 +356,12 @@ public class PawnEntity {
 		upladdersprite = new Sprite(upLadderTexRegion);
 		upladdersprite.scale(1f);
 		physics = new GamePhysics();
+
+		pBox.dispose();
+
 	}
+
+
 
 	public void goLeft() {
 		if (isAlive) {
@@ -456,7 +462,7 @@ public class PawnEntity {
 	}
 
 	public void update(boolean isWorldCoord, Camera camera, boolean shoot) {
-	
+
 		float inx = aimingAt.x;
 		float iny = aimingAt.y;
 
@@ -677,27 +683,18 @@ public class PawnEntity {
 		} else {
 			aimAngle = tmpAimVec.angle();
 		}
-		switch (weapon.weaponid){
-			case 0:
-				armsprite = armswordsprite;
+		switch (weapon.weaponid) {
+		case 0:
+			armsprite = armswordsprite;
 			break;
-			case 1:
-				armsprite = armuzisprite;
+		case 1:
+			armsprite = armuzisprite;
 			break;
-			case 2:
-				armsprite = armshotgunsprite;
+		case 2:
+			armsprite = armshotgunsprite;
 			break;
 		}
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+
 		sprite.setSize(1f, 1f);
 		sprite.setOrigin(sprite.getWidth() / 2, 0);
 		sprite.setPosition(worldpos.x - 0.5f, worldpos.y);
@@ -714,11 +711,16 @@ public class PawnEntity {
 		} else {
 			isShooting = false;
 		}
-		body.setTransform(worldpos.x, worldpos.y + 1, 0f);
+		mainbody.setTransform(worldpos.x, worldpos.y + 1, 0f);
+		pawnFoot.footbody.setTransform(worldpos.x, worldpos.y + 0.1f, 0f);
 		if (levelMan == null) {
 			System.out.println("levelMan IN ACTOR IS NULL");
 		}
 		physics.doPhysics(this);
+		if (pawnFoot.isOnGround) {
+			// DazDebug.print("PAWNENTITY IS ON GROUND");
+		}
+		// pawnFoot.isOnGround = false;
 		pressJump = false;
 		goThruPlatform = false;
 		isShooting = false;
@@ -768,8 +770,8 @@ public class PawnEntity {
 		health -= damage;
 		if (health <= 0) {
 			isAlive = false;
-			body.setActive(false);
-			body.setAwake(false);
+			mainbody.setActive(false);
+			mainbody.setAwake(false);
 			isOnLadder = false;
 		}
 	}
@@ -832,14 +834,13 @@ public class PawnEntity {
 	}
 
 	public void Pickup(Item pickUpItem) {
-		if (pickUpItem.isWeapon){
+		if (pickUpItem.isWeapon) {
 			int holdId = weapon.weaponid;
 			weapon.setWeapon(pickUpItem.itemWeaponNumber);
 			pickUpItem.dropWeapon(holdId);
 		}
 	}
-	
-		
-	//}
+
+	// }
 
 }

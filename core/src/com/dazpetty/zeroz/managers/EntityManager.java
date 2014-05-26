@@ -154,7 +154,7 @@ public class EntityManager {
 						&& (zenemy[enemycount] == null
 								|| zenemy[enemycount].isAlive == false || zenemy[enemycount].isDisposed)) {
 					if (zenemy[enemycount] != null
-							&& zenemy[enemycount].body != null) {
+							&& zenemy[enemycount].mainbody != null) {
 						System.out
 								.println("destroying enemy body" + enemycount);
 						zenemy[enemycount].reUseEntity(startpos, uzi);
@@ -186,7 +186,7 @@ public class EntityManager {
 						&& (zenemy[enemycount] == null
 								|| zenemy[enemycount].isAlive == false || zenemy[enemycount].isDisposed)) {
 					if (zenemy[enemycount] != null
-							&& zenemy[enemycount].body != null) {
+							&& zenemy[enemycount].mainbody != null) {
 						System.out
 								.println("destroying enemy body" + enemycount);
 						zenemy[enemycount].reUseEntity(startpos, uzi);

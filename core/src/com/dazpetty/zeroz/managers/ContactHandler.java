@@ -7,6 +7,7 @@ import com.dazpetty.zeroz.entities.CopterTurret;
 import com.dazpetty.zeroz.entities.Destroyable;
 import com.dazpetty.zeroz.entities.Drone;
 import com.dazpetty.zeroz.entities.PawnEntity;
+import com.dazpetty.zeroz.entities.PawnFoot;
 import com.dazpetty.zeroz.entities.Projectile;
 
 public class ContactHandler {
@@ -43,10 +44,31 @@ public class ContactHandler {
 			
 			
 			Object objBb = objB;
+			
+			
+			
 			/*
 			 * TODO: MOve this out of collision listener into worldLogic so that the
 			 * contactlistener doesn't crash
 			 */
+			
+		//	if (objA instanceof String) {
+				//if (((String) objA).equals("solid")) {
+					
+				
+					
+				//}
+			//}
+			
+			if ((objA instanceof PawnFoot)){
+				((PawnFoot)objA).isOnGround = true;
+				DazDebug.print("99999999999999999999999999999999999foot ground collision");
+			}else if ((objB instanceof PawnFoot)){
+				((PawnFoot)objB).isOnGround = true;
+				DazDebug.print("99999999999999999999999999999999999foot ground collision");
+				
+			}
+			
 			if ((objA instanceof String || objA instanceof CopterTurret
 					|| objA instanceof PawnEntity || objA instanceof Destroyable || objA instanceof Drone)
 					&& objB instanceof Projectile) {

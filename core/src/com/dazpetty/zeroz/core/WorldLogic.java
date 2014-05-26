@@ -74,6 +74,8 @@ public class WorldLogic {
 		// CREATE PLAYER
 		entityMan.zplayer = new PawnEntity(camera, world, false, levelMan,  levelMan.playerstart, -1,
 				entityMan, "player");
+		
+		DazDebug.print("playerstart at x" + levelMan.playerstart.x + " y:" + levelMan.playerstart.y);
 		//entityMan.createActor(1,entityMan.es.enemyspawner);
 		// INPUTHANDLER
 		

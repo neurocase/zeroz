@@ -100,7 +100,7 @@ public class GameScene implements Screen {
 	Vector3 touchPos = new Vector3(0, 0, 0);
 	Vector3 zeroVector3 = new Vector3(0, 0, 0);
 	public Vector target = new Vector2(0, 0);
-	private Vector2 playerpos = new Vector2(0, 0);
+	private Vector2 playerpos = new Vector2(7, 7);
 	private Vector3 screenPosZero = new Vector3(0, 0, 0);
 	Vector3 camVector = new Vector3(0, 0, 0);
 	/*

@@ -13,6 +13,7 @@ import com.dazpetty.zeroz.entities.Destroyable;
 import com.dazpetty.zeroz.entities.Drone;
 import com.dazpetty.zeroz.entities.PawnEntity;
 import com.dazpetty.zeroz.entities.Item;
+import com.dazpetty.zeroz.entities.PawnFoot;
 import com.dazpetty.zeroz.entities.Projectile;
 
 public class DazContactListener implements ContactListener {
@@ -57,6 +58,17 @@ public class DazContactListener implements ContactListener {
 		Object objA = fa.getBody().getUserData();
 		Object objB = fb.getBody().getUserData();
 		
+	/*	if (objA instanceof PawnFoot || objB instanceof String){
+			if (((String)objB).equals("ground")){
+				((PawnFoot)objA).isOnGround = true;
+			}
+		}
+		if (objB instanceof PawnFoot || objA instanceof String){
+			if (((String)objA).equals("ground")){
+				((PawnFoot)objB).isOnGround = true;
+			}
+		}*/
+		
 		ch.handleCollision(objA, objB);
 	
 	}
@@ -64,6 +76,30 @@ public class DazContactListener implements ContactListener {
 	@Override
 	public void endContact(Contact contact) {
 		// TODO Auto-generated method stub
+	/*	Fixture fa = contact.getFixtureA();
+		Fixture fb = contact.getFixtureB();
+
+		if (fa == null || fb == null)
+			return;
+
+		if (fa.getUserData() == null || fb.getUserData() == null)
+			return;
+		
+		Object objA = fa.getBody().getUserData();
+		Object objB = fb.getBody().getUserData();
+		
+		if (objA instanceof PawnFoot || objB instanceof String){
+			if (((String)objB).equals("ground")){
+				((PawnFoot)objA).isOnGround = false;
+			}
+		}
+		if (objB instanceof PawnFoot || objA instanceof String){
+			if (((String)objA).equals("ground")){
+				((PawnFoot)objB).isOnGround = false;
+			}
+		}*/
+		
+		
 	}
 
 	@Override

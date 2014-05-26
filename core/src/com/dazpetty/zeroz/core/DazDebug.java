@@ -11,14 +11,14 @@ public class DazDebug {
 	
 	
 	public void tick(){
-		t++;
+	/*	t++;
 	//long milliTimeNow = System.currentTimeMillis();
 		if (t > 30){	
 			long tickTime = System.currentTimeMillis();
 				print("-  30 TICKs: " + (tickTime/30) + "      -");
 			milliTimeTick = System.currentTimeMillis();
 			t = 0;
-		}
+		}*/
 	}
 	static long startTime = System.currentTimeMillis();
 	public static void print(String str){

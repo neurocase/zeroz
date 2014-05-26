@@ -44,7 +44,7 @@ public class Explosion {
 		currentFrame = 2;
 		worldpos = new Vector2 (x,y);
 		
-		DazDebug.print("explosion at: x:" + x + " y:" + y + " id:" + id);
+		//DazDebug.print("explosion at: x:" + x + " y:" + y + " id:" + id);
 		projExplosionTexAtlas = assetMan.projExplosionTexAtlas;
 		fuseBoxExplosionTexAtlas = assetMan.fuseBoxExplosionTexAtlas;
 				
@@ -147,7 +147,7 @@ public class Explosion {
 		sprite.setColor(1, 1, 1, alpha);
 				
 		currentAtlasKey = String.format("%04d", currentFrame);
-		DazDebug.print("currentAtlasKey:" + currentAtlasKey + "explosionID: " + explosionid + "default:" + type);
+		//DazDebug.print("currentAtlasKey:" + currentAtlasKey + "explosionID: " + explosionid + "default:" + type);
 		sprite.setRegion(projExplosionTexAtlas.findRegion(currentAtlasKey));
 	}
 
