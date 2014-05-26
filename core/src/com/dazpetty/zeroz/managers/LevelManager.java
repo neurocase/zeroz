@@ -14,6 +14,7 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.dazpetty.zeroz.entities.CopterBoss;
 import com.dazpetty.zeroz.entities.Destroyable;
 import com.dazpetty.zeroz.entities.Door;
@@ -213,7 +214,6 @@ public class LevelManager {
 			for (int w = 0; w < collisionLayer.getWidth(); w++) {
 
 				if (isCellBlocked(w, h, false)) {
-
 					int c = 0;
 					while (isCellBlocked(w + c, h, false)) {
 						c++;
@@ -225,12 +225,12 @@ public class LevelManager {
 					PolygonShape groundBox = new PolygonShape();
 					groundBox.setAsBox(c * 0.5f, 0.5f);
 					groundBody.createFixture(groundBox, 0.0f);
-					groundBody.setUserData("solid");
+					groundBody.setUserData("ground");
 					FixtureDef fixtureDef = new FixtureDef();
 					fixtureDef.shape = groundBox;
 					fixtureDef.filter.categoryBits = 2;
 					Fixture gfix = groundBody.createFixture(groundBox, 0.0f);
-					gfix.setUserData("ground");
+					gfix.setUserData("solid");
 					for (int d = 0; d < c - 1; d++) {
 						w++;
 					}
@@ -261,13 +261,13 @@ public class LevelManager {
 					
 		
 					groundBody.createFixture(groundShape, 0.0f);
-					groundBody.setUserData("solid");
+					groundBody.setUserData("ground");
 					
 					FixtureDef fixtureDef = new FixtureDef();
 					fixtureDef.shape = groundShape;
 					fixtureDef.filter.categoryBits = 2;
 					Fixture gfix = groundBody.createFixture(groundShape, 0.0f);
-					gfix.setUserData("ground");
+					gfix.setUserData("solid");
 					groundShape.dispose();
 				}
 				if (isCellPlatform(w, h)) {
@@ -275,19 +275,31 @@ public class LevelManager {
 					while (isCellPlatform(w + c, h)) {
 						c++;
 					}
+				
 					BodyDef groundBodyDef = new BodyDef();
 					groundBodyDef.position.set(new Vector2(w + c * 0.5f,
 							h + 0.75f));
+					groundBodyDef.type = groundBodyDef.type = BodyType.StaticBody;
+
 					Body groundBody = world.createBody(groundBodyDef);
 					PolygonShape groundBox = new PolygonShape();
 					groundBox.setAsBox(c * 0.5f, 0.2f);
-					groundBody.createFixture(groundBox, 0.0f);
-					groundBody.setUserData("platform");
+					
+					
 					FixtureDef fixtureDef = new FixtureDef();
+					
+					fixtureDef.filter.categoryBits = 4;
+				//	fixtureDef.isSensor = true;
 					fixtureDef.shape = groundBox;
-					fixtureDef.filter.categoryBits = 1;
+					groundBody.createFixture(fixtureDef);
+					groundBody.setUserData("platform");
+					
 					Fixture pfix = groundBody.createFixture(fixtureDef);
+					//pfix.setSensor(true);
 					pfix.setUserData("platform");
+					
+					
+					
 					for (int d = 0; d < c - 1; d++) {
 						w++;
 					}

@@ -47,6 +47,8 @@ public class InputHandler {
 	float tshoot = 0.80f;
 	float touchAreaHeight = 96;
 	
+	int goDirection = 0;
+	
 	public void LoadInputHandler(float viewwidthin, float viewheightin, Camera camera, PawnEntity zplayer){
 		viewwidth = viewwidthin;
 		viewheight = viewheightin;
@@ -70,12 +72,14 @@ public class InputHandler {
 			Gdx.app.exit();
 		}
 		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-			zplayer.goRight();
+			//zplayer.goRight();
+			zplayer.goDirection = 1;
 
 		}
 
 		if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-			zplayer.goLeft();
+			//zplayer.goLeft();
+			zplayer.goDirection = -1;
 		}
 		if (Gdx.input.isKeyPressed(Input.Keys.UP)
 				&& !Gdx.input.isKeyPressed(Input.Keys.DOWN)) {

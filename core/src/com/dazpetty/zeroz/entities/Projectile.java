@@ -118,7 +118,7 @@ public class Projectile implements Poolable {
 			body.setGravityScale(1);
 		}
 		int str = id;
-		body.setUserData(this);
+		//body.setUserData(this);
 		body.setBullet(true);
 				
 		
@@ -151,11 +151,13 @@ public class Projectile implements Poolable {
 	    if (isAI){
 	    	fixtureDef.filter.maskBits = 3;
 	    	Fixture fixture = body.createFixture(fixtureDef);
-	    	fixture.setUserData("aiproj");	
+	    	fixture.setUserData(this);
+	    	body.setUserData("aiproj");	
 	    }else{
 	    	fixtureDef.filter.maskBits = 3;
 	    	Fixture fixture = body.createFixture(fixtureDef);
-	    	fixture.setUserData("playerproj");
+	    	fixture.setUserData(this);
+	    	body.setUserData("playerproj");
 	    }
 	}
 

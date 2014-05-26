@@ -74,10 +74,12 @@ public class PawnEntity {
 	/*
 	 * ORDINARY VARIABLES
 	 */
+
+	public int goDirection = 0;
 	public int deathanim = 0;
-	public float jumpSpeed = 16;
+	public float jumpSpeed = 10;
 	public float aimAngle = 0;
-	public float moveSpeed = 3;
+	public float moveSpeed = 0.5f;
 	public int startinghealth = 100;
 	public int health = 100;
 	public float rotdir = 0;
@@ -120,7 +122,7 @@ public class PawnEntity {
 	/*
 	 * ANIMATION TYPES
 	 */
-	public int MAX_MOVE_SPEED = 10;
+	public int MAX_MOVE_SPEED = 5;
 	private static final int FRAME_COLS = 5; // #1
 	private static final int FRAME_ROWS = 5; // #2
 	private String currentAtlasKey = new String("0000");
@@ -167,18 +169,16 @@ public class PawnEntity {
 	public Weapon weapon;
 	TiledMapTileLayer collisionLayer = null;
 	public PawnFoot pawnFoot;
+	public Fixture mainbodyfixture;
 	/*
 	 * LIBGDX/BOX2D OBJECTS
 	 */
 	protected Camera scenecamera;
 	public World world;
 	public BodyDef bodyDef = new BodyDef();
-
 	public Body mainbody;
 	public Sprite grensprite;
 	public FixtureDef fixtureDef;
-
-	// public CircleShape dynamicCircle;
 	/*
 	 * AI's VARIABLES
 	 */
@@ -218,11 +218,13 @@ public class PawnEntity {
 
 		weapon = new Weapon(1);
 
+		this.world = world;
 		this.id = id;
 		this.levelMan = levelMan;
 
 		isLevelScrolling = levelMan.isLevelScrolling;
 		projMan = actorMan.projMan;
+
 		if (levelMan == null) {
 			levelMan = (LevelManager) levelMan;
 			if (levelMan == null) {
@@ -230,51 +232,71 @@ public class PawnEntity {
 			}
 		}
 
-		if (mainbody == null) {
-			pawnFoot = new PawnFoot(this, world);
-
-			BodyDef bodyDef = new BodyDef();
-			bodyDef.type = BodyType.KinematicBody;
-			mainbody = world.createBody(bodyDef);
-		} else {
-			mainbody.setActive(true);
-			mainbody.setAwake(true);
-
+		if (actorstart.x == 0) {
+			actorstart = (new Vector2(7, 14));
 		}
-
 		worldpos = actorstart;
-		initialized = true;
 
+	
+		BodyDef bodyDef = new BodyDef();
+		bodyDef.position.set(worldpos);
+		bodyDef.type = BodyType.DynamicBody;
+
+		mainbody = world.createBody(bodyDef);
+		mainbody.setActive(true);
+		mainbody.setAwake(true);
+		mainbody.setBullet(true);
+
+		initialized = true;
 		isDisposed = false;
 		isAI = amAI;
-		this.world = world;
 
 		fixtureDef = new FixtureDef();
-		PolygonShape pBox = new PolygonShape();
-		pBox.setAsBox(0.25f, 0.8f);
-		fixtureDef.shape = pBox;
-		fixtureDef.isSensor = true;
-		Fixture fixture = mainbody.createFixture(fixtureDef);
+		fixtureDef.friction = 0;
+		fixtureDef.density = 0;
+		//fixtureDef.
+		// fixtureDef.
+		// fixtureDef.isSensor = true;
+		/*
+		 * PolygonShape pBox = new PolygonShape(); pBox.setAsBox(0.3f, 1f);
+		 * 
+		 * Vector2[] triangle = new Vector2[3]; triangle[0]= new Vector2(-0.3f,
+		 * 0.2f); triangle[1]= new Vector2(0.3f, 0.2f); triangle[2]= new
+		 * Vector2(0,0);
+		 * 
+		 * pBox.set(triangle);
+		 */
+		 PolygonShape pBox = new PolygonShape(); 
+		 pBox.setAsBox(0.3f, 0.8f);
+		
+	//	CircleShape dCirc = new CircleShape();
+	//	dCirc.setRadius(0.35f);
 
+		fixtureDef.shape = pBox;
+		// fixtureDef.isSensor = true;
+		Filter pawnfilter = fixtureDef.filter;
+	//	pawnfilter.maskBits = 3;
+		mainbodyfixture = mainbody.createFixture(fixtureDef);
+		mainbody.setBullet(true);
+		mainbody.setFixedRotation(true);
 		// footfixture.isSensor();
 
-		mainbody.setUserData(this);
-
+		mainbodyfixture.setUserData(this);
+		
 		if (isAI) {
-			fixture.setUserData("ai");
+			mainbody.setUserData("ai");
 		} else {
-			fixture.setUserData("player");
+			mainbody.setUserData("player");
 		}
 		mainbody.setLinearVelocity(0, 0);
 
-		if (!isAI) {
-			fixtureDef.filter.maskBits = 7;
-			fixtureDef.filter.categoryBits = 8;
-		} else {
-			fixtureDef.filter.maskBits = 9;
-			fixtureDef.filter.categoryBits = 4;
-		}
+		/*
+		 * if (!isAI) { fixtureDef.filter.maskBits = 7;
+		 * fixtureDef.filter.categoryBits = 8; } else {
+		 * fixtureDef.filter.maskBits = 9; fixtureDef.filter.categoryBits = 4; }
+		 */
 		mainbody.createFixture(fixtureDef);
+		pawnFoot = new PawnFoot(this, world, mainbody);
 
 		// footfixture.
 		height = 2;
@@ -316,8 +338,6 @@ public class PawnEntity {
 		aimladdersprite.setPosition(-10, -10);
 		aimladdersprite.scale(1f);
 
-		// armsprite.setPosition(-10-64, -10);
-
 		runTextureAtlas = actorMan.humanSprite.runTextureAtlas;
 		idleTextureAtlas = actorMan.humanSprite.idleTextureAtlas;
 		backWalkTextureAtlas = actorMan.humanSprite.backWalkTextureAtlas;
@@ -357,20 +377,20 @@ public class PawnEntity {
 		upladdersprite.scale(1f);
 		physics = new GamePhysics();
 
-		pBox.dispose();
+		// pBox.dispose();
+		// pBox.dispose();
 
 	}
 
-
-
 	public void goLeft() {
 		if (isAlive) {
-			if (isCrouching || state == "crouchback" || state == "crouch") {
-				MAX_MOVE_SPEED = 6;
-			} else {
-				MAX_MOVE_SPEED = 10;
-			}
-			if (velocity.y == 0 || isOnLadder) {
+			/*
+			 * if (isCrouching || state == "crouchback" || state == "crouch") {
+			 * MAX_MOVE_SPEED = 6; } else { MAX_MOVE_SPEED = 10; }
+			 */
+			velocity = mainbody.getLinearVelocity();
+
+		/*	if (velocity.y == 0 || isOnLadder) {
 				velocity.x -= moveSpeed;
 				if (velocity.x < -MAX_MOVE_SPEED)
 					velocity.x = -MAX_MOVE_SPEED;
@@ -378,18 +398,27 @@ public class PawnEntity {
 				run = true;
 			}
 			if (velocity.y != 0 && velocity.x > -5 && canDoubleJump) {
-				velocity.x -= moveSpeed;
+				velocity.x = -moveSpeed;
+			}*/
+			
+			if (velocity.x > -MAX_MOVE_SPEED){
+				mainbody.applyLinearImpulse(-moveSpeed, 0, 0, 0, true);
 			}
+			
+			
+			//mainbody.setLinearVelocity(velocity);
+
 		}
 	}
 
 	public void goRight() {
 		if (isAlive) {
-			if (isCrouching || state == "crouchback" || state == "crouch") {
-				MAX_MOVE_SPEED = 6;
-			} else {
-				MAX_MOVE_SPEED = 10;
-			}
+
+			velocity = mainbody.getLinearVelocity();
+			/*
+			 * if (isCrouching || state == "crouchback" || state == "crouch") {
+			 * MAX_MOVE_SPEED = 6; } else { MAX_MOVE_SPEED = 10; }
+			/* *//*
 			if (velocity.y == 0 || isOnLadder) {
 				velocity.x += moveSpeed;
 				if (velocity.x > MAX_MOVE_SPEED)
@@ -398,8 +427,13 @@ public class PawnEntity {
 				run = true;
 			}
 			if (velocity.y != 0 && velocity.x < 5 && canDoubleJump) {
-				velocity.x += moveSpeed;
+				velocity.x = moveSpeed;
 			}
+			*/
+			if (velocity.x < MAX_MOVE_SPEED){
+				mainbody.applyLinearImpulse(moveSpeed, 0, 0, 0, true);
+			}
+			//mainbody.setLinearVelocity(velocity);
 		}
 	}
 
@@ -409,60 +443,85 @@ public class PawnEntity {
 
 	}
 
+	long lasttimejump = System.currentTimeMillis();
+
+	boolean groundCheck = false;
+	
+	public boolean groundCheck(){
+		/*if ((levelMan.isCellBlocked(worldpos.x, worldpos.y-0.4f, false))
+				||  (levelMan.isCellPlatform(worldpos.x, worldpos.y-0.4f))
+				||  (levelMan.isCellDiagonal(worldpos.x, worldpos.y-0.4f)))
+				{
+			return true;
+		}
+		
+		if ((levelMan.isCellBlocked(worldpos.x, worldpos.y-0.4f, false))
+				||  (levelMan.isCellPlatform(worldpos.x, worldpos.y-0.4f))
+				||  (levelMan.isCellDiagonal(worldpos.x, worldpos.y-0.4f))){
+			return true;
+		}
+		return false;*/
+		if (pawnFoot.numFootContacts > 0){
+			return true;
+		}
+			return false;
+	}
+	
+	
 	public void goJump() {
-		pressJump = true;
-		if (levelMan != null) {
-			if (isAlive) {
-				for (float i = -0.55f; i < 0.55f; i += 0.55f) {
-					if (levelMan.isCellLadder(worldpos.x + i, worldpos.y)) {
-						worldpos.x = (int) worldpos.x + i + 0.4f;
-					}
-				}
-
-				if (levelMan.isCellLadder(worldpos.x, worldpos.y)) {
-					isGrounded = false;
-					velocity.y = 4f;
-					isOnLadder = true;
-					velocity.x = 0;
-					run = true;
-				} else {
-					isOnLadder = false;
-				}
-
-				if (isGrounded) {
-					canDoubleJump = true;
-					if (!isCrouching) {
-						velocity.y += jumpSpeed;
-					} else {
-
-					}
-					isGrounded = false;
-					isOnLadder = false;
-				} else if ((velocity.x >= 0 && levelMan.isCellBlocked(
-						worldpos.x + 0.5f, worldpos.y, true))
-						|| (velocity.x <= 0 && levelMan.isCellBlocked(
-								worldpos.x - 0.5f, worldpos.y, true))) {
-					if (canDoubleJump && velocity.y < (jumpSpeed / 2)) {
-						if (velocity.x > 0) {
-							velocity.x = (-jumpSpeed / 2);
-							isGoRight = false;
-						} else {
-							velocity.x = (jumpSpeed / 2);
-							isGoRight = true;
-						}
-						velocity.y = jumpSpeed - (jumpSpeed / 3.5f);
-						canDoubleJump = false;
-					}
-
-				}
+		
+		if (System.currentTimeMillis() - lasttimejump > 300){
+		/*if ((levelMan.isCellBlocked(worldpos.x, worldpos.y-0.4f, false))
+					||  (levelMan.isCellPlatform(worldpos.x, worldpos.y-0.4f))
+					||  (levelMan.isCellDiagonal(worldpos.x, worldpos.y-0.4f))){*/
+			if (groundCheck()){
+					lasttimejump = System.currentTimeMillis();
+					mainbody.applyLinearImpulse(0, jumpSpeed, 0, 0, true);
+			}else{
+				DazDebug.print("GROUND CHECK FAIL");
 			}
-		} else {
-			System.out.println("Error, TileLayerManager is NULL");
 		}
 	}
 
-	public void update(boolean isWorldCoord, Camera camera, boolean shoot) {
+	public void stopVelocity() {
+	//	mainbodyfixture.setFriction(100);
+		//mainbodyfixture.setFriction(500);
+	}
 
+	public void update(boolean isWorldCoord, Camera camera, boolean shoot) {
+		
+	//	if (numFootContacts != 0){
+			DazDebug.print("footcontacts:" + pawnFoot.numFootContacts);
+		//}
+		velocity = mainbody.getLinearVelocity();
+		
+		
+		//fixtureDef.filter.categoryBits = 13; 
+		
+		if (!groundCheck()){
+			
+		}else{
+			
+		}
+		
+		
+		
+		
+		if (goDirection == 1) {
+			
+			goRight();
+		} else if (goDirection == -1) {
+			
+			goLeft();
+		} else if (goDirection == 0 && Math.abs(velocity.x) > 0.1) {
+			if (!isAI){
+				//DazDebug.print("STOPSTOPSTOP");
+			}
+			stopVelocity();
+		}
+		goDirection = 0;
+
+		worldpos = mainbody.getPosition();
 		float inx = aimingAt.x;
 		float iny = aimingAt.y;
 
@@ -697,9 +756,9 @@ public class PawnEntity {
 
 		sprite.setSize(1f, 1f);
 		sprite.setOrigin(sprite.getWidth() / 2, 0);
-		sprite.setPosition(worldpos.x - 0.5f, worldpos.y);
+		sprite.setPosition(worldpos.x - 0.5f, worldpos.y - 1f);
 		armsprite.setRotation(aimAngle - 180);
-		armsprite.setPosition(worldpos.x - 1.76f, worldpos.y + 1 + armyadd);
+		armsprite.setPosition(worldpos.x - 1.76f, worldpos.y + armyadd);
 
 		if (type == "enemy") {
 			sprite.setColor(Color.RED);
@@ -711,16 +770,21 @@ public class PawnEntity {
 		} else {
 			isShooting = false;
 		}
-		mainbody.setTransform(worldpos.x, worldpos.y + 1, 0f);
-		pawnFoot.footbody.setTransform(worldpos.x, worldpos.y + 0.1f, 0f);
+		// mainbody.setTransform(worldpos.x, worldpos.y + 1, 0f);
+		// pawnFoot.footbody.setTransform(worldpos.x, worldpos.y + 0.1f, 0f);
+		// pawnFoot.footbody.
 		if (levelMan == null) {
 			System.out.println("levelMan IN ACTOR IS NULL");
 		}
 		physics.doPhysics(this);
-		if (pawnFoot.isOnGround) {
-			// DazDebug.print("PAWNENTITY IS ON GROUND");
-		}
+		// if (pawnFoot.isOnGround) {
+		// DazDebug.print("PAWNENTITY IS ON GROUND");
+		// }
 		// pawnFoot.isOnGround = false;
+		/*
+		 * if (isPlayerGrounded() && !isAI){ DazDebug.print("playergrounded");
+		 * isGrounded = true; }
+		 */
 		pressJump = false;
 		goThruPlatform = false;
 		isShooting = false;
@@ -790,6 +854,7 @@ public class PawnEntity {
 
 	float distanceFromTarget = 0;
 	private boolean targetIsNull = false;
+	public int numFootContacts = 0;
 
 	public void giveQuickTarget(PawnEntity ztarget) {
 		float relativetoplayerx = ztarget.worldpos.x - worldpos.x;
@@ -839,6 +904,47 @@ public class PawnEntity {
 			weapon.setWeapon(pickUpItem.itemWeaponNumber);
 			pickUpItem.dropWeapon(holdId);
 		}
+	}
+
+	private boolean isPlayerGrounded() {// (float deltaTime) {
+		// groundedPlatform = null;
+		Array<Contact> contactList = world.getContactList();
+		for (int i = 0; i < contactList.size; i++) {
+			Contact contact = contactList.get(i);
+			if (contact.isTouching()
+					&& (contact.getFixtureA() == mainbodyfixture || contact
+							.getFixtureB() == mainbodyfixture)) {
+
+				Vector2 pos = worldpos;
+				WorldManifold manifold = contact.getWorldManifold();
+				boolean below = true;
+				for (int j = 0; j < manifold.getNumberOfContactPoints(); j++) {
+					below &= (manifold.getPoints()[j].y < pos.y - 1.5f);
+				}
+
+				if (below) {
+					if (contact.getFixtureA().getUserData() != null
+							&& contact.getFixtureA().getUserData()
+									.equals("ground")) {
+						// groundedPlatform =
+						// (Platform)contact.getFixtureA().getBody().getUserData();
+						DazDebug.print("onGround");
+					}
+
+					if (contact.getFixtureB().getUserData() != null
+							&& contact.getFixtureB().getUserData()
+									.equals("ground")) {
+						// groundedPlatform =
+						// (Platform)contact.getFixtureB().getBody().getUserData();
+						DazDebug.print("onGround");
+					}
+					return true;
+				}
+
+				return false;
+			}
+		}
+		return false;
 	}
 
 	// }

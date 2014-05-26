@@ -32,7 +32,7 @@ public class GamePhysics {
 
 			newposition.x += (pawn.velocity.x * Gdx.graphics.getDeltaTime());
 
-			if (!pawn.isFlying) {
+			/*if (!pawn.isFlying) {
 
 				if (!pawn.isGrounded) {
 					boolean fall = true;
@@ -58,7 +58,7 @@ public class GamePhysics {
 					}
 				}
 				newposition.y += (pawn.velocity.y * Gdx.graphics.getDeltaTime());
-			}
+			}*/
 			boolean blocked = false;
 
 			for (int i = 0; i < (int) pawn.height; i++) {
@@ -83,6 +83,7 @@ public class GamePhysics {
 			if (pawn.levelMan.isCellBlocked(pawn.worldpos.x, newposition.y + 2,
 					true) && !pawn.isGrounded && pawn.velocity.y > 0) {
 				pawn.velocity.y = 0;
+				pawn.isGrounded = true;
 			}
 
 			if (pawn.levelMan.isCellBlocked(pawn.worldpos.x, newposition.y + 2,
@@ -93,7 +94,7 @@ public class GamePhysics {
 			// isGrounded prevents jumping, it also prevents calculating gravity
 			// when negative
 
-			if (!pawn.levelMan.isCellBlocked(pawn.worldpos.x, newposition.y,
+		/*	if (!pawn.levelMan.isCellBlocked(pawn.worldpos.x, newposition.y,
 					true) && !pawn.isGrounded) {
 				pawn.worldpos.y = newposition.y;
 			} else {
@@ -109,7 +110,7 @@ public class GamePhysics {
 						System.out.println("Donk!");
 					}
 				}
-			}
+			}*/
 			
 			
 		/*	
@@ -135,13 +136,13 @@ public class GamePhysics {
 			
 			
 			
-			if (!Gdx.input.isKeyPressed(Input.Keys.UP)
+		/*	if (!Gdx.input.isKeyPressed(Input.Keys.UP)
 					&& !pawn.levelMan.isCellBlocked(pawn.worldpos.x,
 							pawn.worldpos.y - 0.1f, true)
 					&& !pawn.levelMan.isCellPlatform(pawn.worldpos.x,
 							pawn.worldpos.y - 0.1f)) {
 				pawn.isGrounded = false;
-			}
+			}*/
 
 		}
 

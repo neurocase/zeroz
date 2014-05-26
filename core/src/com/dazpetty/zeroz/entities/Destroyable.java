@@ -85,11 +85,11 @@ public class Destroyable {
 	    PolygonShape pBox = new PolygonShape();
 	    pBox.setAsBox(0.5f, 1f);
 	    
-	    body.setUserData(this);
+	    body.setUserData("destroyable");
 	    fixtureDef.shape = pBox;
     	fixtureDef.filter.categoryBits = 2;
 	    Fixture fixture = body.createFixture(fixtureDef);
-	    fixture.setUserData("destroyable");
+	    fixture.setUserData(this);
 	}
 
 	public void damageDestroyable(float damage) {
