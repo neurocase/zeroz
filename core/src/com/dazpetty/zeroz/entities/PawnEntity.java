@@ -72,6 +72,18 @@ public class PawnEntity {
 	public boolean isLevelScrolling = false;
 	public boolean pressJump = false;
 	/*
+	 *  INPUT HELPERS
+	 */
+	
+	public boolean pressUp = false;
+	public boolean pressDown = false;
+	public boolean pressRight = false;
+	public boolean pressLeft = false;
+	public boolean pressShoot = false;
+	
+	
+	
+	/*
 	 * ORDINARY VARIABLES
 	 */
 
@@ -275,7 +287,7 @@ public class PawnEntity {
 		fixtureDef.shape = pBox;
 		// fixtureDef.isSensor = true;
 		Filter pawnfilter = fixtureDef.filter;
-	//	pawnfilter.maskBits = 3;
+		pawnfilter.maskBits = 3;
 		mainbodyfixture = mainbody.createFixture(fixtureDef);
 		mainbody.setBullet(true);
 		mainbody.setFixedRotation(true);
@@ -467,18 +479,34 @@ public class PawnEntity {
 			return false;
 	}
 	
+	public boolean checkLadder(){
+		if (levelMan.isCellLadder(worldpos.x, worldpos.y)){
+			return true;	
+		}
+		return false;
+	}
+	
+	
+	
 	
 	public void goJump() {
 		
-		if (System.currentTimeMillis() - lasttimejump > 300){
-		/*if ((levelMan.isCellBlocked(worldpos.x, worldpos.y-0.4f, false))
-					||  (levelMan.isCellPlatform(worldpos.x, worldpos.y-0.4f))
-					||  (levelMan.isCellDiagonal(worldpos.x, worldpos.y-0.4f))){*/
-			if (groundCheck()){
-					lasttimejump = System.currentTimeMillis();
-					mainbody.applyLinearImpulse(0, jumpSpeed, 0, 0, true);
-			}else{
-				DazDebug.print("GROUND CHECK FAIL");
+		if (checkLadder()){
+			isOnLadder = true;
+			
+			mainbody.setLinearVelocity(0, 1);
+			
+		}else{
+			if (System.currentTimeMillis() - lasttimejump > 300){
+			/*if ((levelMan.isCellBlocked(worldpos.x, worldpos.y-0.4f, false))
+						||  (levelMan.isCellPlatform(worldpos.x, worldpos.y-0.4f))
+						||  (levelMan.isCellDiagonal(worldpos.x, worldpos.y-0.4f))){*/
+				if (groundCheck()){
+						lasttimejump = System.currentTimeMillis();
+						mainbody.applyLinearImpulse(0, jumpSpeed, 0, 0, true);
+				}else{
+					//DazDebug.print("GROUND CHECK FAIL");
+				}
 			}
 		}
 	}
@@ -488,15 +516,41 @@ public class PawnEntity {
 		//mainbodyfixture.setFriction(500);
 	}
 
+	public void resetInputFlags(){
+		 pressUp = false;
+		 pressDown = false;
+		 pressRight = false;
+		 pressLeft = false;
+		 pressShoot = false;
+	}
+	
+	boolean nextFall = false;
 	public void update(boolean isWorldCoord, Camera camera, boolean shoot) {
 		
 	//	if (numFootContacts != 0){
+		if (!isAI){
 			DazDebug.print("footcontacts:" + pawnFoot.numFootContacts);
+		}
 		//}
 		velocity = mainbody.getLinearVelocity();
 		
+		if (velocity.y > 0){
+				pawnFoot.fallMode();
+		}else{
+			pawnFoot.platformMode();
+		}
+		if (pressDown){
+			pawnFoot.fallMode();
+		}
+
 		
-		//fixtureDef.filter.categoryBits = 13; 
+		if (checkLadder() && isOnLadder){
+			mainbody.setGravityScale(0);
+		}else if (!checkLadder()){
+			mainbody.setGravityScale(1);
+		}
+		
+		fixtureDef.filter.categoryBits = 3; 
 		
 		if (!groundCheck()){
 			
@@ -505,18 +559,22 @@ public class PawnEntity {
 		}
 		
 		
+		if (pressUp){
+			goJump();
+		}
+		if (pressShoot){
+			quickShoot();
+		}
+		if (pressDown){
+			isCrouching = true;
+		}
 		
 		
-		if (goDirection == 1) {
-			
+		if (pressRight) {
 			goRight();
-		} else if (goDirection == -1) {
-			
+		} else if (pressLeft) {
 			goLeft();
-		} else if (goDirection == 0 && Math.abs(velocity.x) > 0.1) {
-			if (!isAI){
-				//DazDebug.print("STOPSTOPSTOP");
-			}
+		} else if (!pressLeft && !pressRight && Math.abs(velocity.x) > 0.1) {
 			stopVelocity();
 		}
 		goDirection = 0;
@@ -776,7 +834,7 @@ public class PawnEntity {
 		if (levelMan == null) {
 			System.out.println("levelMan IN ACTOR IS NULL");
 		}
-		physics.doPhysics(this);
+	//	physics.doPhysics(this);
 		// if (pawnFoot.isOnGround) {
 		// DazDebug.print("PAWNENTITY IS ON GROUND");
 		// }
@@ -791,6 +849,8 @@ public class PawnEntity {
 
 		aimingAt.x = 0;
 		aimingAt.y = 0;
+		
+		resetInputFlags();
 	}
 
 	public float distanceFromPlayer = 0;
@@ -828,6 +888,8 @@ public class PawnEntity {
 				goJump();
 			}
 		}
+
+		
 	}
 
 	public void takeDamage(float damage) {
@@ -855,6 +917,7 @@ public class PawnEntity {
 	float distanceFromTarget = 0;
 	private boolean targetIsNull = false;
 	public int numFootContacts = 0;
+
 
 	public void giveQuickTarget(PawnEntity ztarget) {
 		float relativetoplayerx = ztarget.worldpos.x - worldpos.x;

@@ -146,9 +146,11 @@ public class ContactHandler {
 		 *  	Will work if here
 		 */
 		
+		
 		for (int i = 0; i < 2; i++){
+			
 			Object objBb = objB;
-			contact.setEnabled(false);
+		
 			if (objA instanceof PawnFoot && objB instanceof String){
 				tmpVec = ((PawnFoot)objA).parentPawn.mainbody.getLinearVelocity();
 				if (tmpVec.y > 0){

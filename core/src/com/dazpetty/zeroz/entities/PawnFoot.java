@@ -11,19 +11,31 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 public class PawnFoot {
-
+	public boolean isOnPlatform = false;
 	public boolean isOnGround = false;
 	public PawnEntity parentPawn;
-	
-	public FixtureDef footfixtureDef;
 	public BodyDef footbodyDef = new BodyDef();
 	public Body footbody;	
 	public World world;
+	public FixtureDef footfixtureDef;
 	public Fixture footfixture;
 	public Body body;
-	
 	public int numFootContacts = 0;
-	public boolean isOnPlatform; 
+	
+	public void fallMode(){
+		for(Fixture fixture : body.getFixtureList()){
+			fixture.setSensor(true);
+				if (fixture.getUserData() instanceof PawnEntity){
+					fixture.setSensor(false);
+				}
+			}
+	}
+	
+	public void platformMode(){
+		for(Fixture fixture : body.getFixtureList()){
+				fixture.setSensor(false);			
+			}
+	}
 	
 	
 	public PawnFoot(PawnEntity parentPawn, World world, Body body){
@@ -33,27 +45,20 @@ public class PawnFoot {
 		BodyDef footbodyDef = new BodyDef();
 		footbodyDef.type = BodyType.KinematicBody;
 		
-		footbody = world.createBody(footbodyDef);
-		footbody.setActive(true);
-		footbody.setAwake(true);
 		footfixtureDef = new FixtureDef();
-	//	footfixtureDef.filter.maskBits = 3;
+		footfixtureDef.filter.maskBits = 7;
 		
 		CircleShape footBox = new CircleShape();
-		footBox.setRadius(0.2f);
+		footBox.setRadius(0.27f);
 		footBox.setPosition(new Vector2(0, -0.8f));
 		footfixtureDef.shape = footBox;
 
 		footfixture = body.createFixture(footfixtureDef);
 		footfixture.setUserData(this);
-		footfixture.setSensor(true);
 		footfixtureDef.friction = 1;
-		//footfixtureDef.isSensor = true;
+		
 		body.createFixture(footfixtureDef);
-		
-		
-		
-		
+
 	}
 	public void incFootContact(){
 		numFootContacts++;

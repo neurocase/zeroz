@@ -72,29 +72,21 @@ public class InputHandler {
 			Gdx.app.exit();
 		}
 		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-			//zplayer.goRight();
-			zplayer.goDirection = 1;
-
+			zplayer.pressRight = true;
+		
 		}
 
 		if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-			//zplayer.goLeft();
-			zplayer.goDirection = -1;
+			zplayer.pressLeft = true;
 		}
 		if (Gdx.input.isKeyPressed(Input.Keys.UP)
 				&& !Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-			zplayer.goJump();
+			zplayer.pressUp = true;
 		}
-		if (Gdx.input.isKeyPressed(Input.Keys.UP)
-				&& Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-			zplayer.goThruPlatform = true;
-			zplayer.goJumpDown();
-		}
-
 		float an = 0;
 
 		if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-			zplayer.isCrouching = true;
+			zplayer.pressDown = true;
 		}
 	}
 	
@@ -119,21 +111,20 @@ public class InputHandler {
 
 					if (!(section > 0.2 && section < 0.3)) {
 						if (section < tleft) {
-							zplayer.goLeft();
+							zplayer.pressLeft = true;
 						} else if (section < tright) {
-							zplayer.goRight();
+							zplayer.pressRight = true;
 						}
 					}
 					if (section >= crouchbegin && section <= crouchend) {
-						wantCrouch = true;
+						zplayer.pressDown = true;
 					}
 					if (section >= tjump && section <= tshoot) {
-						wantJump = true;
+						zplayer.pressUp = true;
 					}
 					if (section > tshoot && section < 1) {
 						//zplayer.actorTarget = aimlessVec;
-						playerShoot = true;
-						zplayer.quickShoot();
+						zplayer.pressShoot = true;
 					}
 				}
 				if (inTarget) {
@@ -155,7 +146,7 @@ public class InputHandler {
 					playerShoot = true;
 				}
 			}
-			if (!wantCrouch && wantJump) {
+		/*	if (!wantCrouch && wantJump) {
 				zplayer.goJump();
 				zplayer.goThruPlatform = true;
 			}
@@ -165,7 +156,7 @@ public class InputHandler {
 			}
 			if (wantCrouch && !wantJump) {
 				zplayer.isCrouching = true;
-			}
+			}*/
 		}
 	}
 	

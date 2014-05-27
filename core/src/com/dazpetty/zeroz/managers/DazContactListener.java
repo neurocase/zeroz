@@ -88,21 +88,58 @@ public class DazContactListener implements ContactListener {
 		ch.handleEndCollision(objA, objB);
 
 	}
-
+	boolean setCollision = true;
 	@Override
 	public void preSolve(Contact contact, Manifold oldManifold) {
 
 		Fixture fa = contact.getFixtureA();
 		Fixture fb = contact.getFixtureB();
+		/*Object objA = fa.getBody().getUserData();
+		Object objB = fb.getBody().getUserData();
+		
+		setCollision = true;
+		
+		if (objA instanceof Boolean && objB instanceof Boolean){
+			if ((Boolean) objA || (Boolean) objB){
+				setCollision = false;
+			}
+				
+		}
 
+		
+		if (objA instanceof PawnFoot){
+			if (((PawnFoot) objA).isFallMode()){
+				setCollision = false;
+				System.out.println("COLLISION DISABLED");
+			}
+		}
+		if (objB instanceof PawnFoot){
+			if (((PawnFoot) objB).isFallMode()){
+				setCollision = false;
+				System.out.println("COLLISION DISABLED");
+			}
+		}
+		contact.setEnabled(setCollision);*/
+		
+		
 		if (fa == null || fb == null)
 			return;
-
-		if (fa.getUserData() == null || fb.getUserData() == null)
+		//contact.setEnabled(false);
+		
+		if (fa.getUserData() == null || fb.getUserData() == null){
 			return;
+			
+			//if (fa.setUserData(userData);
+		}else{
+			DazDebug.print("Collision");
+			DazDebug.print("fa" + fa);
+			DazDebug.print("fb" + fb);
+		}
 		
 		Object objA = fa.getUserData();
 		Object objB = fb.getUserData();
+		
+		
 		
 		ch.handlePresolve(objA, objB, contact);
 	}

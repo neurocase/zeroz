@@ -90,9 +90,7 @@ public class HumanSprite {
 		armswordsprite.setOrigin(((armswordsprite.getWidth() * 0.77f)),
 				armswordsprite.getHeight() / 2);
 		armswordsprite.setPosition(-10, -10);
-	
-		//armsprite = new Sprite();
-	
+		
 		runTextureAtlas = new TextureAtlas(
 				Gdx.files.internal("data/gfx/zman/run.atlas"));
 		idleTextureAtlas = new TextureAtlas(
@@ -109,7 +107,6 @@ public class HumanSprite {
 		upLadderTextureAtlas = new TextureAtlas(
 				Gdx.files.internal("data/gfx/zman/upladder.atlas"));
 		
-	
 		deathTextureAtlas = new TextureAtlas(
 				Gdx.files.internal("data/gfx/zman/death1.atlas"));
 	

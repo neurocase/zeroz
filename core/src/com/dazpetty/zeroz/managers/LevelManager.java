@@ -274,7 +274,7 @@ public class LevelManager {
 					/*
 					 * 	PLATFORMS ARE NOT WORKING
 					 */
-					boolean THIS_CODE_IS_FIXED = false;
+					boolean THIS_CODE_IS_FIXED = true;
 					if (THIS_CODE_IS_FIXED){
 					int c = 0;
 					while (isCellPlatform(w + c, h)) {
