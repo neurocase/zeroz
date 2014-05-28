@@ -44,7 +44,7 @@ import com.dazpetty.zeroz.entities.CopterBoss;
 import com.dazpetty.zeroz.entities.Destroyable;
 import com.dazpetty.zeroz.entities.Door;
 import com.dazpetty.zeroz.entities.Drone;
-import com.dazpetty.zeroz.entities.EnemySpawner;
+import com.dazpetty.zeroz.entities.EntitySpawner;
 import com.dazpetty.zeroz.entities.HUDTarget;
 import com.dazpetty.zeroz.entities.HumanSprite;
 import com.dazpetty.zeroz.entities.Item;
@@ -151,23 +151,25 @@ public class GameScene implements Screen {
 		
 		
 		entityMan = new EntityManager(camera, world, tm);
+		tm.buildLevel(entityMan);
 		worldLogic = new WorldLogic(camera, entityMan, world, tm);
 		worldRenderer = new WorldRenderer(camera, world, entityMan, tm, worldLogic);
-		tm.buildLevel(entityMan);
+	
 	}
 	//public boolean levelComplete = false;
 
 	@Override
 	public void render(float delta) {
 		
-		entityMan.zplayer.update(worldLogic.inputHandler.giveWorldPos, camera, playerShoot);
-		tm = entityMan.zplayer.levelMan;
+	
+		tm = entityMan.levelMan;
 		
 		//camera = worldLogic.camera;
 		
 	//	}
 		showDebugInfo(true);
 		worldLogic.update();
+		//entityMan.
 		worldRenderer.Render();
 		
 		worldLogic.inputHandler.checkKeyboard();
@@ -194,7 +196,7 @@ public class GameScene implements Screen {
 	}
 
 	public void showDebugInfo(boolean show) {
-		game.batch.begin();
+		/*game.batch.begin();
 		String info2 = "";
 		if (debugOn) {
 			info2 = " Health:" + entityMan.zplayer.health + " entityMan.zplayer X:"
@@ -216,7 +218,7 @@ public class GameScene implements Screen {
 			game.font.draw(game.batch, info5, 20, 280);
 		}
 		game.font.draw(game.batch, info2, 20, 340);
-		game.batch.end();
+		game.batch.end();*/
 	}
 
 	@Override

@@ -18,7 +18,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.dazpetty.zeroz.entities.CopterBoss;
 import com.dazpetty.zeroz.entities.Destroyable;
 import com.dazpetty.zeroz.entities.Door;
-import com.dazpetty.zeroz.entities.EnemySpawner;
+import com.dazpetty.zeroz.entities.EntitySpawner;
 import com.dazpetty.zeroz.entities.Item;
 
 /*	The LevelManager contains functions for searching the tiled map filetype for playerstart , enemyspawner, door and  item locations.
@@ -56,12 +56,26 @@ public class LevelManager {
 	public boolean isBossLevel = false;
 	public Vector2 playerstart = new Vector2(0, 0);
 
+	
+	public int enemyspawners = 0;
+	
+	
 	public Vector2 levelcompletepos = new Vector2(0, 0);
 
 	public boolean isLevelComplete = false;
 
 	public EntityManager actorMan;
 	public World world;
+	
+	
+	
+
+	public final int ENEMY_SPAWNER_LIMIT = 20;
+	public EntitySpawner playerSpawner;
+	public EntitySpawner enemyspawner[] = new EntitySpawner[ENEMY_SPAWNER_LIMIT];
+	
+	
+	
 
 	public LevelManager(int level, EntityManager actorMan, World world) {
 		this.actorMan = actorMan;
@@ -316,11 +330,11 @@ public class LevelManager {
 					int rand = (int) (Math.random() * 10);
 					if (rand == 0)
 						rand = 1;
-					actorMan.enemyspawner[actorMan.enemyspawners] = new EnemySpawner(
+					enemyspawner[enemyspawners] = new EntitySpawner(
 							w, h, type, rand);
 					System.out.println("Spawner Created of Type:" + type + "at"
 							+ w + "," + h + " with " + rand + " enemies");
-					actorMan.enemyspawners++;
+					enemyspawners++;
 				}
 				if (isCellDestroyable(w, h)) {
 					int value = getCellValue(w, h);
@@ -360,8 +374,7 @@ public class LevelManager {
 				}
 				if (isCellPlayerStart(w, h)) {
 					System.out.println("PlayerStart at: x" + w + "y:" + h);
-					playerstart.x = w;
-					playerstart.y = h;
+					playerStart = new EntitySpawner(w, h, "player", 1);
 				}
 				if (!isLevelScrolling) {
 					if (isLevelScrolling(w, h)) {
@@ -378,6 +391,13 @@ public class LevelManager {
 
 			}
 		}
+	}
+
+	EntitySpawner playerStart;
+	
+	public EntitySpawner getPlayerSpawner() {
+		return playerStart;
+		
 	}
 
 }

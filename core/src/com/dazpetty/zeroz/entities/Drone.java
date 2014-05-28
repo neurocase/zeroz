@@ -50,11 +50,7 @@ public class Drone {
 	public long spawntime = System.currentTimeMillis();
 	public long nowtime = System.currentTimeMillis();
 
-	public Sprite sprite;
-	public TextureRegion texRegion;
-	public Texture texture;
-	public TextureAtlas textureAtlas;
-	float stateTime;
+
 	
 	public int startinghealth = 100;
 	public int health = startinghealth;
@@ -63,7 +59,11 @@ public class Drone {
 	//public AtlasRegion atlasTexRegion;
 	
 	//public AtlasRegion runTexRegion;
-	
+	public Sprite sprite;
+	public TextureRegion texRegion;
+	public Texture texture;
+	public TextureAtlas textureAtlas;
+	float stateTime;
 	private int currentFrame = 1;
 	private String currentAtlasKey = new String("0001");
 	
@@ -78,31 +78,21 @@ public class Drone {
     	body = world.createBody(bodyDef);
 		
 
+
+
 		textureAtlas = new TextureAtlas(
 				Gdx.files.internal("data/gfx/drone/drone.atlas"));
 		AtlasRegion atlasTexRegion = textureAtlas.findRegion("0000");
-		
-		//atlasTexRegion.setRegion(textureAtlas.findRegion("0000"), 0, 0, 128, 128);
-		//atlasTexRegion.setRegionWidth(1);
-		//atlasTexRegion.setRegionHeight(32);
-		//atlasTexRegion.setV2(2);
-		//atlasTexRegion.set
-	//	atlasTexRegion.setRegion(u, v, u2, v2);
-		
 		sprite = new Sprite(atlasTexRegion);
 		worldpos = new Vector2(x, y);
 		
 		Vector3 tmpVec3 = new Vector3(worldpos.x,worldpos.y,0); 
 		
 		camera.project(tmpVec3);
-		//sprite.setOrigin(sprite.getWidth() / 2, sprite.getHeight() / 2);
-		//sprite.setPosition(tmpVec3.x, tmpVec3.y);
-	//	sprite.scale(0.1f);
-		//sprite.setSize(1, 1);
 
-        System.out.print("!!!!" + atlasTexRegion.getV()+ "," +  atlasTexRegion.getV2());
-		//sprite.set
-		//bodyDef.position.set(worldpos.x+0.5f, worldpos.y+1f);
+
+      //  System.out.print("!!!!" + atlasTexRegion.getV()+ "," +  atlasTexRegion.getV2());
+	
 		bodyDef.position.set(worldpos.x+bodyOffset.x, worldpos.y+bodyOffset.y);
 		bodyDef.gravityScale = 0;
 		body = world.createBody(bodyDef); 
@@ -125,23 +115,17 @@ public class Drone {
         	  	currentFrame = 1;
           
           //currentFrame = 1;
-          // ATTENTION! String.format() doesnt work under GWT for god knows why...
+          // ATTENTION! String.format() doesnt work under GWT 
           currentAtlasKey = String.format("%04d", currentFrame);
           sprite.setRegion(textureAtlas.findRegion(currentAtlasKey));
   		
   		Vector3 tmpVec3 = new Vector3(worldpos.x,worldpos.y,0); 
-		
-		//cam.project(tmpVec3);
+
 		sprite.setOrigin(sprite.getWidth() / 2, sprite.getHeight() / 2);
 		sprite.setPosition(tmpVec3.x, tmpVec3.y);
 		sprite.setSize(2,1);
 		sprite.setRotation(rotation);
-		//sprite.setRotation(45);
-		
-		//sprite.setPosition(worldpos.x, worldpos.y);
-		//sprite.scale(0.1f);
-		//sprite.scale(1f);
-	
+
     }
 
 	public void reUseDrone(Vector2 actorstart){

@@ -7,6 +7,7 @@ import com.badlogic.gdx.utils.Array;
 import com.dazpetty.zeroz.core.DazDebug;
 import com.dazpetty.zeroz.entities.CopterTurret;
 import com.dazpetty.zeroz.entities.Destroyable;
+import com.dazpetty.zeroz.entities.Door;
 import com.dazpetty.zeroz.entities.Drone;
 import com.dazpetty.zeroz.entities.PawnEntity;
 import com.dazpetty.zeroz.entities.PawnFoot;
@@ -45,10 +46,19 @@ public class ContactHandler {
 		for (int i = 0; i < 2; i++){
 			Object objBb = objB;
 
+			
+			
+			
+			
 			if ((objA instanceof String || objA instanceof CopterTurret
-					|| objA instanceof PawnEntity || objA instanceof Destroyable || objA instanceof Drone)
+					|| objA instanceof PawnEntity || objA instanceof Destroyable || objA instanceof Drone || objA instanceof Door)
 					&& objB instanceof Projectile) {
 				
+				if (objA instanceof Door){
+					DazDebug.print("ITS A FUCKEN DOOR MATE!");
+					DazDebug.print("AND IT SHOULD BLOODY REGISTER!");
+					removeProj = true;
+				}
 				
 				if (objA instanceof String) {
 					if (((String) objA).equals("solid")) {

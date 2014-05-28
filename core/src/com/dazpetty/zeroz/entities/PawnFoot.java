@@ -55,7 +55,7 @@ public class PawnFoot {
 
 		footfixture = body.createFixture(footfixtureDef);
 		footfixture.setUserData(this);
-		footfixtureDef.friction = 1;
+		footfixtureDef.friction = 10;
 		
 		body.createFixture(footfixtureDef);
 

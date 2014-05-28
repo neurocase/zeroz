@@ -28,7 +28,7 @@ public class InputHandler {
 	float viewheight;
 	Camera camera;
 	PawnEntity zplayer;
-	Vector3 aimlessVec = new Vector3(0, 0, 1);
+	Vector2 aimlessVec = new Vector2(0, 0);
 	public GameScene game;
 	
 	public boolean playerShoot = false;
@@ -59,6 +59,7 @@ public class InputHandler {
 	
 
 	public void checkKeyboard() {
+		zplayer.isShooting = false;
 		zplayer.isCrouching = false;
 		if (Gdx.input.isKeyPressed(Keys.U)) {
 			zplayer.attemptShoot(ang);
@@ -123,8 +124,9 @@ public class InputHandler {
 						zplayer.pressUp = true;
 					}
 					if (section > tshoot && section < 1) {
-						//zplayer.actorTarget = aimlessVec;
+					//	zplayer.actorTarget = aimlessVec;
 						zplayer.pressShoot = true;
+						zplayer.isShooting = false;
 					}
 				}
 				if (inTarget) {
@@ -135,7 +137,7 @@ public class InputHandler {
 
 					zplayer.aimingAt.x = newAimVec.x;
 					zplayer.aimingAt.y = newAimVec.y;
-					
+					zplayer.isShooting = true;
 		
 					newAimVec.y -= 1;
 					float ang = newAimVec.angle();

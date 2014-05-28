@@ -1,0 +1,131 @@
+
+door1.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+0001
+  rotate: false
+  xy: 2, 262
+  size: 32, 128
+  orig: 32, 128
+  offset: 0, 0
+  index: -1
+0002
+  rotate: false
+  xy: 2, 132
+  size: 32, 128
+  orig: 32, 128
+  offset: 0, 0
+  index: -1
+0003
+  rotate: false
+  xy: 36, 262
+  size: 32, 128
+  orig: 32, 128
+  offset: 0, 0
+  index: -1
+0004
+  rotate: false
+  xy: 2, 2
+  size: 32, 128
+  orig: 32, 128
+  offset: 0, 0
+  index: -1
+0005
+  rotate: false
+  xy: 36, 132
+  size: 32, 128
+  orig: 32, 128
+  offset: 0, 0
+  index: -1
+0006
+  rotate: false
+  xy: 70, 262
+  size: 32, 128
+  orig: 32, 128
+  offset: 0, 0
+  index: -1
+0007
+  rotate: false
+  xy: 36, 2
+  size: 32, 128
+  orig: 32, 128
+  offset: 0, 0
+  index: -1
+0008
+  rotate: false
+  xy: 70, 132
+  size: 32, 128
+  orig: 32, 128
+  offset: 0, 0
+  index: -1
+0009
+  rotate: false
+  xy: 104, 262
+  size: 32, 128
+  orig: 32, 128
+  offset: 0, 0
+  index: -1
+0010
+  rotate: false
+  xy: 70, 2
+  size: 32, 128
+  orig: 32, 128
+  offset: 0, 0
+  index: -1
+0011
+  rotate: false
+  xy: 104, 132
+  size: 32, 128
+  orig: 32, 128
+  offset: 0, 0
+  index: -1
+0012
+  rotate: false
+  xy: 138, 262
+  size: 32, 128
+  orig: 32, 128
+  offset: 0, 0
+  index: -1
+0013
+  rotate: false
+  xy: 104, 2
+  size: 32, 128
+  orig: 32, 128
+  offset: 0, 0
+  index: -1
+0014
+  rotate: false
+  xy: 138, 132
+  size: 32, 128
+  orig: 32, 128
+  offset: 0, 0
+  index: -1
+0015
+  rotate: false
+  xy: 172, 262
+  size: 32, 128
+  orig: 32, 128
+  offset: 0, 0
+  index: -1
+0016
+  rotate: false
+  xy: 138, 2
+  size: 32, 128
+  orig: 32, 128
+  offset: 0, 0
+  index: -1
+0017
+  rotate: false
+  xy: 172, 132
+  size: 32, 128
+  orig: 32, 128
+  offset: 0, 0
+  index: -1
+0018
+  rotate: false
+  xy: 206, 262
+  size: 32, 128
+  orig: 32, 128
+  offset: 0, 0
+  index: -1

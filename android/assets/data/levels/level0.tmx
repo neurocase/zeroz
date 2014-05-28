@@ -68,6 +68,11 @@
     <property name="door" value="1"/>
    </properties>
   </tile>
+  <tile id="103">
+   <properties>
+    <property name="animatedtile" value="redlight"/>
+   </properties>
+  </tile>
   <tile id="126">
    <properties>
     <property name="playerstart" value=""/>
@@ -245,4 +250,6 @@
    H4sIAAAAAAAAA+3OwQkAIAwAsU6mk3QUd7cr+JBCSeD+FwEAAAAA71a1q9M9AgAAMFx2DwAAAAB8dAG/hk551DAAAA==
   </data>
  </layer>
+ <objectgroup name="Object Layer 1" width="125" height="25"/>
+ <objectgroup name="Object Layer 2" width="125" height="25"/>
 </map>

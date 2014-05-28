@@ -318,6 +318,7 @@ public class WorldRenderer {
 		for (int i = 0; i < entityMan.DOOR_LIMIT; i++) {
 			if (entityMan.door[i] != null) {
 				entityMan.door[i].sprite.draw(batch);
+				entityMan.door[i].updateFrame();
 			}
 		}
 		for (int i = 0; i < entityMan.ITEM_LIMIT; i++) {

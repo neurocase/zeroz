@@ -18,7 +18,7 @@ import com.dazpetty.zeroz.entities.PawnEntity;
 import com.dazpetty.zeroz.entities.CopterBoss;
 import com.dazpetty.zeroz.entities.Destroyable;
 import com.dazpetty.zeroz.entities.Door;
-import com.dazpetty.zeroz.entities.EnemySpawner;
+import com.dazpetty.zeroz.entities.EntitySpawner;
 import com.dazpetty.zeroz.entities.HUDTarget;
 import com.dazpetty.zeroz.entities.Item;
 import com.dazpetty.zeroz.managers.EntityManager;
@@ -53,45 +53,30 @@ public class WorldLogic {
 	public LevelManager levelMan;
 	
 	public WorldLogic(OrthographicCamera camera, EntityManager entityMan, World world, LevelManager levelMan){
-		
-		
 		this.entityMan = entityMan;
 		this.camera = camera;
 		this.world = world;
 		this.levelMan = levelMan;
-		/*
-		 * SETUP CAMERA AND RENDERER
-		 */
-		// Tiled layer manager for cell (not box2d) based collision.
 	
-	
-		
-		/*
-		 * SETUP WORLD AND COLLISIONS
-		 */
-		
-		
-		// CREATE PLAYER
-		entityMan.zplayer = new PawnEntity(camera, world, false, levelMan,  levelMan.playerstart, -1,
-				entityMan, "player");
-		
+		entityMan.zplayer = new PawnEntity(entityMan, levelMan.getPlayerSpawner());
 		DazDebug.print("playerstart at x" + levelMan.playerstart.x + " y:" + levelMan.playerstart.y);
-		//entityMan.createActor(1,entityMan.es.enemyspawner);
-		// INPUTHANDLER
-		
-		
+		playerSpawned = true;
 		inputHandler.LoadInputHandler(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), camera, entityMan.zplayer);
-	
-		
 	}
 	
 	
 	
 	
 	
-	
+	public boolean playerSpawned = false;
 	
 	public void update(){
+		
+		if (!playerSpawned){
+	
+		}
+		entityMan.zplayer.update(inputHandler.giveWorldPos, camera);
+		
 		/*
 		 * UPDATE PLAYER AND PROJECTILES
 		 */
@@ -114,10 +99,10 @@ public class WorldLogic {
 		 * SPAWN ENEMIES AT SPAWNPOINT NEAR PLAYER
 		 */
 		if (pollCheck(11)){
-			for (int i = 0; i < entityMan.enemyspawners; i++) {
-				if (Math.abs((double) (entityMan.enemyspawner[i].worldpos.x - entityMan.zplayer.worldpos.x)) < 20) {
-					if (entityMan.enemyspawner[i] != null ){//&& entityMan.enemyspawner[i].enemyType == "footsoldier") {
-						entityMan.createActor(2, entityMan.enemyspawner[i]);
+			for (int i = 0; i < levelMan.enemyspawners; i++) {
+				if (Math.abs((double) (levelMan.enemyspawner[i].worldpos.x - entityMan.zplayer.worldpos.x)) < 20) {
+					if (levelMan.enemyspawner[i] != null ){//&& entityMan.enemyspawner[i].enemyType == "footsoldier") {
+						entityMan.createActor(2, levelMan.enemyspawner[i]);
 					} else {
 						System.out.println("ERROR: There are no enemy spawners");
 					}
@@ -138,9 +123,9 @@ public class WorldLogic {
 					if (entityMan.zenemy[i] != null) {
 						boolean enemyAim = true;
 						if (enemyAim) {
-							entityMan.zenemy[i].update(true, camera, true);
+							entityMan.zenemy[i].update(true, camera);
 						} else {
-							entityMan.zenemy[i].update(true, camera, true);
+							entityMan.zenemy[i].update(true, camera);
 						}
 						// If too far away from player, dispose of enemy
 						if (Math.abs((double) (entityMan.zenemy[i].worldpos.x - entityMan.zplayer.worldpos.x)) > 30

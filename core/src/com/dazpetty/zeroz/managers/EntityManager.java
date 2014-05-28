@@ -14,7 +14,7 @@ import com.dazpetty.zeroz.entities.CopterBoss;
 import com.dazpetty.zeroz.entities.Destroyable;
 import com.dazpetty.zeroz.entities.Door;
 import com.dazpetty.zeroz.entities.Drone;
-import com.dazpetty.zeroz.entities.EnemySpawner;
+import com.dazpetty.zeroz.entities.EntitySpawner;
 import com.dazpetty.zeroz.entities.HUDTarget;
 import com.dazpetty.zeroz.entities.HumanSprite;
 import com.dazpetty.zeroz.entities.Item;
@@ -39,7 +39,7 @@ public class EntityManager {
 
 	public final int ENEMY_LIMIT = 10;
 	
-	public final int ENEMY_SPAWN_LIMIT = 20;
+
 	public final int DESTROYABLE_LIMIT = 10;
 	public final int DOOR_LIMIT = 10;
 	public final int DRONE_LIMIT = ENEMY_LIMIT;
@@ -55,14 +55,12 @@ public class EntityManager {
 
 	public int enemycount = 0;
 	public int dronecount = 0;
-	public int enemyspawners = 0;
+
 
 	
 
 	public CopterBoss copterBoss;// = new CopterBoss();
 
-	
-	public EnemySpawner enemyspawner[] = new EnemySpawner[ENEMY_SPAWN_LIMIT];
 	public PawnEntity[] zenemy = new PawnEntity[ENEMY_LIMIT];
 	public Destroyable[] destroyable = new Destroyable[DESTROYABLE_LIMIT];
 	public Door[] door = new Door[DOOR_LIMIT];
@@ -131,120 +129,13 @@ public class EntityManager {
 		explosion[TOTAL_EXPLOSIONS] = new Explosion(x, y, id, angle, assetMan);
 	}
 
-	public void createActor(int s, EnemySpawner es) {
-		Vector2 startpos = new Vector2(0, 0);
-		if (es != null) {
-			startpos = new Vector2(es.worldpos.x, es.worldpos.y);
-		}
+	public void createActor(int s, EntitySpawner spawner) {
 		long timenow = System.currentTimeMillis();
 
-		if (s == 1) {
-			zplayer = new PawnEntity(camera, world, false, levelMan, levelMan.playerstart,
-					-1, this, "player");
+		if (spawner.type.equals("player")){
+			DazDebug.print("SPAWNING PLAYER AT, X:" + spawner.worldpos.x + " Y:" + spawner.worldpos.y);
+			zplayer = new PawnEntity(this, spawner);
 		}
-		if (s == 2) {
-
-			if (es.enemyType.equals("footsoldier")) {
-				// wtfc();
-				// System.out.println();
-				Weapon uzi = new Weapon(1);
-
-				// long a = timenow - es.lasttimespawn;
-				if (es.attemptSpawn(timenow)
-						&& (zenemy[enemycount] == null
-								|| zenemy[enemycount].isAlive == false || zenemy[enemycount].isDisposed)) {
-					if (zenemy[enemycount] != null
-							&& zenemy[enemycount].mainbody != null) {
-						System.out
-								.println("destroying enemy body" + enemycount);
-						zenemy[enemycount].reUseEntity(startpos, uzi);
-						System.out.println("Spawning Renewing Enemy:"
-								+ enemycount + " X:" + startpos.x + "Y"
-								+ startpos.y);
-					} else {
-						System.out.println("Spawning New Enemy:" + es.enemyType
-								+ "," + enemycount + " X:" + startpos.x + "Y"
-								+ startpos.y);
-						/*
-						 * I HAVE NO IDEA WHY I NEED TO PASS zplayer.levelMan INSTEAD
-						 * OF levelMan, BUT IT WONT WORK OTHERWISE.
-						 */
-						zenemy[enemycount] = new PawnEntity(camera, world,
-								true, levelMan, startpos, enemycount, this,
-								es.enemyType);
-					}
-					es.lasttimespawn = System.currentTimeMillis();
-					enemycount++;
-					if (enemycount == ENEMY_LIMIT) {
-						enemycount = 0;
-					}
-				}
-			} else if (es.enemyType.equals("paratrooper")) {
-				Weapon uzi = new Weapon(1);
-				// long a = timenow - es.lasttimespawn;
-				if (es.attemptSpawn(timenow)
-						&& (zenemy[enemycount] == null
-								|| zenemy[enemycount].isAlive == false || zenemy[enemycount].isDisposed)) {
-					if (zenemy[enemycount] != null
-							&& zenemy[enemycount].mainbody != null) {
-						System.out
-								.println("destroying enemy body" + enemycount);
-						zenemy[enemycount].reUseEntity(startpos, uzi);
-						System.out.println("Spawning Renewing Enemy:"
-								+ enemycount + " X:" + startpos.x + "Y"
-								+ startpos.y);
-					} else {
-						System.out.println("Spawning New Enemy:" + es.enemyType
-								+ "," + enemycount + " X:" + startpos.x + "Y"
-								+ startpos.y);
-						/*
-						 * I HAVE NO IDEA WHY I NEED TO PASS zplayer.levelMan INSTEAD
-						 * OF levelMan, BUT IT WONT WORK OTHERWISE.
-						 */
-						zenemy[enemycount] = new PawnEntity(camera, world,
-								true, levelMan, startpos, enemycount, this,
-								es.enemyType);
-					}
-				}
-				es.lasttimespawn = System.currentTimeMillis();
-				enemycount++;
-				if (enemycount == ENEMY_LIMIT) {
-					enemycount = 0;
-				}
-			}
-
-		} else if (es.enemyType.equals("drone")) {
-
-			if (es.attemptSpawn(timenow)
-					&& (drone[dronecount] == null || drone[dronecount].isAlive == false)) {// ||
-																							// drone[dronecount].isDisposed))
-																							// {
-				if (drone[dronecount] != null && drone[dronecount].body != null) {
-					System.out.println("destroying enemy body" + enemycount);
-					drone[dronecount].reUseDrone(startpos);
-					System.out.println("Spawning Renewing Enemy:" + enemycount
-							+ " X:" + startpos.x + "Y" + startpos.y);
-				} else {
-					System.out.println("Spawning New Enemy:" + es.enemyType
-							+ "," + enemycount + " X:" + startpos.x + "Y"
-							+ startpos.y);
-					/*
-					 * I HAVE NO IDEA WHY I NEED TO PASS zplayer.levelMan INSTEAD OF
-					 * levelMan, BUT IT WONT WORK OTHERWISE.
-					 */
-
-					drone[dronecount] = new Drone(startpos.x, startpos.y,
-							world, dronecount, camera);
-				}
-				es.lasttimespawn = System.currentTimeMillis();
-				dronecount++;
-				if (dronecount == DRONE_LIMIT) {
-					dronecount = 0;
-				}
-			}
-
-		}
-
 	}
 
 	public void checkBodies() {

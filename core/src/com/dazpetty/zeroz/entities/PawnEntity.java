@@ -33,7 +33,6 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.WorldManifold;
 import com.badlogic.gdx.utils.Array;
 import com.dazpetty.zeroz.core.DazDebug;
-import com.dazpetty.zeroz.core.GamePhysics;
 import com.dazpetty.zeroz.managers.EntityManager;
 import com.dazpetty.zeroz.managers.ProjectileManager;
 import com.dazpetty.zeroz.managers.LevelManager;
@@ -57,8 +56,6 @@ public class PawnEntity {
 	public boolean goThruPlatform = false;
 	public boolean isCrouching = false;
 	public boolean isAI = false;
-	// public boolean isDead = false;
-	public boolean initialized = false;
 	public boolean isFlying = false;
 	public boolean isGoRight = true;
 	public boolean isGoLeft = false;
@@ -66,11 +63,8 @@ public class PawnEntity {
 	public boolean hasEnemy = false;
 	public boolean isShooting = false;
 	public boolean aimOnLadder = false;
-	public boolean amTouching = false;
-	public boolean run = false;
-	public boolean blinkOn = false;
 	public boolean isLevelScrolling = false;
-	public boolean pressJump = false;
+
 	/*
 	 *  INPUT HELPERS
 	 */
@@ -89,7 +83,7 @@ public class PawnEntity {
 
 	public int goDirection = 0;
 	public int deathanim = 0;
-	public float jumpSpeed = 10;
+	public float jumpSpeed = 16;
 	public float aimAngle = 0;
 	public float moveSpeed = 0.5f;
 	public int startinghealth = 100;
@@ -124,13 +118,12 @@ public class PawnEntity {
 	public Vector2 actorTarget = new Vector2(0, 0);
 	// public Vector2 p1 = new Vector2(), p2 = new Vector2(),
 	// collision = new Vector2(), normal = new Vector2();
-	int wantGoDirection = 0;
+	//int wantGoDirection = 0;
 	public float aimAtPlayer = 0;
 	public int activeBullet = 0;
 	public float height = 0;
 	public float width = 0;
 	public long lasttimeshoot = System.currentTimeMillis();
-
 	/*
 	 * ANIMATION TYPES
 	 */
@@ -175,7 +168,6 @@ public class PawnEntity {
 	/*
 	 * MY OBJECTS
 	 */
-	private GamePhysics physics;
 	public LevelManager levelMan;
 	public ProjectileManager projMan;
 	public Weapon weapon;
@@ -191,6 +183,8 @@ public class PawnEntity {
 	public Body mainbody;
 	public Sprite grensprite;
 	public FixtureDef fixtureDef;
+	public Camera camera;
+	
 	/*
 	 * AI's VARIABLES
 	 */
@@ -207,35 +201,40 @@ public class PawnEntity {
 	 */
 	public void reUseEntity(Vector2 actorstart, Weapon weapon) {
 		this.weapon = weapon;
+		mainbody.setTransform(actorstart, 0);
 		mainbody.setActive(true);
-		mainbody.setAwake(true);
+		mainbody.setAwake(true);			
 		isDisposed = false;
 		isOnLadder = false;
-		// isDead = false;
 		isAlive = true;
 		worldpos = actorstart;
 		health = startinghealth;
+		
 	}
 
 	public void attemptShoot(float ang) {
 		projMan.setWorld(world);
+		
 		if (isAlive) {
+			aimAngle = ang;
 			projMan.shootProjectile(ang, this);
 		}
 	}
 
-	public PawnEntity(Camera scam, World world, boolean amAI,
-			LevelManager levelMan, Vector2 actorstart, int id,
-			EntityManager actorMan, String actorType) {
+	
+	public EntitySpawner spawner;
+	
+	public PawnEntity(EntityManager entMan, EntitySpawner spawner) {
 
+		this.spawner = spawner;
 		weapon = new Weapon(1);
-
-		this.world = world;
+		this.camera = entMan.camera;
+		this.world = entMan.world;
 		this.id = id;
-		this.levelMan = levelMan;
+		this.levelMan = entMan.levelMan;
 
 		isLevelScrolling = levelMan.isLevelScrolling;
-		projMan = actorMan.projMan;
+		projMan = entMan.projMan;
 
 		if (levelMan == null) {
 			levelMan = (LevelManager) levelMan;
@@ -244,10 +243,10 @@ public class PawnEntity {
 			}
 		}
 
-		if (actorstart.x == 0) {
-			actorstart = (new Vector2(7, 14));
+		if (spawner.worldpos.x == 0) {
+			spawner.worldpos = (new Vector2(7, 14));
 		}
-		worldpos = actorstart;
+		worldpos = spawner.worldpos;
 
 	
 		BodyDef bodyDef = new BodyDef();
@@ -259,39 +258,21 @@ public class PawnEntity {
 		mainbody.setAwake(true);
 		mainbody.setBullet(true);
 
-		initialized = true;
 		isDisposed = false;
-		isAI = amAI;
+		isAI = spawner.isAI;
 
 		fixtureDef = new FixtureDef();
 		fixtureDef.friction = 0;
-		fixtureDef.density = 0;
-		//fixtureDef.
-		// fixtureDef.
-		// fixtureDef.isSensor = true;
-		/*
-		 * PolygonShape pBox = new PolygonShape(); pBox.setAsBox(0.3f, 1f);
-		 * 
-		 * Vector2[] triangle = new Vector2[3]; triangle[0]= new Vector2(-0.3f,
-		 * 0.2f); triangle[1]= new Vector2(0.3f, 0.2f); triangle[2]= new
-		 * Vector2(0,0);
-		 * 
-		 * pBox.set(triangle);
-		 */
-		 PolygonShape pBox = new PolygonShape(); 
-		 pBox.setAsBox(0.3f, 0.8f);
-		
-	//	CircleShape dCirc = new CircleShape();
-	//	dCirc.setRadius(0.35f);
-
+		fixtureDef.density = 1;
+		PolygonShape pBox = new PolygonShape(); 
+		pBox.setAsBox(0.3f, 0.8f);
 		fixtureDef.shape = pBox;
-		// fixtureDef.isSensor = true;
+	
 		Filter pawnfilter = fixtureDef.filter;
 		pawnfilter.maskBits = 3;
 		mainbodyfixture = mainbody.createFixture(fixtureDef);
 		mainbody.setBullet(true);
 		mainbody.setFixedRotation(true);
-		// footfixture.isSensor();
 
 		mainbodyfixture.setUserData(this);
 		
@@ -302,30 +283,23 @@ public class PawnEntity {
 		}
 		mainbody.setLinearVelocity(0, 0);
 
-		/*
-		 * if (!isAI) { fixtureDef.filter.maskBits = 7;
-		 * fixtureDef.filter.categoryBits = 8; } else {
-		 * fixtureDef.filter.maskBits = 9; fixtureDef.filter.categoryBits = 4; }
-		 */
 		mainbody.createFixture(fixtureDef);
 		pawnFoot = new PawnFoot(this, world, mainbody);
 
-		// footfixture.
 		height = 2;
 		width = 1.25f;
-		scenecamera = scam;
 
-		aimLadderTexture = actorMan.humanSprite.aimLadderTexture;
+		aimLadderTexture = entMan.humanSprite.aimLadderTexture;
 
-		Texture armSwordTexture = actorMan.humanSprite.armSwordTexture;
+		Texture armSwordTexture = entMan.humanSprite.armSwordTexture;
 		TextureRegion armSwordTexRegion = new TextureRegion(armSwordTexture, 0,
 				0, 128, 64);
 
-		Texture armUziTexture = actorMan.humanSprite.armUziTexture;
+		Texture armUziTexture = entMan.humanSprite.armUziTexture;
 		TextureRegion armUziTexRegion = new TextureRegion(armUziTexture, 0, 0,
 				128, 64);
 
-		Texture armShotgunTexture = actorMan.humanSprite.armShotgunTexture;
+		Texture armShotgunTexture = entMan.humanSprite.armShotgunTexture;
 		TextureRegion armShotgunTexRegion = new TextureRegion(
 				armShotgunTexture, 0, 0, 128, 64);
 
@@ -350,13 +324,13 @@ public class PawnEntity {
 		aimladdersprite.setPosition(-10, -10);
 		aimladdersprite.scale(1f);
 
-		runTextureAtlas = actorMan.humanSprite.runTextureAtlas;
-		idleTextureAtlas = actorMan.humanSprite.idleTextureAtlas;
-		backWalkTextureAtlas = actorMan.humanSprite.backWalkTextureAtlas;
-		crouchTextureAtlas = actorMan.humanSprite.crouchTextureAtlas;
-		crouchBackTextureAtlas = actorMan.humanSprite.crouchBackTextureAtlas;
-		upLadderTextureAtlas = actorMan.humanSprite.upLadderTextureAtlas;
-		deathTextureAtlas = actorMan.humanSprite.deathTextureAtlas;
+		runTextureAtlas = entMan.humanSprite.runTextureAtlas;
+		idleTextureAtlas = entMan.humanSprite.idleTextureAtlas;
+		backWalkTextureAtlas = entMan.humanSprite.backWalkTextureAtlas;
+		crouchTextureAtlas = entMan.humanSprite.crouchTextureAtlas;
+		crouchBackTextureAtlas = entMan.humanSprite.crouchBackTextureAtlas;
+		upLadderTextureAtlas = entMan.humanSprite.upLadderTextureAtlas;
+		deathTextureAtlas = entMan.humanSprite.deathTextureAtlas;
 
 		AtlasRegion runTexRegion = runTextureAtlas.findRegion("0000");
 		AtlasRegion idleTexRegion = idleTextureAtlas.findRegion("0000");
@@ -387,65 +361,24 @@ public class PawnEntity {
 
 		upladdersprite = new Sprite(upLadderTexRegion);
 		upladdersprite.scale(1f);
-		physics = new GamePhysics();
-
-		// pBox.dispose();
-		// pBox.dispose();
-
+		 pBox.dispose();
 	}
 
 	public void goLeft() {
 		if (isAlive) {
-			/*
-			 * if (isCrouching || state == "crouchback" || state == "crouch") {
-			 * MAX_MOVE_SPEED = 6; } else { MAX_MOVE_SPEED = 10; }
-			 */
 			velocity = mainbody.getLinearVelocity();
-
-		/*	if (velocity.y == 0 || isOnLadder) {
-				velocity.x -= moveSpeed;
-				if (velocity.x < -MAX_MOVE_SPEED)
-					velocity.x = -MAX_MOVE_SPEED;
-				isGoRight = false;
-				run = true;
-			}
-			if (velocity.y != 0 && velocity.x > -5 && canDoubleJump) {
-				velocity.x = -moveSpeed;
-			}*/
-			
 			if (velocity.x > -MAX_MOVE_SPEED){
 				mainbody.applyLinearImpulse(-moveSpeed, 0, 0, 0, true);
 			}
-			
-			
-			//mainbody.setLinearVelocity(velocity);
-
 		}
 	}
 
 	public void goRight() {
 		if (isAlive) {
-
 			velocity = mainbody.getLinearVelocity();
-			/*
-			 * if (isCrouching || state == "crouchback" || state == "crouch") {
-			 * MAX_MOVE_SPEED = 6; } else { MAX_MOVE_SPEED = 10; }
-			/* *//*
-			if (velocity.y == 0 || isOnLadder) {
-				velocity.x += moveSpeed;
-				if (velocity.x > MAX_MOVE_SPEED)
-					velocity.x = MAX_MOVE_SPEED;
-				isGoRight = true;
-				run = true;
-			}
-			if (velocity.y != 0 && velocity.x < 5 && canDoubleJump) {
-				velocity.x = moveSpeed;
-			}
-			*/
 			if (velocity.x < MAX_MOVE_SPEED){
 				mainbody.applyLinearImpulse(moveSpeed, 0, 0, 0, true);
 			}
-			//mainbody.setLinearVelocity(velocity);
 		}
 	}
 
@@ -460,22 +393,12 @@ public class PawnEntity {
 	boolean groundCheck = false;
 	
 	public boolean groundCheck(){
-		/*if ((levelMan.isCellBlocked(worldpos.x, worldpos.y-0.4f, false))
-				||  (levelMan.isCellPlatform(worldpos.x, worldpos.y-0.4f))
-				||  (levelMan.isCellDiagonal(worldpos.x, worldpos.y-0.4f)))
-				{
-			return true;
-		}
-		
-		if ((levelMan.isCellBlocked(worldpos.x, worldpos.y-0.4f, false))
-				||  (levelMan.isCellPlatform(worldpos.x, worldpos.y-0.4f))
-				||  (levelMan.isCellDiagonal(worldpos.x, worldpos.y-0.4f))){
-			return true;
-		}
-		return false;*/
 		if (pawnFoot.numFootContacts > 0){
+			isGrounded = true;
 			return true;
+			
 		}
+			isGrounded = false;
 			return false;
 	}
 	
@@ -493,27 +416,39 @@ public class PawnEntity {
 		
 		if (checkLadder()){
 			isOnLadder = true;
-			
 			mainbody.setLinearVelocity(0, 1);
 			
 		}else{
 			if (System.currentTimeMillis() - lasttimejump > 300){
-			/*if ((levelMan.isCellBlocked(worldpos.x, worldpos.y-0.4f, false))
-						||  (levelMan.isCellPlatform(worldpos.x, worldpos.y-0.4f))
-						||  (levelMan.isCellDiagonal(worldpos.x, worldpos.y-0.4f))){*/
 				if (groundCheck()){
 						lasttimejump = System.currentTimeMillis();
 						mainbody.applyLinearImpulse(0, jumpSpeed, 0, 0, true);
+						
+						
 				}else{
 					//DazDebug.print("GROUND CHECK FAIL");
 				}
 			}
 		}
 	}
+	
+	public void velocityCheck(){
+		if (mainbody.getLinearVelocity().y > jumpSpeed){
+			mainbody.setLinearVelocity(new Vector2 (mainbody.getLinearVelocity().x, jumpSpeed));
+		}
+	}
 
-	public void stopVelocity() {
-	//	mainbodyfixture.setFriction(100);
-		//mainbodyfixture.setFriction(500);
+	public void stopVelocity(boolean b) {
+		if (b){
+		//mainbodyfixture.setFriction(1000);
+		fixtureDef.friction = 0;
+		pawnFoot.footfixtureDef.friction = 1000;
+		}else{
+			mainbodyfixture.setFriction(1);
+			fixtureDef.friction = 1;
+			pawnFoot.footfixtureDef.friction = 1;
+		}
+		
 	}
 
 	public void resetInputFlags(){
@@ -525,8 +460,10 @@ public class PawnEntity {
 	}
 	
 	boolean nextFall = false;
-	public void update(boolean isWorldCoord, Camera camera, boolean shoot) {
+	public void update(boolean isWorldCoord, Camera camera) {
 		
+		
+		velocityCheck();
 	//	if (numFootContacts != 0){
 		if (!isAI){
 			DazDebug.print("footcontacts:" + pawnFoot.numFootContacts);
@@ -574,23 +511,205 @@ public class PawnEntity {
 			goRight();
 		} else if (pressLeft) {
 			goLeft();
-		} else if (!pressLeft && !pressRight && Math.abs(velocity.x) > 0.1) {
-			stopVelocity();
+		} 
+		
+		if (!pressLeft && !pressRight && !pressUp && isGrounded) {
+			stopVelocity(true);
+			
+			//System.out.println("STOPSTOPSTOPSTOPSTOPSTOP");
+		}else{
+			stopVelocity(false);
 		}
 		goDirection = 0;
 
+		calculateFrame();
+		
+	
+		if (levelMan == null) {
+			System.out.println("levelMan IN ACTOR IS NULL");
+		}
+	
+		goThruPlatform = false;
+		isShooting = false;
+
+		aimingAt.x = 0;
+		aimingAt.y = 0;
+		
+		if (worldpos.y < -10){
+			isAlive = false;
+		}
+		
+		resetInputFlags();
+	}
+
+	public float distanceFromPlayer = 0;
+
+	public void updateAI(PawnEntity zplayer) {
+		// attemptShoot(0);
+		if (isAlive && zplayer.isAlive) {
+			isAI = true;
+			type = "enemy";
+			float relativetoplayerx = zplayer.worldpos.x - worldpos.x;
+			float relativetoplayery = zplayer.worldpos.y - worldpos.y;
+			relativepos.x = relativetoplayerx;
+			relativepos.y = relativetoplayery;
+			distanceFromPlayer = (relativetoplayerx * relativetoplayerx)
+					+ (relativetoplayery * relativetoplayery);
+			distanceFromPlayer = Math
+					.abs((float) Math.sqrt(distanceFromPlayer));
+
+			targetWorldVec.x = zplayer.worldpos.x;
+			targetWorldVec.y = zplayer.worldpos.y;
+			aimAtPlayer = relativepos.angle();
+			aimAngle = aimAtPlayer;
+			if (relativetoplayerx < -shootDist) {
+				goLeft();
+			} else if (relativetoplayerx > shootDist) {
+				goRight();
+
+			} else {
+				attemptShoot(relativepos.angle());
+			}
+			if (relativetoplayery > 2) {
+				goJump();
+			}
+			if (isGrounded && isJumpy) {
+				goJump();
+			}
+		}
+
+		
+	}
+
+	public void takeDamage(float damage) {
+		health -= damage;
+		if (health <= 0) {
+			isAlive = false;
+			mainbody.setActive(false);
+			mainbody.setAwake(false);
+			isOnLadder = false;
+		}
+	}
+
+	public void dispose() {
+		runTextureAtlas.dispose();
+		idleTextureAtlas.dispose();
+		backWalkTextureAtlas.dispose();
+		armTexture.dispose();
+		aimLadderTexture.dispose();
+		crouchTextureAtlas.dispose();
+		crouchBackTextureAtlas.dispose();
+		upLadderTextureAtlas.dispose();
+		deathTextureAtlas.dispose();
+	}
+
+	float distanceFromTarget = 0;
+	private boolean targetIsNull = false;
+	public int numFootContacts = 0;
+	
+
+
+	public void giveQuickTarget(PawnEntity ztarget) {
+		float relativetoplayerx = ztarget.worldpos.x - worldpos.x;
+		float relativetoplayery = ztarget.worldpos.y - worldpos.y;
+		targetIsNull = false;
+		// the actorTarget vector is relative to the player, as if the player is
+		// at 0,0
+
+		actorTarget.x = relativetoplayerx;
+		actorTarget.y = relativetoplayery;
+	}
+
+	public void giveQuickTarget(Drone ztarget) {
+		float relativetoplayerx = ztarget.worldpos.x - worldpos.x;
+		float relativetoplayery = ztarget.worldpos.y - worldpos.y;
+		targetIsNull = false;
+		// the actorTarget vector is relative to the player, as if the player is
+		// at 0,0
+
+		actorTarget.x = relativetoplayerx;
+		actorTarget.y = relativetoplayery;
+	}
+
+	public void quickShoot() {
+		if (!targetIsNull) {
+			attemptShoot(actorTarget.angle());
+			aimingAt.x = actorTarget.x;
+			aimingAt.y = actorTarget.y;
+		} else {
+			if (movingdirection == "right") {
+				attemptShoot(180);
+			} else {
+				attemptShoot(0);
+			}
+		}
+	}
+
+	public void setTargetToNull() {
+		targetIsNull = true;
+		// TODO Auto-generated method stub
+
+	}
+
+	public void Pickup(Item pickUpItem) {
+		if (pickUpItem.isWeapon) {
+			int holdId = weapon.weaponid;
+			weapon.setWeapon(pickUpItem.itemWeaponNumber);
+			pickUpItem.dropWeapon(holdId);
+		}
+	}
+
+	private boolean isPlayerGrounded() {// (float deltaTime) {
+		// groundedPlatform = null;
+		Array<Contact> contactList = world.getContactList();
+		for (int i = 0; i < contactList.size; i++) {
+			Contact contact = contactList.get(i);
+			if (contact.isTouching()
+					&& (contact.getFixtureA() == mainbodyfixture || contact
+							.getFixtureB() == mainbodyfixture)) {
+
+				Vector2 pos = worldpos;
+				WorldManifold manifold = contact.getWorldManifold();
+				boolean below = true;
+				for (int j = 0; j < manifold.getNumberOfContactPoints(); j++) {
+					below &= (manifold.getPoints()[j].y < pos.y - 1.5f);
+				}
+
+				if (below) {
+					if (contact.getFixtureA().getUserData() != null
+							&& contact.getFixtureA().getUserData()
+									.equals("ground")) {
+						DazDebug.print("onGround");
+					}
+
+					if (contact.getFixtureB().getUserData() != null
+							&& contact.getFixtureB().getUserData()
+									.equals("ground")) {
+						DazDebug.print("onGround");
+					}
+					return true;
+				}
+
+				return false;
+			}
+		}
+		return false;
+	}
+	
+	public void calculateFrame(){
+		
+		float minMove = 2;
 		worldpos = mainbody.getPosition();
-		float inx = aimingAt.x;
-		float iny = aimingAt.y;
+	
 
 		if (isAI) {
 			boolean facingtarget = true;
 			boolean flip = false;
 			boolean aimless = false;
-			inx = 0;
-			iny = 0;
+			aimingAt.x = 0;
+			aimingAt.y = 0;
 			aimless = true;
-			isWorldCoord = false;
+			//isWorldCoord = false;
 		}
 
 		if (!armsprite.isFlipX())
@@ -601,24 +720,28 @@ public class PawnEntity {
 		boolean aimless = false;
 		currentFrame++;
 
-		if (inx == 0 && iny == 0) {
+		if (aimingAt.x == 0 && aimingAt.y == 0) {
 			aimless = true;
-			isWorldCoord = false;
+		//	isWorldCoord = false;
 			if (movingdirection == "right")
-				inx = -2;
+				aimingAt.x  = -2;
 			if (movingdirection == "left" && !isLevelScrolling)
-				inx = 2;
+				aimingAt.x  = 2;
 		} else {
-			iny -= 1;
+			aimingAt.y -= 1;
 		}
 
 		if (velocity.x < 0) {
+			if (velocity.x < -minMove) {
 			movingdirection = "right";
+			}
 			if (aimless) {
 				aimingdirection = "right";
 			}
 		} else if (velocity.x > 0) {
+			if (velocity.x > minMove) {
 			movingdirection = "left";
+			}
 			if (aimless) {
 				aimingdirection = "left";
 			}
@@ -629,16 +752,17 @@ public class PawnEntity {
 			movingdirection = "left";
 		}
 
-		targetScreenVec.x = inx;
-		targetScreenVec.y = iny;
-		targetWorldVec.x = inx;
-		targetWorldVec.y = iny;
-
-		if (isWorldCoord) {
+		targetScreenVec.x = aimingAt.x;
+		targetScreenVec.y = aimingAt.y;
+		targetWorldVec.x = aimingAt.x;
+		targetWorldVec.y = aimingAt.y;
+		
+		if (isAI) {
 			camera.project(targetScreenVec);
-		} else {
+			} else {
 			camera.unproject(targetWorldVec);
 		}
+		//camera.unproject(targetWorldVec);
 
 		if (aimAngle > 90 && aimAngle < 270) {
 			aimingdirection = "right";
@@ -646,13 +770,13 @@ public class PawnEntity {
 			aimingdirection = "left";
 		}
 
-		float tx = targetWorldVec.x;
-		float ty = targetWorldVec.y;
+		//float tx = targetWorldVec.x;
+	//	float ty = targetWorldVec.y;
 
-		if (velocity.x != 0 && velocity.y == 0 && isGrounded) {
+		if (Math.abs(velocity.x) > minMove && velocity.y == 0 && isGrounded) {
 			state = "run";
 		}
-		if (velocity.x == 0 && velocity.y == 0 && !isOnLadder) {
+		if ((Math.abs(velocity.x) < minMove) && velocity.y == 0 && !isOnLadder) {
 			state = "idle";
 			if (isLevelScrolling) {
 				movingdirection = "left";
@@ -672,17 +796,17 @@ public class PawnEntity {
 			}
 		}
 
-		if (velocity.x != 0 && movingdirection == aimingdirection) {
+		if (Math.abs(velocity.x) > minMove && movingdirection == aimingdirection) {
 			state = "run";
 			if (isCrouching) {
 				state = "crouch";
 			}
-		} else if (velocity.x != 0 && movingdirection != aimingdirection) {
+		} else if (Math.abs(velocity.x) > minMove && movingdirection != aimingdirection) {
 			state = "runback";
 			if (isCrouching) {
 				state = "crouchback";
 			}
-		} else if (velocity.x == 0 && velocity.y == 0) {
+		} else if (Math.abs(velocity.x) < minMove && velocity.y == 0) {
 			state = "idle";
 			if (isLevelScrolling) {
 				state = "run";
@@ -794,11 +918,18 @@ public class PawnEntity {
 				aimladdersprite.flip(true, false);
 		}
 
-		Vector2 tmpAimVec = new Vector2(targetScreenVec.x, targetScreenVec.y);
+		//Vector2 tmpAimVec = new Vector2(targetScreenVec.x, targetScreenVec.y);
+		Vector2 tmpAimVec = new Vector2(aimingAt.x, aimingAt.y);
 		if (isAI) {
 			aimAngle = aimAtPlayer;
 		} else {
 			aimAngle = tmpAimVec.angle();
+			DazDebug.print("AIMANGLE:" + tmpAimVec.angle());
+			/*
+			 * 				AIMANGLE
+			 * 
+			 */
+			
 		}
 		switch (weapon.weaponid) {
 		case 0:
@@ -815,6 +946,12 @@ public class PawnEntity {
 		sprite.setSize(1f, 1f);
 		sprite.setOrigin(sprite.getWidth() / 2, 0);
 		sprite.setPosition(worldpos.x - 0.5f, worldpos.y - 1f);
+		
+		/*
+		 * 				AIM ANGLE
+		 * 
+		 */
+		
 		armsprite.setRotation(aimAngle - 180);
 		armsprite.setPosition(worldpos.x - 1.76f, worldpos.y + armyadd);
 
@@ -828,186 +965,8 @@ public class PawnEntity {
 		} else {
 			isShooting = false;
 		}
-		// mainbody.setTransform(worldpos.x, worldpos.y + 1, 0f);
-		// pawnFoot.footbody.setTransform(worldpos.x, worldpos.y + 0.1f, 0f);
-		// pawnFoot.footbody.
-		if (levelMan == null) {
-			System.out.println("levelMan IN ACTOR IS NULL");
-		}
-	//	physics.doPhysics(this);
-		// if (pawnFoot.isOnGround) {
-		// DazDebug.print("PAWNENTITY IS ON GROUND");
-		// }
-		// pawnFoot.isOnGround = false;
-		/*
-		 * if (isPlayerGrounded() && !isAI){ DazDebug.print("playergrounded");
-		 * isGrounded = true; }
-		 */
-		pressJump = false;
-		goThruPlatform = false;
-		isShooting = false;
-
-		aimingAt.x = 0;
-		aimingAt.y = 0;
 		
-		resetInputFlags();
-	}
-
-	public float distanceFromPlayer = 0;
-
-	public void updateAI(PawnEntity zplayer) {
-		// attemptShoot(0);
-		if (isAlive && zplayer.isAlive) {
-			isAI = true;
-			type = "enemy";
-			float relativetoplayerx = zplayer.worldpos.x - worldpos.x;
-			float relativetoplayery = zplayer.worldpos.y - worldpos.y;
-			relativepos.x = relativetoplayerx;
-			relativepos.y = relativetoplayery;
-			distanceFromPlayer = (relativetoplayerx * relativetoplayerx)
-					+ (relativetoplayery * relativetoplayery);
-			distanceFromPlayer = Math
-					.abs((float) Math.sqrt(distanceFromPlayer));
-
-			targetWorldVec.x = zplayer.worldpos.x;
-			targetWorldVec.y = zplayer.worldpos.y;
-			aimAtPlayer = relativepos.angle();
-			aimAngle = aimAtPlayer;
-			if (relativetoplayerx < -shootDist) {
-				goLeft();
-			} else if (relativetoplayerx > shootDist) {
-				goRight();
-
-			} else {
-				attemptShoot(relativepos.angle());
-			}
-			if (relativetoplayery > 2) {
-				goJump();
-			}
-			if (isGrounded && isJumpy) {
-				goJump();
-			}
-		}
-
 		
-	}
-
-	public void takeDamage(float damage) {
-		health -= damage;
-		if (health <= 0) {
-			isAlive = false;
-			mainbody.setActive(false);
-			mainbody.setAwake(false);
-			isOnLadder = false;
-		}
-	}
-
-	public void dispose() {
-		runTextureAtlas.dispose();
-		idleTextureAtlas.dispose();
-		backWalkTextureAtlas.dispose();
-		armTexture.dispose();
-		aimLadderTexture.dispose();
-		crouchTextureAtlas.dispose();
-		crouchBackTextureAtlas.dispose();
-		upLadderTextureAtlas.dispose();
-		deathTextureAtlas.dispose();
-	}
-
-	float distanceFromTarget = 0;
-	private boolean targetIsNull = false;
-	public int numFootContacts = 0;
-
-
-	public void giveQuickTarget(PawnEntity ztarget) {
-		float relativetoplayerx = ztarget.worldpos.x - worldpos.x;
-		float relativetoplayery = ztarget.worldpos.y - worldpos.y;
-		targetIsNull = false;
-		// the actorTarget vector is relative to the player, as if the player is
-		// at 0,0
-
-		actorTarget.x = relativetoplayerx;
-		actorTarget.y = relativetoplayery;
-	}
-
-	public void giveQuickTarget(Drone ztarget) {
-		float relativetoplayerx = ztarget.worldpos.x - worldpos.x;
-		float relativetoplayery = ztarget.worldpos.y - worldpos.y;
-		targetIsNull = false;
-		// the actorTarget vector is relative to the player, as if the player is
-		// at 0,0
-
-		actorTarget.x = relativetoplayerx;
-		actorTarget.y = relativetoplayery;
-	}
-
-	public void quickShoot() {
-		if (!targetIsNull) {
-			attemptShoot(actorTarget.angle());
-			aimingAt.x = actorTarget.x;
-			aimingAt.y = actorTarget.y;
-		} else {
-			if (movingdirection == "right") {
-				attemptShoot(180);
-			} else {
-				attemptShoot(0);
-			}
-		}
-	}
-
-	public void setTargetToNull() {
-		targetIsNull = true;
-		// TODO Auto-generated method stub
-
-	}
-
-	public void Pickup(Item pickUpItem) {
-		if (pickUpItem.isWeapon) {
-			int holdId = weapon.weaponid;
-			weapon.setWeapon(pickUpItem.itemWeaponNumber);
-			pickUpItem.dropWeapon(holdId);
-		}
-	}
-
-	private boolean isPlayerGrounded() {// (float deltaTime) {
-		// groundedPlatform = null;
-		Array<Contact> contactList = world.getContactList();
-		for (int i = 0; i < contactList.size; i++) {
-			Contact contact = contactList.get(i);
-			if (contact.isTouching()
-					&& (contact.getFixtureA() == mainbodyfixture || contact
-							.getFixtureB() == mainbodyfixture)) {
-
-				Vector2 pos = worldpos;
-				WorldManifold manifold = contact.getWorldManifold();
-				boolean below = true;
-				for (int j = 0; j < manifold.getNumberOfContactPoints(); j++) {
-					below &= (manifold.getPoints()[j].y < pos.y - 1.5f);
-				}
-
-				if (below) {
-					if (contact.getFixtureA().getUserData() != null
-							&& contact.getFixtureA().getUserData()
-									.equals("ground")) {
-						// groundedPlatform =
-						// (Platform)contact.getFixtureA().getBody().getUserData();
-						DazDebug.print("onGround");
-					}
-
-					if (contact.getFixtureB().getUserData() != null
-							&& contact.getFixtureB().getUserData()
-									.equals("ground")) {
-						// groundedPlatform =
-						// (Platform)contact.getFixtureB().getBody().getUserData();
-						DazDebug.print("onGround");
-					}
-					return true;
-				}
-
-				return false;
-			}
-		}
-		return false;
 	}
 
 	// }
