@@ -12,6 +12,7 @@ import com.dazpetty.zeroz.entities.Drone;
 import com.dazpetty.zeroz.entities.PawnEntity;
 import com.dazpetty.zeroz.entities.PawnFoot;
 import com.dazpetty.zeroz.entities.Projectile;
+import com.dazpetty.zeroz.entities.WorldVolume;
 
 public class ContactHandler {
 
@@ -47,6 +48,11 @@ public class ContactHandler {
 			Object objBb = objB;
 
 			
+			if ((objA instanceof PawnEntity) && (objB instanceof WorldVolume)){
+				if (!((PawnEntity) objA).isAI) {
+					((WorldVolume) objB).triggerVolumeOn();
+				}
+			}
 			
 			
 			
@@ -62,7 +68,7 @@ public class ContactHandler {
 				
 				if (objA instanceof String) {
 					if (((String) objA).equals("solid")) {
-						//DazDebug.print("::: Ground TAKES DAMAGE");
+					
 						removeProj = true;
 						
 					}
@@ -134,6 +140,13 @@ public class ContactHandler {
 	public void handleEndCollision(Object objA, Object objB) {
 		for (int i = 0; i < 2; i++){
 			Object objBb = objB;
+			
+
+		if ((objA instanceof PawnEntity) && (objB instanceof WorldVolume)){
+			if (!((PawnEntity) objA).isAI) {
+				((WorldVolume) objB).triggerVolumeOff();
+			}
+		}	
 		if (objA instanceof PawnFoot && objB instanceof String){
 			if (((String)objB).equals("solid")){
 				((PawnFoot)objA).decFootContact();

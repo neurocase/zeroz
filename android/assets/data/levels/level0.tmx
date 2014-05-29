@@ -9,7 +9,8 @@
   </tile>
   <tile id="28">
    <properties>
-    <property name="lockdownarea" value="1"/>
+    <property name="id" value="1"/>
+    <property name="worldvolume" value="spawntrigger"/>
    </properties>
   </tile>
   <tile id="29">
@@ -24,6 +25,7 @@
   </tile>
   <tile id="31">
    <properties>
+    <property name="enemycount" value="3"/>
     <property name="enemyspawn" value="footsoldier"/>
    </properties>
   </tile>
@@ -39,7 +41,8 @@
   </tile>
   <tile id="60">
    <properties>
-    <property name="enemies" value="5"/>
+    <property name="enemycount" value="2"/>
+    <property name="enemyspawn" value="triggered"/>
     <property name="lockdownspawn" value="1"/>
    </properties>
   </tile>
@@ -232,7 +235,7 @@
  </layer>
  <layer name="collision" width="125" height="25">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+2YPU8cMRCGfSARjuMiCkpSQPITgiIK/kX4EHRBKAWiQynSoujSpKChSItAKFH47OgQoqZPd0pxouIvxBa2bjQ341nf+g7M+pVe7e3Y3h37sXfXp1RWVlYWralauF8THrRqQ7hHVTQVYSwz87SUmVdPMcYyM09LoWO5SMQy87SU13n1lJlXT9JYvilwjZSYTyc0d1yu19oNe3xpovrkYrGYv0+A+b21ydUc26p7hDJjMqs9R/TJN7dnIuQY4xpGuE8wRjHvh18KzOs6xwntj9pN7Ul0dK4BY/ZUP9/q2Dvb1t1DcsPWD/0fbq9AzJeDuW9L1zkBvlSPYwJjcAw4p8Dc6JPq5go5c8yhm3a+FBmPMqb0R/tM+1T7wv4+BzFzbAEbbaJ+u2NL9QrzM/W4XEwcjmMKkphvEG02UFuu/Ddzz8/a31XvtfG59K6988Qwy2/MNYowd7mMab8CHgfz8iUx3yXa7KK2XLmP+bHqvTY+7/hTVw+eGGZ5yFwjhDmllJjjbziO+QHR1sW4frpyH3NYD7dzwszNM/3SGj7H3bP9wsZMOWZ5y+QyLObX/uKhCH7D1RneTaEfUj8l5pKkdR7ybA8R7tcv7S2mLsUc8r0njLUgnMdUkW84nzjmN57Ykeoyp+Y+jHWIGPy2M3y3UXtqHoSq7Dpvg3K8b2iAevOg3MTx+YeS/eBUhvkOU/5PiDnmbaIejHVAjPqeN+/uH6g99Y4PFdUviblrU0d8a5YltNOy9org1T68pr3u6Z/EHOZPzVlYVyr31ePaujjeN44wHhXK+tkvTvbZTtp/LlnunFc83PCcg/oqtHHzM3R/Poh9eJG9+TAV8p9BWX2xDhWVz090zv0vFZs5lx9X57lwfirtW4eKGrMroh71ng59nw9inVdZMdf5X6JeDOZSHr61nFn3KiZzSiHM/wO/clxt1DAAAA==
+   H4sIAAAAAAAAA+2YPU9bMRSGHSoBaQjK0JGF0p/QCvE/gFR0I0IMqBti6IqqdOnQhYEVgRCIj8LGhhAzO1vEEDHxF7CFrRydnONznesELtev9Mq5x/a9x358PxylkpKSkmg1KuGeJjxsVUZwjbKoEWEuE/NiKTEvn2LMZWJeLCXm5VNiXj4l5uVT2Zh/KtDacblea9ds+d5EjcnFYjH/WgDmj9YmV1N2VK+EMnMyq/2ZGJNvbc9EyDHGOYzwmGCMYj4IvyIwr+ocP2ovate1p1DpXAHG7KlxzunYF9vXXUNyzbYP/R/uX4aYLwdz3bZucwp8qV7mBMbgHHAuAnOjVdXLFXLmmEPX7XrJMh95TOlE+1z7TPvC/v4PYqZsAxutoXG7sq36hfmZdlwuJg7nsQiSmLeIPi3Ul6s/Zq65rv1H9Z8bH0vv2jtPDLP8zZwjC3OXy7j2BPAkWJfvifk20Wcb9eXqfcwPVf+58XHXn7p68sQwy33mHCHMKRWJOf6G45jvEX1djBunq/cxh+1wPyfM3DzTL63hc9w92y9szNRjlrdMLqNifu2vHongN1yV4V0XxiGNU2IuSbrPQ57tIcLjOtLeYNpSzCHfR8JYC8JxTGX5hvOJY37jiR2oHnNq7cNYl4jBbzvD9yfqT62DUOW9zzugHu8baqDdN1Bv4vh4Puc4OOVhvsnUPwgxx7xDtIOxLohR3/Pm3f0X9afe8aGixiUxd32qiG/FsoR2WtZuCv4+gFe0f3jGJzGH+VNrFraV6n3tuL4ujveNY4w/CHWD7BenBuwn7T+XLHfOTQ83vOagfgl93PoM3Z8PYx+eZW8+SoX8Z5BXW9ahovLZRcfc/1KxmXP5cW3eCufX0o51qKg5uyLaUe/p0Pf5MO7zMivmfX5PtIvBXMrDdy8n1v2KyZxSCPNnl2Mi4dQwAAA=
   </data>
  </layer>
  <layer name="declayer" width="125" height="25">
@@ -242,7 +245,7 @@
  </layer>
  <layer name="miscLayer" width="125" height="25">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3X0Q2CMBiFUSZRRnECdQEDixgdxVHYxFXkkRAMJlUuwXOSJn3o336vrSoAAABgzW7pAOjt0gFftk8HsGldOuAHDgWzzWBfl2UAwOpd0gEs7poOAOBjw//pc2J/n5h5vLmrLs+Z1S7wxr879us0WudoEWPN/BFC2nQAAJvzAptGXFTUMAAA
+   H4sIAAAAAAAAA+3XQQqCQBSAYS8ieQ0XQSewLhB6kaijdBRv0lVqE5gIGjY91O+DgVm8Gf7VwGQZAACwFfsfzcDbLjpgI67RASxKHh2wEN4vUmqjAxI4zDhbd/bFvIzVKKMDAEjmHB3A312iAwCYrPs/fQzsbwNn7hPvLr7PGdUkuJNP1Wsde+sUWkRfPT5CkCY6AIDVeQJD5E261DAAAA==
   </data>
  </layer>
  <layer name="top" width="125" height="25">
@@ -250,6 +253,4 @@
    H4sIAAAAAAAAA+3OwQkAIAwAsU6mk3QUd7cr+JBCSeD+FwEAAAAA71a1q9M9AgAAMFx2DwAAAAB8dAG/hk551DAAAA==
   </data>
  </layer>
- <objectgroup name="Object Layer 1" width="125" height="25"/>
- <objectgroup name="Object Layer 2" width="125" height="25"/>
 </map>

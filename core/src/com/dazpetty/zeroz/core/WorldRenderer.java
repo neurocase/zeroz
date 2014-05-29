@@ -377,8 +377,6 @@ public class WorldRenderer {
 		
 	}
 
-//werd
-
 	public boolean debugOn = false;
 	
 	
@@ -404,14 +402,9 @@ public class WorldRenderer {
 				if (projMan.muzzleflash[i].isAlive) {
 					projMan.muzzleflash[i].sprite.draw(batch);
 				}
-				
 			}
-			
 		}
-		
-		
 		dazdebug.tick();
-		
 	}
 	DazDebug dazdebug = new DazDebug();
 	long ticker = 0;

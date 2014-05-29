@@ -157,6 +157,7 @@ public class HumanSprite {
 		deathTextureAtlas.dispose();
 		armUziTexture.dispose();
 		aimLadderTexture.dispose();
-		 
 	}
+
+	
 }

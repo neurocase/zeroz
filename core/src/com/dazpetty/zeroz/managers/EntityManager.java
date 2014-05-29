@@ -22,23 +22,15 @@ import com.dazpetty.zeroz.entities.MuzzleFlash;
 import com.dazpetty.zeroz.entities.Projectile;
 import com.dazpetty.zeroz.entities.Weapon;
 
-
-
-
-
-
 /* The EntityManager class manages game entities, the enemies that the player encounters, the player character, the destroyable objects,
  * the doors, explosions, the ProjectileManager and items.
  * 
- * 
+ *   NOTE: The Level Manager contains the enemy spawners
  */
-
-
 
 public class EntityManager {
 
 	public final int ENEMY_LIMIT = 10;
-	
 
 	public final int DESTROYABLE_LIMIT = 10;
 	public final int DOOR_LIMIT = 10;
@@ -52,12 +44,8 @@ public class EntityManager {
 	public int TOTAL_EXPLOSIONS = 0;
 	public int TOTAL_ITEMS = 0;
 
-
 	public int enemycount = 0;
 	public int dronecount = 0;
-
-
-	
 
 	public CopterBoss copterBoss;// = new CopterBoss();
 
@@ -81,11 +69,12 @@ public class EntityManager {
 	public ContactHandler ch;
 	public ProjectileManager projMan;
 	public ProjectileManager aiProjMan;
-	
+
 	MyAssetManager assetMan = new MyAssetManager();;
 
-	public EntityManager(OrthographicCamera camera, World world, LevelManager levelMan) {
-		
+	public EntityManager(OrthographicCamera camera, World world,
+			LevelManager levelMan) {
+
 		projMan = new ProjectileManager(PROJECTILE_LIMIT, world, assetMan);
 		aiProjMan = new ProjectileManager(PROJECTILE_LIMIT, world, assetMan);
 
@@ -119,9 +108,6 @@ public class EntityManager {
 		return null;
 	}
 
-	
-	
-	
 	public void createExplosion(float x, float y, int id, float angle) {
 		if (TOTAL_EXPLOSIONS > EXPLOSION_LIMIT - 1) {
 			TOTAL_EXPLOSIONS = 0;
@@ -129,36 +115,30 @@ public class EntityManager {
 		explosion[TOTAL_EXPLOSIONS] = new Explosion(x, y, id, angle, assetMan);
 	}
 
-	public void createActor(int s, EntitySpawner spawner) {
-		long timenow = System.currentTimeMillis();
+	/*
+	 * public void flushSpawners(EntitySpawner spawner){ for (int i = 0; i <
+	 * ENEMY_LIMIT; i++){ zenemy[i] = new PawnEntity(this, spawner);
+	 * zenemy[i].isAlive = false; } initSpawn = true; }
+	 */
+	boolean initSpawn = false;
 
-		if (spawner.type.equals("player")){
-			DazDebug.print("SPAWNING PLAYER AT, X:" + spawner.worldpos.x + " Y:" + spawner.worldpos.y);
-			zplayer = new PawnEntity(this, spawner);
-		}
-	}
 
 	public void checkBodies() {
-
 		/*
 		 * DEACTIVATE DOORS, ENEMIES AND DESTROYED OBJECTS
 		 */
-		
-		for (int i = 0; i < EXPLOSION_LIMIT; i++){
-			if (explosion[i] != null){
+		for (int i = 0; i < EXPLOSION_LIMIT; i++) {
+			if (explosion[i] != null) {
 				explosion[i].update();
 			}
 		}
-		
-		
-		
 		float damage = zplayer.weapon.damage;
 		Array<PawnEntity> enemiesToDamage = ch.getEnemiesToDamage();
 		if (enemiesToDamage != null) {
 			for (int i = 0; i < enemiesToDamage.size; i++) {
 				PawnEntity he = (PawnEntity) enemiesToDamage.get(i);
-				DazDebug.print("AI: " + he.id + " takes " + zplayer.weapon.damage
-						+ " damage.");
+				DazDebug.print("AI: " + he.id + " takes "
+						+ zplayer.weapon.damage + " damage.");
 				he.takeDamage(damage);
 			}
 		}
@@ -183,10 +163,10 @@ public class EntityManager {
 				dest.damageDestroyable(damage);
 				int killKeyValue = dest.id;
 				zplayer.levelMan.keys[killKeyValue] = true;
-				createExplosion(dest.worldpos.x-1, dest.worldpos.y, 1, 0);
-				if (!dest.isAlive){
+				createExplosion(dest.worldpos.x - 1, dest.worldpos.y, 1, 0);
+				if (!dest.isAlive) {
 					DazDebug.print("Destroyable " + dest.id + "is DEAD!");
-					createExplosion(dest.worldpos.x-1, dest.worldpos.y, 0, 0);
+					createExplosion(dest.worldpos.x - 1, dest.worldpos.y, 0, 0);
 				}
 				for (int j = 0; j < DOOR_LIMIT; j++) {
 					if (door[j] != null) {

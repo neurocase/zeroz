@@ -99,16 +99,9 @@ public class WorldLogic {
 		 * SPAWN ENEMIES AT SPAWNPOINT NEAR PLAYER
 		 */
 		if (pollCheck(11)){
-			for (int i = 0; i < levelMan.enemyspawners; i++) {
-				if (Math.abs((double) (levelMan.enemyspawner[i].worldpos.x - entityMan.zplayer.worldpos.x)) < 20) {
-					if (levelMan.enemyspawner[i] != null ){//&& entityMan.enemyspawner[i].enemyType == "footsoldier") {
-						entityMan.createActor(2, levelMan.enemyspawner[i]);
-					} else {
-						System.out.println("ERROR: There are no enemy spawners");
-					}
-				}
-			}
+			levelMan.checkSpawners();
 		}
+		
 			
 			/*
 			 * UPDATE ENEMY AI

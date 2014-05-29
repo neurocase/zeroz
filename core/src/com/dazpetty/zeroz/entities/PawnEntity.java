@@ -39,6 +39,7 @@ import com.dazpetty.zeroz.managers.LevelManager;
 
 /*
  * Pawn Entity is the base class for entities controlled by the player or ai,
+ *		Scrolling error occurs only if idle and shooting/aiming
  *
  */
 
@@ -107,18 +108,16 @@ public class PawnEntity {
 	 * Vectors
 	 */
 
-	// public Vector2 screenpos = new Vector2(0, 0);
+
 	public Vector2 worldpos = new Vector2(0, 0);
 	public Vector2 velocity = new Vector2(0, 0);
 	public Vector3 targetWorldVec = new Vector3(0, 0, 0);
 	public Vector3 targetScreenVec = new Vector3(0, 0, 0);
-	// public Vector3 enemyWorldVec = new Vector3(0, 0, 0);
-	// public Vector3 enemyScreenVec = new Vector3(0, 0, 0);
+
+
 	public Vector3 aimingAt = new Vector3(0, 0, 0);
 	public Vector2 actorTarget = new Vector2(0, 0);
-	// public Vector2 p1 = new Vector2(), p2 = new Vector2(),
-	// collision = new Vector2(), normal = new Vector2();
-	//int wantGoDirection = 0;
+
 	public float aimAtPlayer = 0;
 	public int activeBullet = 0;
 	public float height = 0;
@@ -131,7 +130,6 @@ public class PawnEntity {
 	private static final int FRAME_COLS = 5; // #1
 	private static final int FRAME_ROWS = 5; // #2
 	private String currentAtlasKey = new String("0000");
-	// float stateTime;
 	private int currentFrame = 1;
 
 	public Sprite rightarmsprite;
@@ -199,17 +197,21 @@ public class PawnEntity {
 	/*
 	 * FUNCTIONS
 	 */
-	public void reUseEntity(Vector2 actorstart, Weapon weapon) {
-		this.weapon = weapon;
-		mainbody.setTransform(actorstart, 0);
+	public void useEntity(EntitySpawner spawner) {
+		
+		
+		
+		this.weapon = spawner.weapon;
+		worldpos = spawner.worldpos;
+		mainbody.setTransform(spawner.worldpos, 0);
 		mainbody.setActive(true);
 		mainbody.setAwake(true);			
 		isDisposed = false;
 		isOnLadder = false;
 		isAlive = true;
-		worldpos = actorstart;
-		health = startinghealth;
 		
+		health = startinghealth;
+		DazDebug.print("ENTITY IN AT" + worldpos.x + worldpos.y);
 	}
 
 	public void attemptShoot(float ang) {
@@ -224,10 +226,13 @@ public class PawnEntity {
 	
 	public EntitySpawner spawner;
 	
+	public EntityManager entMan;
+	
 	public PawnEntity(EntityManager entMan, EntitySpawner spawner) {
 
 		this.spawner = spawner;
 		weapon = new Weapon(1);
+		this.entMan = entMan;
 		this.camera = entMan.camera;
 		this.world = entMan.world;
 		this.id = id;
@@ -254,8 +259,8 @@ public class PawnEntity {
 		bodyDef.type = BodyType.DynamicBody;
 
 		mainbody = world.createBody(bodyDef);
-		mainbody.setActive(true);
-		mainbody.setAwake(true);
+		mainbody.setActive(false);
+		mainbody.setAwake(false);
 		mainbody.setBullet(true);
 
 		isDisposed = false;
@@ -263,9 +268,19 @@ public class PawnEntity {
 
 		fixtureDef = new FixtureDef();
 		fixtureDef.friction = 0;
-		fixtureDef.density = 1;
-		PolygonShape pBox = new PolygonShape(); 
-		pBox.setAsBox(0.3f, 0.8f);
+		fixtureDef.density = 1.5f;
+		PolygonShape pBox = new PolygonShape();
+		
+		float hadjust = 0.7f;
+		Vector2[] collisionShape = new Vector2[5];
+		collisionShape[0] = new Vector2(0f,(float) (1.6-hadjust));
+		collisionShape[1] = new Vector2(0.3f,(float) (1-hadjust));
+		collisionShape[2] = new Vector2(0.15f,-0.1f-hadjust);
+		collisionShape[3] = new Vector2(-0.15f,-0.1f-hadjust);
+		collisionShape[4] = new Vector2(-0.3f,(float) (1-hadjust));
+		pBox.set(collisionShape);
+		//pBox.setPosition(new Vector2(0, -0.8f));
+	//	pBox.setAsBox(0.3f, 0.8f);
 		fixtureDef.shape = pBox;
 	
 		Filter pawnfilter = fixtureDef.filter;
@@ -288,6 +303,15 @@ public class PawnEntity {
 
 		height = 2;
 		width = 1.25f;
+
+		 pBox.dispose();
+		setupTextures();
+		 
+		 useEntity(spawner);
+	}
+	
+	
+	public void setupTextures(){
 
 		aimLadderTexture = entMan.humanSprite.aimLadderTexture;
 
@@ -361,7 +385,6 @@ public class PawnEntity {
 
 		upladdersprite = new Sprite(upLadderTexRegion);
 		upladdersprite.scale(1f);
-		 pBox.dispose();
 	}
 
 	public void goLeft() {
@@ -466,7 +489,7 @@ public class PawnEntity {
 		velocityCheck();
 	//	if (numFootContacts != 0){
 		if (!isAI){
-			DazDebug.print("footcontacts:" + pawnFoot.numFootContacts);
+			//DazDebug.print("footcontacts:" + pawnFoot.numFootContacts);
 		}
 		//}
 		velocity = mainbody.getLinearVelocity();
@@ -476,13 +499,35 @@ public class PawnEntity {
 		}else{
 			pawnFoot.platformMode();
 		}
+		/*
+		 *  CONTROLS
+		 * 
+		 */
+		
+		if (pressUp){
+			goJump();
+		}
+		if (pressShoot){
+			quickShoot();
+		}
+		
 		if (pressDown){
 			pawnFoot.fallMode();
+			isCrouching = true;
+			if (isOnLadder){
+				mainbody.setLinearVelocity(0, -1);
+			}
 		}
 
+		/*if (checkLadder() && !isGrounded){
+			isOnLadder = true;
+		}*/
 		
 		if (checkLadder() && isOnLadder){
 			mainbody.setGravityScale(0);
+			if (!pressDown && !pressUp){
+				mainbody.setLinearVelocity(0, 0);
+			}
 		}else if (!checkLadder()){
 			mainbody.setGravityScale(1);
 		}
@@ -496,15 +541,6 @@ public class PawnEntity {
 		}
 		
 		
-		if (pressUp){
-			goJump();
-		}
-		if (pressShoot){
-			quickShoot();
-		}
-		if (pressDown){
-			isCrouching = true;
-		}
 		
 		
 		if (pressRight) {
@@ -795,7 +831,6 @@ public class PawnEntity {
 				state = "ladderslide";
 			}
 		}
-
 		if (Math.abs(velocity.x) > minMove && movingdirection == aimingdirection) {
 			state = "run";
 			if (isCrouching) {
@@ -822,12 +857,10 @@ public class PawnEntity {
 		if (!isGrounded && !isOnLadder && velocity.y != 0) {
 			state = "jumping";
 		}
-
 		if (isOnLadder && !aimless) {
 			state = "ladderaim";
 			isShooting = true;
 		}
-
 		if (state == "run" || state == "ladderclimb" || state == "runback"
 				|| state == "crouch" || state == "crouchback" || !isAlive) {
 			if (currentFrame > 24) {
@@ -843,11 +876,8 @@ public class PawnEntity {
 					.findRegion(currentAtlasKey));
 			crouchsprite.setRegion(crouchTextureAtlas
 					.findRegion(currentAtlasKey));
-
 		}
-
 		float armyadd = 0;
-
 		if (state == "run") {
 			sprite = runsprite;
 			isOnLadder = false;
@@ -887,7 +917,6 @@ public class PawnEntity {
 			currentFrame = deathanim;
 			sprite = deathsprite;
 			currentAtlasKey = String.format("%04d", currentFrame);
-
 			if (deathanim < 7 && !isGrounded)
 				deathanim++;
 			if (deathanim < 10 && isGrounded)
@@ -895,19 +924,15 @@ public class PawnEntity {
 			deathsprite
 					.setRegion(deathTextureAtlas.findRegion(currentAtlasKey));
 		}
-
 		if (isCrouching && isGrounded) {
 			armyadd = -0.55f;
 		}
-
 		if (aimingdirection == "left" && !sprite.isFlipX()) {
 			flip = true;
 		}
-
 		if (flip && isAlive) {
 			sprite.flip(true, false);
 		}
-
 		if (aimingdirection == "right") {
 			if (armsprite.isFlipY())
 				armsprite.flip(false, true);
@@ -917,17 +942,14 @@ public class PawnEntity {
 			if (aimladdersprite.isFlipX())
 				aimladdersprite.flip(true, false);
 		}
-
 		//Vector2 tmpAimVec = new Vector2(targetScreenVec.x, targetScreenVec.y);
 		Vector2 tmpAimVec = new Vector2(aimingAt.x, aimingAt.y);
 		if (isAI) {
 			aimAngle = aimAtPlayer;
 		} else {
 			aimAngle = tmpAimVec.angle();
-			DazDebug.print("AIMANGLE:" + tmpAimVec.angle());
 			/*
 			 * 				AIMANGLE
-			 * 
 			 */
 			
 		}
@@ -942,16 +964,12 @@ public class PawnEntity {
 			armsprite = armshotgunsprite;
 			break;
 		}
-
 		sprite.setSize(1f, 1f);
 		sprite.setOrigin(sprite.getWidth() / 2, 0);
 		sprite.setPosition(worldpos.x - 0.5f, worldpos.y - 1f);
-		
 		/*
 		 * 				AIM ANGLE
-		 * 
 		 */
-		
 		armsprite.setRotation(aimAngle - 180);
 		armsprite.setPosition(worldpos.x - 1.76f, worldpos.y + armyadd);
 
@@ -965,10 +983,5 @@ public class PawnEntity {
 		} else {
 			isShooting = false;
 		}
-		
-		
 	}
-
-	// }
-
 }

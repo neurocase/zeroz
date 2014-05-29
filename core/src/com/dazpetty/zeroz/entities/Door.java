@@ -62,7 +62,11 @@ public class Door {
 		openDoor = true;
 	}
 	
-	
+	public void closeDoor(){
+		body.setAwake(false);
+		body.setActive(false);
+		openDoor = true;
+	}
 	
 	public void setFrame(int frame){
 

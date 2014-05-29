@@ -15,11 +15,13 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.dazpetty.zeroz.core.DazDebug;
 import com.dazpetty.zeroz.entities.CopterBoss;
 import com.dazpetty.zeroz.entities.Destroyable;
 import com.dazpetty.zeroz.entities.Door;
 import com.dazpetty.zeroz.entities.EntitySpawner;
 import com.dazpetty.zeroz.entities.Item;
+import com.dazpetty.zeroz.entities.WorldVolume;
 
 /*	The LevelManager contains functions for searching the tiled map filetype for playerstart , enemyspawner, door and  item locations.
  *  the levels may also contain special tiles which indicate whether the level is a boss level or a scrolling level (a level where the
@@ -39,11 +41,14 @@ public class LevelManager {
 	public String bossKey = "boss";
 	public String scrollingKey = "scrollingmap";
 
+	public String idkey = "id";
 	public String itemKey = "item";
+	public String worldvolumekey = "worldvolume";
 	public String blockedKey = "solid";
 	public String platformKey = "platform";
 	public String npcKey = "target";
 	public String enemyKey = "enemyspawn";
+	public String enemyCountKey = "enemycount";
 	public String destroyableKey = "destroyable";
 	public String diagonalKey = "diagonal";
 	public String doorKey = "door";
@@ -64,7 +69,7 @@ public class LevelManager {
 
 	public boolean isLevelComplete = false;
 
-	public EntityManager actorMan;
+	public EntityManager entityMan;
 	public World world;
 	
 	
@@ -74,11 +79,14 @@ public class LevelManager {
 	public EntitySpawner playerSpawner;
 	public EntitySpawner enemyspawner[] = new EntitySpawner[ENEMY_SPAWNER_LIMIT];
 	
+	public int worldvolumecount = 0;
+	public final int WORLD_VOLUME_LIMIT = 20;
+	public WorldVolume worldvolume[] = new WorldVolume[WORLD_VOLUME_LIMIT];
 	
 	
 
-	public LevelManager(int level, EntityManager actorMan, World world) {
-		this.actorMan = actorMan;
+	public LevelManager(int level, EntityManager entityMan, World world) {
+		this.entityMan = entityMan;
 		this.world = world;
 
 		String levelstr = Integer.toString(level);
@@ -100,19 +108,41 @@ public class LevelManager {
 		return cell != null && cell.getTile() != null
 				&& cell.getTile().getProperties().containsKey(bossKey);
 	}
-
+	
+	public boolean isCellWorldVolume(float x, float y) {
+		Cell cell = miscLayer.getCell((int) (x), (int) (y));
+		return cell != null && cell.getTile() != null
+				&& cell.getTile().getProperties().containsKey(worldvolumekey);
+	}
+	
+	public String getWorldVolumeType(float x, float y) {
+		Cell cell = miscLayer.getCell((int) (x), (int) (y));
+		String value = "null";
+		if (isCellWorldVolume(x, y)) {
+			value = (String) cell.getTile().getProperties().get(worldvolumekey);
+		}
+		return value;
+	}
+	
+	public String getCellStringID(float x, float y) {
+		Cell cell = miscLayer.getCell((int) (x), (int) (y));
+		String value = "0";
+		if (isCellItem(x, y)) {
+			value = (String) cell.getTile().getProperties().get(idkey);
+		}
+		return value;
+	}
+	
 	public boolean isCellLadder(float x, float y) {
 		Cell cell = collisionLayer.getCell((int) (x), (int) (y));
 		return cell != null && cell.getTile() != null
 				&& cell.getTile().getProperties().containsKey(ladderKey);
 	}
-
 	public boolean isCellPlayerStart(float x, float y) {
 		Cell cell = miscLayer.getCell((int) (x), (int) (y));
 		return cell != null && cell.getTile() != null
 				&& cell.getTile().getProperties().containsKey(playerstartKey);
 	}
-
 	public boolean isCellLevelComplete(float x, float y) {
 		Cell cell = miscLayer.getCell((int) (x), (int) (y));
 		return cell != null && cell.getTile() != null
@@ -136,6 +166,13 @@ public class LevelManager {
 		Cell cell = miscLayer.getCell((int) (x), (int) (y));
 		return cell != null && cell.getTile() != null
 				&& cell.getTile().getProperties().containsKey(enemyKey);
+
+	}
+	
+	public boolean isCellSpawnCounter(float x, float y) {
+		Cell cell = miscLayer.getCell((int) (x), (int) (y));
+		return cell != null && cell.getTile() != null
+				&& cell.getTile().getProperties().containsKey(enemyCountKey);
 
 	}
 
@@ -223,7 +260,7 @@ public class LevelManager {
 	}
 
 	public void buildLevel(EntityManager actorMan) {
-		this.actorMan = actorMan;
+		this.entityMan = actorMan;
 		for (int h = 0; h < collisionLayer.getHeight(); h++) {
 			for (int w = 0; w < collisionLayer.getWidth(); w++) {
 
@@ -330,10 +367,17 @@ public class LevelManager {
 					int rand = (int) (Math.random() * 10);
 					if (rand == 0)
 						rand = 1;
+					int count = 0;
+					count = getEnemySpawnCount(w, h);
+					if (count == 0 || !isCellSpawnCounter(w,h)){
+						count = rand;
+					}
 					enemyspawner[enemyspawners] = new EntitySpawner(
-							w, h, type, rand);
+							w, h, type,  count, entityMan);
+					DazDebug.print("-=-=-=-=+++++++++++++++++++++++++++++++++++=-=-=");
 					System.out.println("Spawner Created of Type:" + type + "at"
-							+ w + "," + h + " with " + rand + " enemies");
+							+ w + "," + h + " with " + count + " enemies");
+					DazDebug.print("-=-=-=-=+++++++++++++++++++++++++++++++++++=-=-=");
 					enemyspawners++;
 				}
 				if (isCellDestroyable(w, h)) {
@@ -374,7 +418,16 @@ public class LevelManager {
 				}
 				if (isCellPlayerStart(w, h)) {
 					System.out.println("PlayerStart at: x" + w + "y:" + h);
-					playerStart = new EntitySpawner(w, h, "player", 1);
+					playerStart = new EntitySpawner(w, h, "player", 1, entityMan);
+				}
+				if (isCellWorldVolume(w, h)) {
+					DazDebug.print("++++++++++++++++++++++++++++WORLDVOLUME AT");
+					String type = getWorldVolumeType(w, h);
+					if (worldvolumecount < WORLD_VOLUME_LIMIT ){
+						worldvolume[worldvolumecount] = new WorldVolume(w,h,type,world,this);
+						worldvolumecount++;
+					}
+					DazDebug.print("++++++++++++++++++++++++++++WORLDVOLUME AT: X:" + w + " Y:" + h + " TYPE:" + type);
 				}
 				if (!isLevelScrolling) {
 					if (isLevelScrolling(w, h)) {
@@ -385,7 +438,6 @@ public class LevelManager {
 					if (isCellBoss(w, h)) {
 						isBossLevel = true;
 						actorMan.copterBoss = new CopterBoss(w, h, world);
-
 					}
 				}
 
@@ -393,11 +445,46 @@ public class LevelManager {
 		}
 	}
 
+	private int getEnemySpawnCount(float x, float y) {
+		if (isCellSpawnCounter(x, y)){
+			
+		Cell cell = miscLayer.getCell((int) (x), (int) (y));
+		String value = "null";
+		int intvalue = 0;
+		if (isCellSpawnCounter(x, y)) {
+			value = (String) cell.getTile().getProperties().get(enemyCountKey);
+			intvalue = Integer.parseInt(value);
+		}
+		
+		return intvalue;
+		}
+		return 0;
+	}
+
 	EntitySpawner playerStart;
 	
 	public EntitySpawner getPlayerSpawner() {
 		return playerStart;
 		
+	}
+	
+	
+	
+	
+	
+
+	public void checkSpawners() {
+
+		for (int i = 0; i < enemyspawners; i++) {
+			if (Math.abs((double) (enemyspawner[i].worldpos.x - entityMan.zplayer.worldpos.x)) < 16) {
+				if (enemyspawner[i] != null ){
+					enemyspawner[i].createActor();
+				} else {
+					System.out.println("ERROR: There are no enemy spawners");
+				}
+			}
+		}
+	
 	}
 
 }
