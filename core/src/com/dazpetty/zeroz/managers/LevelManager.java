@@ -16,6 +16,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.dazpetty.zeroz.core.DazDebug;
+import com.dazpetty.zeroz.core.GameScreen;
 import com.dazpetty.zeroz.entities.CopterBoss;
 import com.dazpetty.zeroz.entities.Destroyable;
 import com.dazpetty.zeroz.entities.Door;
@@ -44,6 +45,7 @@ public class LevelManager {
 	public String idkey = "id";
 	public String itemKey = "item";
 	public String worldvolumekey = "worldvolume";
+	public String triggervaluekey = "triggervalue";
 	public String blockedKey = "solid";
 	public String platformKey = "platform";
 	public String npcKey = "target";
@@ -83,19 +85,30 @@ public class LevelManager {
 	public final int WORLD_VOLUME_LIMIT = 20;
 	public WorldVolume worldvolume[] = new WorldVolume[WORLD_VOLUME_LIMIT];
 	
+	public EventManager eventMan;
+	public SceneManager scene;
+	
 	
 
-	public LevelManager(int level, EntityManager entityMan, World world) {
-		this.entityMan = entityMan;
+	public LevelManager(int level, GameScreen gameScreen, World world) {
+		this.entityMan = gameScreen.entityMan;
+		this.scene = gameScreen.scene;
 		this.world = world;
-
+		
 		String levelstr = Integer.toString(level);
 		map = new TmxMapLoader().load("data/levels/level" + levelstr + ".tmx");
 		collisionLayer = (TiledMapTileLayer) map.getLayers().get("collision");
 		miscLayer = (TiledMapTileLayer) map.getLayers().get("miscLayer");
 		Arrays.fill(keys, Boolean.FALSE);
-
+		eventMan = new EventManager(this);
 	}
+	
+
+	/*	----------------------------
+	 *  FUNCTIONS FOR BUILDING LEVEL
+	 *  ----------------------------
+	 */
+	
 
 	public boolean isLevelScrolling(float x, float y) {
 		Cell cell = miscLayer.getCell((int) (x), (int) (y));
@@ -202,6 +215,21 @@ public class LevelManager {
 		}
 		return value;
 	}
+	
+	public boolean isCellTriggerValue(float x, float y) {
+		Cell cell = miscLayer.getCell((int) (x), (int) (y));
+		return cell != null && cell.getTile() != null
+				&& cell.getTile().getProperties().containsKey(triggervaluekey);
+	}
+	
+	public int getCellTriggerValue(float x, float y) {
+		Cell cell = miscLayer.getCell((int) (x), (int) (y));
+		String value = "0";
+		if (isCellTriggerValue(x, y)) {
+			value = (String) cell.getTile().getProperties().get(triggervaluekey);
+		}
+		return Integer.parseInt(value);
+	}
 
 	public int getCellValue(float x, float y) {
 		Cell cell = miscLayer.getCell((int) (x), (int) (y));
@@ -258,9 +286,16 @@ public class LevelManager {
 		return cell != null && cell.getTile() != null
 				&& cell.getTile().getProperties().containsKey(platformKey);
 	}
+	
+	
+	
+	/*	---------------------
+	 *  BUILDING LEVEL
+	 *  ---------------------
+	 */
 
-	public void buildLevel(EntityManager actorMan) {
-		this.entityMan = actorMan;
+	public void buildLevel(EntityManager entityMan) {
+		this.entityMan = entityMan;
 		for (int h = 0; h < collisionLayer.getHeight(); h++) {
 			for (int w = 0; w < collisionLayer.getWidth(); w++) {
 
@@ -373,7 +408,7 @@ public class LevelManager {
 						count = rand;
 					}
 					enemyspawner[enemyspawners] = new EntitySpawner(
-							w, h, type,  count, entityMan);
+							w, h, type,  count, getCellTriggerValue(w, h), entityMan);
 					DazDebug.print("-=-=-=-=+++++++++++++++++++++++++++++++++++=-=-=");
 					System.out.println("Spawner Created of Type:" + type + "at"
 							+ w + "," + h + " with " + count + " enemies");
@@ -382,33 +417,33 @@ public class LevelManager {
 				}
 				if (isCellDestroyable(w, h)) {
 					int value = getCellValue(w, h);
-					if (actorMan.TOTAL_DESTROYABLES < actorMan.DESTROYABLE_LIMIT) {
-						actorMan.destroyable[value] = new Destroyable(w, h,
+					if (scene.TOTAL_DESTROYABLES < scene.DESTROYABLE_LIMIT) {
+						scene.destroyable[value] = new Destroyable(w, h,
 								value, world);
 						System.out.println("DESTROYABLE ADDED: "
-								+ actorMan.TOTAL_DESTROYABLES);
-						actorMan.TOTAL_DESTROYABLES++;
+								+ scene.TOTAL_DESTROYABLES);
+						scene.TOTAL_DESTROYABLES++;
 
 					}
 				}
 				if (isCellDoor(w, h)) {
-					if (actorMan.TOTAL_DOORS < actorMan.DOOR_LIMIT) {
+					if (scene.TOTAL_DOORS < scene.DOOR_LIMIT) {
 						int value = getCellValue(w, h);
-						actorMan.door[actorMan.TOTAL_DOORS] = new Door(w, h,
+						scene.door[scene.TOTAL_DOORS] = new Door(w, h,
 								value, world);
-						actorMan.TOTAL_DOORS++;
+						scene.TOTAL_DOORS++;
 						System.out.println("DOOR ADDED: "
-								+ actorMan.TOTAL_DOORS);
+								+ scene.TOTAL_DOORS);
 					}
 				}
 				if (isCellItem(w, h)) {
-					if (actorMan.TOTAL_ITEMS < actorMan.ITEM_LIMIT) {
+					if (scene.TOTAL_ITEMS < scene.ITEM_LIMIT) {
 						String value = getItemValue(w, h);
-						actorMan.item[actorMan.TOTAL_ITEMS] = new Item(w, h,
-								actorMan.TOTAL_ITEMS, value);
-						actorMan.TOTAL_ITEMS++;
+						scene.item[scene.TOTAL_ITEMS] = new Item(w, h,
+								scene.TOTAL_ITEMS, value);
+						scene.TOTAL_ITEMS++;
 						System.out.println(value + " ITEM ADDED: "
-								+ actorMan.TOTAL_ITEMS + "at:" + w + "," + h);
+								+ scene.TOTAL_ITEMS + "at:" + w + "," + h);
 					}
 				}
 				if (isCellLevelComplete(w, h)) {
@@ -418,13 +453,13 @@ public class LevelManager {
 				}
 				if (isCellPlayerStart(w, h)) {
 					System.out.println("PlayerStart at: x" + w + "y:" + h);
-					playerStart = new EntitySpawner(w, h, "player", 1, entityMan);
+					playerStart = new EntitySpawner(w, h, "player", 1, 0, entityMan);
 				}
 				if (isCellWorldVolume(w, h)) {
 					DazDebug.print("++++++++++++++++++++++++++++WORLDVOLUME AT");
 					String type = getWorldVolumeType(w, h);
 					if (worldvolumecount < WORLD_VOLUME_LIMIT ){
-						worldvolume[worldvolumecount] = new WorldVolume(w,h,type,world,this);
+						worldvolume[worldvolumecount] = new WorldVolume(w,h,type,getCellTriggerValue(w,h), world,this);
 						worldvolumecount++;
 					}
 					DazDebug.print("++++++++++++++++++++++++++++WORLDVOLUME AT: X:" + w + " Y:" + h + " TYPE:" + type);
@@ -437,7 +472,7 @@ public class LevelManager {
 				if (!isBossLevel) {
 					if (isCellBoss(w, h)) {
 						isBossLevel = true;
-						actorMan.copterBoss = new CopterBoss(w, h, world);
+						scene.copterBoss = new CopterBoss(w, h, world);
 					}
 				}
 
@@ -467,11 +502,6 @@ public class LevelManager {
 		return playerStart;
 		
 	}
-	
-	
-	
-	
-	
 
 	public void checkSpawners() {
 

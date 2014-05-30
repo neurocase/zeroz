@@ -3,6 +3,7 @@ package com.dazpetty.zeroz.entities;
 import com.badlogic.gdx.math.Vector2;
 import com.dazpetty.zeroz.core.DazDebug;
 import com.dazpetty.zeroz.managers.EntityManager;
+import com.dazpetty.zeroz.managers.SceneManager;
 
 public class EntitySpawner {
 
@@ -17,10 +18,15 @@ public class EntitySpawner {
 	//public String type;
 	public boolean triggerOn = false;
 	EntityManager entMan;
+	int triggerkey = 0;
 	
-	public EntitySpawner(float w, float h, String type, int TOTAL_SPAWNS, EntityManager entMan){
+	public SceneManager scene;
+	
+	public EntitySpawner(float w, float h, String type, int TOTAL_SPAWNS, int triggerkey, EntityManager entMan){
 		
+		this.scene = entMan.scene;
 		
+		this.triggerkey = triggerkey;
 		DazDebug.print("-=-=-=-=+++++++++++++++++++++++++++++++++++=-=-=");
 		DazDebug.print("-=-=-=-SPAWNER::" + type + ":" + TOTAL_SPAWNS + "::-=-=");
 		DazDebug.print("-=-=-=-=+++++++++++++++++++++++++++++++++++=-=-=");
@@ -40,13 +46,15 @@ public class EntitySpawner {
 			triggerOn = true;
 		}
 	}
-	public void triggerOn() {
-		triggerOn = true;
-		if (type.equals("triggered")){
-		DazDebug.print("-=-=-=-=+++++++++++++++++++++++++++++++++++=-=-=");
-		DazDebug.print("-=-=-=-=--=-=-=-=-TRIGGERED:" + type + "-=-=-=-=");
-		DazDebug.print("-=-=-=-=+++++++++++++++++++++++++++++++++++=-=-=");
-			//createActor();
+	public void triggerOn(int triggerkey) {
+		if (this.triggerkey == triggerkey){
+			triggerOn = true;
+			if (type.equals("triggered")){
+			DazDebug.print("-=-=-=-=+++++++++++++++++++++++++++++++++++=-=-=");
+			DazDebug.print("-=-=-=-=--=-=-=-=-TRIGGERED:" + type + "-=-=-=-=");
+			DazDebug.print("-=-=-=-=+++++++++++++++++++++++++++++++++++=-=-=");
+				//createActor();
+			}
 		}
 	}
 	public void triggerOff() {
@@ -82,8 +90,8 @@ public class EntitySpawner {
 
 	public void createActor() {
 		spawnSuccessfull = false;
-		if (entMan.enemycount >= entMan.ENEMY_LIMIT) {
-			entMan.enemycount = 0;
+		if (scene.enemycount >= scene.ENEMY_LIMIT) {
+			scene.enemycount = 0;
 		}
 		if (type.equals("triggered")){
 			
@@ -92,20 +100,20 @@ public class EntitySpawner {
 		
 		if (isReady()) {
 			
-			if (entMan.zenemy[entMan.enemycount] == null) {
-				entMan.zenemy[entMan.enemycount] = new PawnEntity(entMan, this);
+			if (scene.zenemy[scene.enemycount] == null) {
+				scene.zenemy[scene.enemycount] = new PawnEntity(entMan, this);
 				SpawnSuccessful();
 				if (type.equals("triggered") && spawnSuccessfull)
 					DazDebug.print("TRIGGER SPAWN SUCCESS");
 				
 
-			} else if (!entMan.zenemy[entMan.enemycount].isAlive
-					|| Math.abs(entMan.zenemy[entMan.enemycount].worldpos.x
+			} else if (!scene.zenemy[scene.enemycount].isAlive
+					|| Math.abs(scene.zenemy[scene.enemycount].worldpos.x
 							- entMan.zplayer.worldpos.x) > 22) {
-				entMan.zenemy[entMan.enemycount].useEntity(this);
+				scene.zenemy[scene.enemycount].useEntity(this);
 				SpawnSuccessful();
 			}
-			entMan.enemycount++;
+			scene.enemycount++;
 			
 		}
 	}

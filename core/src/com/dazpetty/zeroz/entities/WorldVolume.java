@@ -26,8 +26,10 @@ public class WorldVolume {
 	public boolean trigger = false;
 	public String type;
 	LevelManager levelMan;
+	int triggerKey = 0;
 	
-	public WorldVolume(float x, float y, String type, World world, LevelManager levelMan){
+	public WorldVolume(float x, float y, String type, int triggerKey, World world, LevelManager levelMan){
+		this.triggerKey = triggerKey;
 		this.levelMan = levelMan;
 		this.type = type;
 		BodyDef worldVolDef = new BodyDef();
@@ -52,7 +54,9 @@ public class WorldVolume {
 			DazDebug.print("-=-=-=-=--=-=-=-=--=-=-=-=--=-=-=-=-=-=-=-=--=");
 		}
 		
-			for (int i = 0; i < levelMan.ENEMY_SPAWNER_LIMIT; i++){
+		levelMan.eventMan.CallTriggerValue(triggerKey);
+		
+		/*	for (int i = 0; i < levelMan.ENEMY_SPAWNER_LIMIT; i++){
 				
 			//	if (levelMan.enemyspawner[i].type.equals("triggered")){
 				if (levelMan.enemyspawner[i] != null){
@@ -63,7 +67,7 @@ public class WorldVolume {
 				//}
 				}
 			//}
-		}
+		}*/
 	}
 	
 	public void triggerVolumeOff(){

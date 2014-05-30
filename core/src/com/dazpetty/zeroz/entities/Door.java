@@ -56,16 +56,29 @@ public class Door {
 	public boolean openDoor = false;
 	
 	
-	public void openDoor(){
-		body.setAwake(false);
-		body.setActive(false);
-		openDoor = true;
+	public void openDoor(int triggerkeyin){
+		
+		if (keyValue == triggerkeyin && !openDoor){
+			if (body.isAwake() && (body.isActive())){
+			body.setAwake(false);
+			body.setActive(false);
+			openDoor = true;
+			}
+			
+		}
+	}
+	
+	public boolean checkKey(int triggerkeyin){
+		if (keyValue == triggerkeyin){
+			return true;
+		}
+		return false;
 	}
 	
 	public void closeDoor(){
 		body.setAwake(false);
 		body.setActive(false);
-		openDoor = true;
+		openDoor = false;
 	}
 	
 	public void setFrame(int frame){

@@ -36,6 +36,7 @@ import com.dazpetty.zeroz.core.DazDebug;
 import com.dazpetty.zeroz.managers.EntityManager;
 import com.dazpetty.zeroz.managers.ProjectileManager;
 import com.dazpetty.zeroz.managers.LevelManager;
+import com.dazpetty.zeroz.managers.SceneManager;
 
 /*
  * Pawn Entity is the base class for entities controlled by the player or ai,
@@ -67,17 +68,15 @@ public class PawnEntity {
 	public boolean isLevelScrolling = false;
 
 	/*
-	 *  INPUT HELPERS
+	 * INPUT HELPERS
 	 */
-	
+
 	public boolean pressUp = false;
 	public boolean pressDown = false;
 	public boolean pressRight = false;
 	public boolean pressLeft = false;
 	public boolean pressShoot = false;
-	
-	
-	
+
 	/*
 	 * ORDINARY VARIABLES
 	 */
@@ -108,12 +107,10 @@ public class PawnEntity {
 	 * Vectors
 	 */
 
-
 	public Vector2 worldpos = new Vector2(0, 0);
 	public Vector2 velocity = new Vector2(0, 0);
 	public Vector3 targetWorldVec = new Vector3(0, 0, 0);
 	public Vector3 targetScreenVec = new Vector3(0, 0, 0);
-
 
 	public Vector3 aimingAt = new Vector3(0, 0, 0);
 	public Vector2 actorTarget = new Vector2(0, 0);
@@ -182,7 +179,7 @@ public class PawnEntity {
 	public Sprite grensprite;
 	public FixtureDef fixtureDef;
 	public Camera camera;
-	
+
 	/*
 	 * AI's VARIABLES
 	 */
@@ -198,38 +195,36 @@ public class PawnEntity {
 	 * FUNCTIONS
 	 */
 	public void useEntity(EntitySpawner spawner) {
-		
-		
-		
+
 		this.weapon = spawner.weapon;
 		worldpos = spawner.worldpos;
 		mainbody.setTransform(spawner.worldpos, 0);
 		mainbody.setActive(true);
-		mainbody.setAwake(true);			
+		mainbody.setAwake(true);
 		isDisposed = false;
 		isOnLadder = false;
 		isAlive = true;
-		
+
 		health = startinghealth;
 		DazDebug.print("ENTITY IN AT" + worldpos.x + worldpos.y);
 	}
 
 	public void attemptShoot(float ang) {
 		projMan.setWorld(world);
-		
+
 		if (isAlive) {
 			aimAngle = ang;
 			projMan.shootProjectile(ang, this);
 		}
 	}
 
-	
 	public EntitySpawner spawner;
-	
+	public SceneManager scene; 
 	public EntityManager entMan;
-	
+
 	public PawnEntity(EntityManager entMan, EntitySpawner spawner) {
 
+		this.scene = entMan.scene;
 		this.spawner = spawner;
 		weapon = new Weapon(1);
 		this.entMan = entMan;
@@ -239,7 +234,7 @@ public class PawnEntity {
 		this.levelMan = entMan.levelMan;
 
 		isLevelScrolling = levelMan.isLevelScrolling;
-		projMan = entMan.projMan;
+		projMan = scene.projMan;
 
 		if (levelMan == null) {
 			levelMan = (LevelManager) levelMan;
@@ -253,7 +248,6 @@ public class PawnEntity {
 		}
 		worldpos = spawner.worldpos;
 
-	
 		BodyDef bodyDef = new BodyDef();
 		bodyDef.position.set(worldpos);
 		bodyDef.type = BodyType.DynamicBody;
@@ -270,19 +264,19 @@ public class PawnEntity {
 		fixtureDef.friction = 0;
 		fixtureDef.density = 1.5f;
 		PolygonShape pBox = new PolygonShape();
-		
+
 		float hadjust = 0.7f;
 		Vector2[] collisionShape = new Vector2[5];
-		collisionShape[0] = new Vector2(0f,(float) (1.6-hadjust));
-		collisionShape[1] = new Vector2(0.3f,(float) (1-hadjust));
-		collisionShape[2] = new Vector2(0.15f,-0.1f-hadjust);
-		collisionShape[3] = new Vector2(-0.15f,-0.1f-hadjust);
-		collisionShape[4] = new Vector2(-0.3f,(float) (1-hadjust));
+		collisionShape[0] = new Vector2(0f, (float) (1.6 - hadjust));
+		collisionShape[1] = new Vector2(0.3f, (float) (1 - hadjust));
+		collisionShape[2] = new Vector2(0.15f, -0.1f - hadjust);
+		collisionShape[3] = new Vector2(-0.15f, -0.1f - hadjust);
+		collisionShape[4] = new Vector2(-0.3f, (float) (1 - hadjust));
 		pBox.set(collisionShape);
-		//pBox.setPosition(new Vector2(0, -0.8f));
-	//	pBox.setAsBox(0.3f, 0.8f);
+		// pBox.setPosition(new Vector2(0, -0.8f));
+		// pBox.setAsBox(0.3f, 0.8f);
 		fixtureDef.shape = pBox;
-	
+
 		Filter pawnfilter = fixtureDef.filter;
 		pawnfilter.maskBits = 3;
 		mainbodyfixture = mainbody.createFixture(fixtureDef);
@@ -290,7 +284,7 @@ public class PawnEntity {
 		mainbody.setFixedRotation(true);
 
 		mainbodyfixture.setUserData(this);
-		
+
 		if (isAI) {
 			mainbody.setUserData("ai");
 		} else {
@@ -304,14 +298,19 @@ public class PawnEntity {
 		height = 2;
 		width = 1.25f;
 
-		 pBox.dispose();
+		pBox.dispose();
 		setupTextures();
-		 
-		 useEntity(spawner);
+
+		/*
+		 * Entites created in the constructor are dead, then they are brought to
+		 * life by the below code, this is so that both new entites and
+		 * entites "resurrected"  in the array, use the same code when spawning into the
+		 * world.
+		 */
+		useEntity(spawner);
 	}
-	
-	
-	public void setupTextures(){
+
+	public void setupTextures() {
 
 		aimLadderTexture = entMan.humanSprite.aimLadderTexture;
 
@@ -390,7 +389,7 @@ public class PawnEntity {
 	public void goLeft() {
 		if (isAlive) {
 			velocity = mainbody.getLinearVelocity();
-			if (velocity.x > -MAX_MOVE_SPEED){
+			if (velocity.x > -MAX_MOVE_SPEED) {
 				mainbody.applyLinearImpulse(-moveSpeed, 0, 0, 0, true);
 			}
 		}
@@ -399,7 +398,7 @@ public class PawnEntity {
 	public void goRight() {
 		if (isAlive) {
 			velocity = mainbody.getLinearVelocity();
-			if (velocity.x < MAX_MOVE_SPEED){
+			if (velocity.x < MAX_MOVE_SPEED) {
 				mainbody.applyLinearImpulse(moveSpeed, 0, 0, 0, true);
 			}
 		}
@@ -414,167 +413,159 @@ public class PawnEntity {
 	long lasttimejump = System.currentTimeMillis();
 
 	boolean groundCheck = false;
-	
-	public boolean groundCheck(){
-		if (pawnFoot.numFootContacts > 0){
+
+	public boolean groundCheck() {
+		if (pawnFoot.numFootContacts > 0) {
 			isGrounded = true;
 			return true;
-			
+
 		}
-			isGrounded = false;
-			return false;
+		isGrounded = false;
+		return false;
 	}
-	
-	public boolean checkLadder(){
-		if (levelMan.isCellLadder(worldpos.x, worldpos.y)){
-			return true;	
+
+	public boolean checkLadder() {
+		if (levelMan.isCellLadder(worldpos.x, worldpos.y)) {
+			return true;
 		}
 		return false;
 	}
-	
-	
-	
-	
+
 	public void goJump() {
-		
-		if (checkLadder()){
+
+		if (checkLadder()) {
 			isOnLadder = true;
 			mainbody.setLinearVelocity(0, 1);
-			
-		}else{
-			if (System.currentTimeMillis() - lasttimejump > 300){
-				if (groundCheck()){
-						lasttimejump = System.currentTimeMillis();
-						mainbody.applyLinearImpulse(0, jumpSpeed, 0, 0, true);
-						
-						
-				}else{
-					//DazDebug.print("GROUND CHECK FAIL");
+
+		} else {
+			if (System.currentTimeMillis() - lasttimejump > 300) {
+				if (groundCheck()) {
+					lasttimejump = System.currentTimeMillis();
+					mainbody.applyLinearImpulse(0, jumpSpeed, 0, 0, true);
+
+				} else {
+					// DazDebug.print("GROUND CHECK FAIL");
 				}
 			}
 		}
 	}
-	
-	public void velocityCheck(){
-		if (mainbody.getLinearVelocity().y > jumpSpeed){
-			mainbody.setLinearVelocity(new Vector2 (mainbody.getLinearVelocity().x, jumpSpeed));
+
+	public void velocityCheck() {
+		if (mainbody.getLinearVelocity().y > jumpSpeed) {
+			mainbody.setLinearVelocity(new Vector2(
+					mainbody.getLinearVelocity().x, jumpSpeed));
 		}
 	}
 
 	public void stopVelocity(boolean b) {
-		if (b){
-		//mainbodyfixture.setFriction(1000);
-		fixtureDef.friction = 0;
-		pawnFoot.footfixtureDef.friction = 1000;
-		}else{
+		if (b) {
+			// mainbodyfixture.setFriction(1000);
+			fixtureDef.friction = 0;
+			pawnFoot.footfixtureDef.friction = 1000;
+		} else {
 			mainbodyfixture.setFriction(1);
 			fixtureDef.friction = 1;
 			pawnFoot.footfixtureDef.friction = 1;
 		}
-		
+
 	}
 
-	public void resetInputFlags(){
-		 pressUp = false;
-		 pressDown = false;
-		 pressRight = false;
-		 pressLeft = false;
-		 pressShoot = false;
+	public void resetInputFlags() {
+		pressUp = false;
+		pressDown = false;
+		pressRight = false;
+		pressLeft = false;
+		pressShoot = false;
 	}
-	
+
 	boolean nextFall = false;
+
 	public void update(boolean isWorldCoord, Camera camera) {
-		
-		
+
 		velocityCheck();
-	//	if (numFootContacts != 0){
-		if (!isAI){
-			//DazDebug.print("footcontacts:" + pawnFoot.numFootContacts);
+		// if (numFootContacts != 0){
+		if (!isAI) {
+			// DazDebug.print("footcontacts:" + pawnFoot.numFootContacts);
 		}
-		//}
+		// }
 		velocity = mainbody.getLinearVelocity();
-		
-		if (velocity.y > 0){
-				pawnFoot.fallMode();
-		}else{
+
+		if (velocity.y > 0) {
+			pawnFoot.fallMode();
+		} else {
 			pawnFoot.platformMode();
 		}
 		/*
-		 *  CONTROLS
-		 * 
+		 * CONTROLS
 		 */
-		
-		if (pressUp){
+
+		if (pressUp) {
 			goJump();
 		}
-		if (pressShoot){
+		if (pressShoot) {
 			quickShoot();
 		}
-		
-		if (pressDown){
+
+		if (pressDown) {
 			pawnFoot.fallMode();
 			isCrouching = true;
-			if (isOnLadder){
+			if (isOnLadder) {
 				mainbody.setLinearVelocity(0, -1);
 			}
 		}
 
-		/*if (checkLadder() && !isGrounded){
-			isOnLadder = true;
-		}*/
-		
-		if (checkLadder() && isOnLadder){
+		/*
+		 * if (checkLadder() && !isGrounded){ isOnLadder = true; }
+		 */
+
+		if (checkLadder() && isOnLadder) {
 			mainbody.setGravityScale(0);
-			if (!pressDown && !pressUp){
+			if (!pressDown && !pressUp) {
 				mainbody.setLinearVelocity(0, 0);
 			}
-		}else if (!checkLadder()){
+		} else if (!checkLadder()) {
 			mainbody.setGravityScale(1);
 		}
-		
-		fixtureDef.filter.categoryBits = 3; 
-		
-		if (!groundCheck()){
-			
-		}else{
-			
+
+		fixtureDef.filter.categoryBits = 3;
+
+		if (!groundCheck()) {
+
+		} else {
+
 		}
-		
-		
-		
-		
+
 		if (pressRight) {
 			goRight();
 		} else if (pressLeft) {
 			goLeft();
-		} 
-		
+		}
+
 		if (!pressLeft && !pressRight && !pressUp && isGrounded) {
 			stopVelocity(true);
-			
-			//System.out.println("STOPSTOPSTOPSTOPSTOPSTOP");
-		}else{
+
+			// System.out.println("STOPSTOPSTOPSTOPSTOPSTOP");
+		} else {
 			stopVelocity(false);
 		}
 		goDirection = 0;
 
 		calculateFrame();
-		
-	
+
 		if (levelMan == null) {
 			System.out.println("levelMan IN ACTOR IS NULL");
 		}
-	
+
 		goThruPlatform = false;
 		isShooting = false;
 
 		aimingAt.x = 0;
 		aimingAt.y = 0;
-		
-		if (worldpos.y < -10){
+
+		if (worldpos.y < -10) {
 			isAlive = false;
 		}
-		
+
 		resetInputFlags();
 	}
 
@@ -614,7 +605,6 @@ public class PawnEntity {
 			}
 		}
 
-		
 	}
 
 	public void takeDamage(float damage) {
@@ -642,8 +632,6 @@ public class PawnEntity {
 	float distanceFromTarget = 0;
 	private boolean targetIsNull = false;
 	public int numFootContacts = 0;
-	
-
 
 	public void giveQuickTarget(PawnEntity ztarget) {
 		float relativetoplayerx = ztarget.worldpos.x - worldpos.x;
@@ -731,12 +719,11 @@ public class PawnEntity {
 		}
 		return false;
 	}
-	
-	public void calculateFrame(){
-		
+
+	public void calculateFrame() {
+
 		float minMove = 2;
 		worldpos = mainbody.getPosition();
-	
 
 		if (isAI) {
 			boolean facingtarget = true;
@@ -745,7 +732,7 @@ public class PawnEntity {
 			aimingAt.x = 0;
 			aimingAt.y = 0;
 			aimless = true;
-			//isWorldCoord = false;
+			// isWorldCoord = false;
 		}
 
 		if (!armsprite.isFlipX())
@@ -758,25 +745,25 @@ public class PawnEntity {
 
 		if (aimingAt.x == 0 && aimingAt.y == 0) {
 			aimless = true;
-		//	isWorldCoord = false;
+			// isWorldCoord = false;
 			if (movingdirection == "right")
-				aimingAt.x  = -2;
+				aimingAt.x = -2;
 			if (movingdirection == "left" && !isLevelScrolling)
-				aimingAt.x  = 2;
+				aimingAt.x = 2;
 		} else {
 			aimingAt.y -= 1;
 		}
 
 		if (velocity.x < 0) {
 			if (velocity.x < -minMove) {
-			movingdirection = "right";
+				movingdirection = "right";
 			}
 			if (aimless) {
 				aimingdirection = "right";
 			}
 		} else if (velocity.x > 0) {
 			if (velocity.x > minMove) {
-			movingdirection = "left";
+				movingdirection = "left";
 			}
 			if (aimless) {
 				aimingdirection = "left";
@@ -792,13 +779,13 @@ public class PawnEntity {
 		targetScreenVec.y = aimingAt.y;
 		targetWorldVec.x = aimingAt.x;
 		targetWorldVec.y = aimingAt.y;
-		
+
 		if (isAI) {
 			camera.project(targetScreenVec);
-			} else {
+		} else {
 			camera.unproject(targetWorldVec);
 		}
-		//camera.unproject(targetWorldVec);
+		// camera.unproject(targetWorldVec);
 
 		if (aimAngle > 90 && aimAngle < 270) {
 			aimingdirection = "right";
@@ -806,8 +793,8 @@ public class PawnEntity {
 			aimingdirection = "left";
 		}
 
-		//float tx = targetWorldVec.x;
-	//	float ty = targetWorldVec.y;
+		// float tx = targetWorldVec.x;
+		// float ty = targetWorldVec.y;
 
 		if (Math.abs(velocity.x) > minMove && velocity.y == 0 && isGrounded) {
 			state = "run";
@@ -831,12 +818,14 @@ public class PawnEntity {
 				state = "ladderslide";
 			}
 		}
-		if (Math.abs(velocity.x) > minMove && movingdirection == aimingdirection) {
+		if (Math.abs(velocity.x) > minMove
+				&& movingdirection == aimingdirection) {
 			state = "run";
 			if (isCrouching) {
 				state = "crouch";
 			}
-		} else if (Math.abs(velocity.x) > minMove && movingdirection != aimingdirection) {
+		} else if (Math.abs(velocity.x) > minMove
+				&& movingdirection != aimingdirection) {
 			state = "runback";
 			if (isCrouching) {
 				state = "crouchback";
@@ -942,16 +931,17 @@ public class PawnEntity {
 			if (aimladdersprite.isFlipX())
 				aimladdersprite.flip(true, false);
 		}
-		//Vector2 tmpAimVec = new Vector2(targetScreenVec.x, targetScreenVec.y);
+		// Vector2 tmpAimVec = new Vector2(targetScreenVec.x,
+		// targetScreenVec.y);
 		Vector2 tmpAimVec = new Vector2(aimingAt.x, aimingAt.y);
 		if (isAI) {
 			aimAngle = aimAtPlayer;
 		} else {
 			aimAngle = tmpAimVec.angle();
 			/*
-			 * 				AIMANGLE
+			 * AIMANGLE
 			 */
-			
+
 		}
 		switch (weapon.weaponid) {
 		case 0:
@@ -968,7 +958,7 @@ public class PawnEntity {
 		sprite.setOrigin(sprite.getWidth() / 2, 0);
 		sprite.setPosition(worldpos.x - 0.5f, worldpos.y - 1f);
 		/*
-		 * 				AIM ANGLE
+		 * AIM ANGLE
 		 */
 		armsprite.setRotation(aimAngle - 180);
 		armsprite.setPosition(worldpos.x - 1.76f, worldpos.y + armyadd);

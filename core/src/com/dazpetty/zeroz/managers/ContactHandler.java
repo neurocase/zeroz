@@ -32,6 +32,9 @@ public class ContactHandler {
 	public Array<CopterTurret> getCopterTurretToDamage() { return copterTurretToDamage; }
 
 	
+	private Array<WorldVolume> worldVolumesToTrigger;
+	public Array<WorldVolume> getWorldVolumesToTrigger() { return worldVolumesToTrigger; }
+	
 	
 	public ContactHandler(){
 		enemiesToDamage = new Array<PawnEntity>(); 
@@ -39,6 +42,7 @@ public class ContactHandler {
 		destroyablesToDamage = new Array<Destroyable>();
 		droneToDamage = new Array<Drone>();
 		copterTurretToDamage = new Array<CopterTurret>();
+		worldVolumesToTrigger = new Array<WorldVolume>();
 		
 	}
 	
@@ -50,12 +54,9 @@ public class ContactHandler {
 			
 			if ((objA instanceof PawnEntity) && (objB instanceof WorldVolume)){
 				if (!((PawnEntity) objA).isAI) {
-					((WorldVolume) objB).triggerVolumeOn();
+					worldVolumesToTrigger.add((WorldVolume) objB);
 				}
 			}
-			
-			
-			
 			if ((objA instanceof String || objA instanceof CopterTurret
 					|| objA instanceof PawnEntity || objA instanceof Destroyable || objA instanceof Drone || objA instanceof Door)
 					&& objB instanceof Projectile) {
@@ -133,6 +134,7 @@ public class ContactHandler {
 		destroyablesToDamage.clear();
 		droneToDamage.clear();	
 		copterTurretToDamage.clear();
+		worldVolumesToTrigger.clear();
 	}
 
 

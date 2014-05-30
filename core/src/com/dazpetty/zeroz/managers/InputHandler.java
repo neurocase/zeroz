@@ -7,7 +7,7 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.dazpetty.zeroz.core.GameScene;
+import com.dazpetty.zeroz.core.GameScreen;
 import com.dazpetty.zeroz.entities.PawnEntity;
 
 public class InputHandler {
@@ -29,7 +29,7 @@ public class InputHandler {
 	Camera camera;
 	PawnEntity zplayer;
 	Vector2 aimlessVec = new Vector2(0, 0);
-	public GameScene game;
+	public GameScreen game;
 	
 	public boolean playerShoot = false;
 	public boolean giveWorldPos = false;

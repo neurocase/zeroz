@@ -51,12 +51,6 @@ public class MainMenu implements Screen {
 
 	
 		createMainButtons();
-	
-
-	//	Music introMusic = Gdx.audio.newMusic(Gdx.files.internal("data/sound/musicintro.mp3"));
-	//	introMusic.play();
-		
-
 		
 		Gdx.input.setInputProcessor(stage);
 		
@@ -81,7 +75,6 @@ public class MainMenu implements Screen {
 		continueSprite = new Sprite(continueTextureReg);
 		imageSize = Gdx.graphics.getWidth();
 		continueSprite.setSize(imageSize, imageSize/2);
-		//newGameSprite.setOrigin(newGameSprite.getWidth()/2, newGameSprite.getHeight()/2);
 	}
 
 	public void print(String str) {
@@ -141,7 +134,7 @@ public class MainMenu implements Screen {
             @Override 
             public void clicked(InputEvent event, float x, float y){
                
-                game.setScreen(new GameScene(game));
+                game.setScreen(new GameScreen(game));
         		dispose();
             }
         });

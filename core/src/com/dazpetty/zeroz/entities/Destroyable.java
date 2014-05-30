@@ -39,11 +39,16 @@ public class Destroyable {
 	public Body body;
 	public FixtureDef fixtureDef;
 	public boolean isAlive = true;
-	public int id = 0;
+	public int triggerkey = 0;
 	
-	public int health = 50;
+	public int health = 100;
 	
-
+	public int getTriggerKey(){
+		if (health < 0){
+		return triggerkey;
+		}
+		return 0;
+	}
 
 	public void Destroy(){
 		isAlive = false;
@@ -52,9 +57,9 @@ public class Destroyable {
 		sprite = spritedest;
 	}
 	
-	public Destroyable(int x, int y, int id, World world){
+	public Destroyable(int x, int y, int triggerkey, World world){
 		isAlive = true;
-		this.id = id;
+		this.triggerkey = triggerkey;
 		texture = new Texture(("data/gfx/objects/keyfuse.png"));
 		texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		

@@ -21,12 +21,8 @@ import com.dazpetty.zeroz.entities.Projectile;
 public class DazContactListener implements ContactListener {
 
 	private int count;
-	
-
 	private int numFootContacts;
-	
 
-	
 	private boolean playerDead;
 	public boolean damagePlayer = false;
 

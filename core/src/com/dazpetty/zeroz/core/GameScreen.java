@@ -57,8 +57,9 @@ import com.dazpetty.zeroz.managers.OrthoCamController;
 import com.dazpetty.zeroz.managers.ParralaxCamera;
 import com.dazpetty.zeroz.managers.ProjectileManager;
 import com.dazpetty.zeroz.managers.LevelManager;
+import com.dazpetty.zeroz.managers.SceneManager;
 
-public class GameScene implements Screen {
+public class GameScreen implements Screen {
 	/*
 	 * ORDINARY VARIABLES
 	 */
@@ -115,15 +116,17 @@ public class GameScene implements Screen {
 	 */
 	//public HUDTarget hudtarget;
 
+	
+	public SceneManager scene;
 	public EntityManager entityMan;
 	public WorldLogic worldLogic;
 	final ZerozGame game;
-	private OrthographicCamera camera;
+	public OrthographicCamera camera;
 	private CameraInputController cameraController;
 	public ParralaxCamera pcamera;
 	public OrthoCamController pcamcontroller;
 
-	public LevelManager tm;
+	public LevelManager levelMan;
 	public Assets assetMan;
 
 	private boolean showDebug = true;
@@ -137,8 +140,10 @@ public class GameScene implements Screen {
 	 */
 	public WorldRenderer worldRenderer;
 	
-	public GameScene(final ZerozGame gam) {
+	public GameScreen(final ZerozGame gam) {
 
+		//sceneMan = new SceneManager();
+		
 		this.game = gam;
 		assetMan.load();
 		assetMan.manager.finishLoading();
@@ -147,13 +152,14 @@ public class GameScene implements Screen {
 		camera.setToOrtho(false, (viewwidth / viewheight) * 10, 10);
 		camera.update();
 
-		tm = new LevelManager(game.level, entityMan, world);
 		
+		scene = new SceneManager(world, this);
+		levelMan = new LevelManager(game.level, this, world);
+		entityMan = new EntityManager(camera, world, levelMan);
 		
-		entityMan = new EntityManager(camera, world, tm);
-		tm.buildLevel(entityMan);
-		worldLogic = new WorldLogic(camera, entityMan, world, tm);
-		worldRenderer = new WorldRenderer(camera, world, entityMan, tm, worldLogic);
+		levelMan.buildLevel(entityMan);
+		worldLogic = new WorldLogic(this);
+		worldRenderer = new WorldRenderer(this);
 	
 	}
 	//public boolean levelComplete = false;
@@ -162,7 +168,7 @@ public class GameScene implements Screen {
 	public void render(float delta) {
 		
 	
-		tm = entityMan.levelMan;
+		levelMan = entityMan.levelMan;
 		
 		//camera = worldLogic.camera;
 		
@@ -182,43 +188,21 @@ public class GameScene implements Screen {
 			debugOn = true;
 		}
 		if (Gdx.input.isKeyPressed(Keys.C)) {
-			tm.isLevelComplete = true;
+			levelMan.isLevelComplete = true;
 		}
 		if (Gdx.input.isTouched()) {
 			if (!entityMan.zplayer.isAlive) {
 				game.setScreen(new MainMenu(game));
 			}
-			if (tm.isLevelComplete){
+			if (levelMan.isLevelComplete){
 				game.nextLevel();
-				game.setScreen(new GameScene(game));
+				game.setScreen(new GameScreen(game));
 			}
 		}
 	}
 
 	public void showDebugInfo(boolean show) {
-		/*game.batch.begin();
-		String info2 = "";
-		if (debugOn) {
-			info2 = " Health:" + entityMan.zplayer.health + " entityMan.zplayer X:"
-					+ entityMan.zplayer.worldpos.x + ", Y:" + entityMan.zplayer.worldpos.y
-					+ " state:" + entityMan.zplayer.state;
-		} else {
-			info2 = " Health:" + entityMan.zplayer.health;
-			if (entityMan.zplayer.health <= 0) {
-				info2 = "GAME OVER: YOU DIED";
-			}
-		}
-		if (Gdx.input.isTouched()) {
-			Vector3 touchPos = new Vector3(Gdx.input.getX(), Gdx.input.getY(),
-					0);
-			String info4 = "ScreenTouch X:" + touchPos.x + " Y:" + touchPos.y;
-			camera.unproject(touchPos);
-			String info5 = "ScreenTouch X:" + touchPos.x + " Y:" + touchPos.y;
-			game.font.draw(game.batch, info4, 20, 300);
-			game.font.draw(game.batch, info5, 20, 280);
-		}
-		game.font.draw(game.batch, info2, 20, 340);
-		game.batch.end();*/
+	
 	}
 
 	@Override
@@ -253,7 +237,7 @@ public class GameScene implements Screen {
 	//	targettex.dispose();
 		//batch.dispose();
 		entityMan.dispose();
-		tm.map.dispose();
+		levelMan.map.dispose();
 	//	sr.dispose();
 
 	}

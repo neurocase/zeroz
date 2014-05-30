@@ -21,6 +21,7 @@ import com.dazpetty.zeroz.entities.Item;
 import com.dazpetty.zeroz.entities.MuzzleFlash;
 import com.dazpetty.zeroz.entities.Projectile;
 import com.dazpetty.zeroz.entities.Weapon;
+import com.dazpetty.zeroz.entities.WorldVolume;
 
 /* The EntityManager class manages game entities, the enemies that the player encounters, the player character, the destroyable objects,
  * the doors, explosions, the ProjectileManager and items.
@@ -30,54 +31,30 @@ import com.dazpetty.zeroz.entities.Weapon;
 
 public class EntityManager {
 
-	public final int ENEMY_LIMIT = 10;
-
-	public final int DESTROYABLE_LIMIT = 10;
-	public final int DOOR_LIMIT = 10;
-	public final int DRONE_LIMIT = ENEMY_LIMIT;
-	public final int ITEM_LIMIT = 20;
-	public final int PROJECTILE_LIMIT = 20;
-	public final int EXPLOSION_LIMIT = 15;
-
-	public int TOTAL_DESTROYABLES = 0;
-	public int TOTAL_DOORS = 0;
-	public int TOTAL_EXPLOSIONS = 0;
-	public int TOTAL_ITEMS = 0;
-
-	public int enemycount = 0;
-	public int dronecount = 0;
-
-	public CopterBoss copterBoss;// = new CopterBoss();
-
-	public PawnEntity[] zenemy = new PawnEntity[ENEMY_LIMIT];
-	public Destroyable[] destroyable = new Destroyable[DESTROYABLE_LIMIT];
-	public Door[] door = new Door[DOOR_LIMIT];
-	public Item[] item = new Item[ITEM_LIMIT];
-	public Drone[] drone = new Drone[DRONE_LIMIT];
-	public Explosion[] explosion = new Explosion[EXPLOSION_LIMIT];
-
-	public HumanSprite humanSprite = new HumanSprite();
 
 	public PawnEntity zplayer;
+	
+	public HumanSprite humanSprite = new HumanSprite();
+
+
 
 	public OrthographicCamera camera;
 	public World world;
 	public HUDTarget hudtarget;
 	public LevelManager levelMan;
-
+	public EventManager eventMan;
+	public SceneManager scene;
 	public DazContactListener cl;
 	public ContactHandler ch;
-	public ProjectileManager projMan;
-	public ProjectileManager aiProjMan;
+
 
 	MyAssetManager assetMan = new MyAssetManager();;
 
 	public EntityManager(OrthographicCamera camera, World world,
 			LevelManager levelMan) {
 
-		projMan = new ProjectileManager(PROJECTILE_LIMIT, world, assetMan);
-		aiProjMan = new ProjectileManager(PROJECTILE_LIMIT, world, assetMan);
-
+		this.scene = levelMan.scene;
+		eventMan = levelMan.eventMan;
 		this.camera = camera;
 		this.world = world;
 		this.levelMan = levelMan;
@@ -96,12 +73,12 @@ public class EntityManager {
 
 	public Item itemAtLoc(Vector2 vec) {
 		item_poll++;
-		if (item_poll >= item.length)
+		if (item_poll >= scene.item.length)
 			item_poll = 0;
-		if (item[item_poll] != null) {
-			if (Math.abs(item[item_poll].worldpos.x - vec.x) < 2) {
-				if (Math.abs(item[item_poll].worldpos.y - vec.y) < 2) {
-					return item[item_poll];
+		if (scene.item[item_poll] != null) {
+			if (Math.abs(scene.item[item_poll].worldpos.x - vec.x) < 2) {
+				if (Math.abs(scene.item[item_poll].worldpos.y - vec.y) < 2) {
+					return scene.item[item_poll];
 				}
 			}
 		}
@@ -109,10 +86,10 @@ public class EntityManager {
 	}
 
 	public void createExplosion(float x, float y, int id, float angle) {
-		if (TOTAL_EXPLOSIONS > EXPLOSION_LIMIT - 1) {
-			TOTAL_EXPLOSIONS = 0;
+		if (scene.TOTAL_EXPLOSIONS > scene.EXPLOSION_LIMIT - 1) {
+			scene.TOTAL_EXPLOSIONS = 0;
 		}
-		explosion[TOTAL_EXPLOSIONS] = new Explosion(x, y, id, angle, assetMan);
+		scene.explosion[scene.TOTAL_EXPLOSIONS] = new Explosion(x, y, id, angle, assetMan);
 	}
 
 	/*
@@ -127,9 +104,9 @@ public class EntityManager {
 		/*
 		 * DEACTIVATE DOORS, ENEMIES AND DESTROYED OBJECTS
 		 */
-		for (int i = 0; i < EXPLOSION_LIMIT; i++) {
-			if (explosion[i] != null) {
-				explosion[i].update();
+		for (int i = 0; i < scene.EXPLOSION_LIMIT; i++) {
+			if (scene.explosion[i] != null) {
+				scene.explosion[i].update();
 			}
 		}
 		float damage = zplayer.weapon.damage;
@@ -159,22 +136,18 @@ public class EntityManager {
 		if (destroyablesToDamage != null) {
 			for (int i = 0; i < destroyablesToDamage.size; i++) {
 				Destroyable dest = (Destroyable) destroyablesToDamage.get(i);
-				DazDebug.print("Damaging Destroyable " + dest.id);
+				DazDebug.print("Damaging Destroyable of key" + dest.getTriggerKey());
 				dest.damageDestroyable(damage);
-				int killKeyValue = dest.id;
-				zplayer.levelMan.keys[killKeyValue] = true;
-				createExplosion(dest.worldpos.x - 1, dest.worldpos.y, 1, 0);
+				//int killKeyValue = dest.id;
+				if (dest.getTriggerKey() != 0){
+				eventMan.CallTriggerValue(dest.getTriggerKey());
+				}
+				//zplayer.levelMan.keys[killKeyValue] = true;
+			/*	createExplosion(dest.worldpos.x - 1, dest.worldpos.y, 1, 0);
 				if (!dest.isAlive) {
 					DazDebug.print("Destroyable " + dest.id + "is DEAD!");
 					createExplosion(dest.worldpos.x - 1, dest.worldpos.y, 0, 0);
-				}
-				for (int j = 0; j < DOOR_LIMIT; j++) {
-					if (door[j] != null) {
-						if (zplayer.levelMan.keys[door[j].keyValue]) {
-							door[j].openDoor();
-						}
-					}
-				}
+				}*/
 			}
 		}
 
@@ -186,6 +159,14 @@ public class EntityManager {
 			}
 		}
 
+		Array<WorldVolume> worldVolumesToTrigger = ch.getWorldVolumesToTrigger();
+		if (worldVolumesToTrigger != null) {
+			for (int i = 0; i < worldVolumesToTrigger.size; i++) {
+				WorldVolume wv = (WorldVolume) worldVolumesToTrigger.get(i);
+				wv.triggerVolumeOn();
+			}
+		}
+		
 		Array<CopterTurret> copterTurretToDamage = ch.getCopterTurretToDamage();
 		if (copterTurretToDamage != null) {
 			for (int i = 0; i < copterTurretToDamage.size; i++) {
@@ -199,8 +180,8 @@ public class EntityManager {
 	}
 
 	public void dispose() {
-		for (int i = 0; i < ENEMY_LIMIT; i++) {
-			zenemy[i].dispose();
+		for (int i = 0; i < scene.ENEMY_LIMIT; i++) {
+			scene.zenemy[i].dispose();
 		}
 		humanSprite.dispose();
 		zplayer.dispose();

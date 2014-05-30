@@ -20,11 +20,13 @@ import com.dazpetty.zeroz.entities.Explosion;
 import com.dazpetty.zeroz.entities.HUD;
 import com.dazpetty.zeroz.managers.EntityManager;
 import com.dazpetty.zeroz.managers.Assets;
+import com.dazpetty.zeroz.managers.EventManager;
 import com.dazpetty.zeroz.managers.LevelManager;
 import com.dazpetty.zeroz.managers.MyAssetManager;
 import com.dazpetty.zeroz.managers.OrthoCamController;
 import com.dazpetty.zeroz.managers.ParralaxCamera;
 import com.dazpetty.zeroz.managers.ProjectileManager;
+import com.dazpetty.zeroz.managers.SceneManager;
 
 public class WorldRenderer {
 
@@ -60,6 +62,7 @@ public class WorldRenderer {
 	public OrthogonalTiledMapRenderer renderer;
 	public WorldLogic worldLogic;
 	public Explosion explosion;
+	EventManager eventMan;
 	public float viewwidth = 0;
 	public float viewheight = 0;
 	private float addextracamx = 0;
@@ -68,17 +71,20 @@ public class WorldRenderer {
 	
 	ShapeRenderer sr = new ShapeRenderer();
 	
+	public SceneManager scene;
 	
-	public WorldRenderer(OrthographicCamera camera, World world, EntityManager entityMan, LevelManager levelMan, WorldLogic worldLogic){
+	public WorldRenderer(GameScreen gameScreen){
 		
 		viewwidth = Gdx.graphics.getWidth();
 		viewheight = Gdx.graphics.getHeight();
 		
-		this.worldLogic = worldLogic;
-		this.levelMan = levelMan;
-		this.entityMan = entityMan;
-		this.camera = camera;
-		this.world = world;
+		this.worldLogic = gameScreen.worldLogic;
+		this.levelMan = gameScreen.levelMan;
+		this.entityMan = gameScreen.entityMan;
+		this.camera = gameScreen.camera;
+		this.world = gameScreen.world;
+		this.scene = gameScreen.scene;
+		eventMan = levelMan.eventMan;
 		
 		/*
 		 * SETUP SPRITES AND TEXTURES
@@ -146,6 +152,8 @@ public class WorldRenderer {
 	boolean dynamicCamera = false;
 	
 	public void Render(){
+		
+		
 		/*
 		 * SETUP PARRALAX CAMERA
 		 */
@@ -206,9 +214,9 @@ public class WorldRenderer {
 		/*
 		 * BEGIN CORE SPRITE BATCH RENDER LOOP
 		 */
-		for (int i = 0; i < entityMan.DRONE_LIMIT; i++) {
-			if (entityMan.drone[i] != null && entityMan.drone[i].isAlive) {
-				entityMan.drone[i].update(entityMan.zplayer);
+		for (int i = 0; i < scene.DRONE_LIMIT; i++) {
+			if (scene.drone[i] != null && scene.drone[i].isAlive) {
+				scene.drone[i].update(entityMan.zplayer);
 			}
 		}
 		renderer.setView(camera);
@@ -219,26 +227,26 @@ public class WorldRenderer {
 		
 		
 		if (levelMan.isBossLevel){
-			entityMan.copterBoss.bossSprite.draw(batch);
-			entityMan.copterBoss.update();
+			scene.copterBoss.bossSprite.draw(batch);
+			scene.copterBoss.update();
 			
-			for (int i = 0; i < entityMan.copterBoss.copterTurret.length; i++){
-				if (entityMan.copterBoss.copterTurret[i] != null && entityMan.copterBoss.copterTurret[i].isAlive){
-					entityMan.copterBoss.copterTurret[i].baseSprite.draw(batch);
-					entityMan.copterBoss.copterTurret[i].barrelSprite.draw(batch);
+			for (int i = 0; i < scene.copterBoss.copterTurret.length; i++){
+				if (scene.copterBoss.copterTurret[i] != null && scene.copterBoss.copterTurret[i].isAlive){
+					scene.copterBoss.copterTurret[i].baseSprite.draw(batch);
+					scene.copterBoss.copterTurret[i].barrelSprite.draw(batch);
 				}
 			}
 		}
 		
-		for (int i = 0; i < entityMan.EXPLOSION_LIMIT; i++) {
-			if (entityMan.explosion[i] != null && entityMan.explosion[i].isAlive) {
-				entityMan.explosion[i].sprite.draw(batch);
+		for (int i = 0; i < scene.EXPLOSION_LIMIT; i++) {
+			if (scene.explosion[i] != null && scene.explosion[i].isAlive) {
+				scene.explosion[i].sprite.draw(batch);
 			}
 		}
 		
-		for (int i = 0; i < entityMan.DRONE_LIMIT; i++) {
-			if (entityMan.drone[i] != null && entityMan.drone[i].isAlive) {
-				entityMan.drone[i].sprite.draw(batch);
+		for (int i = 0; i < scene.DRONE_LIMIT; i++) {
+			if (scene.drone[i] != null && scene.drone[i].isAlive) {
+				scene.drone[i].sprite.draw(batch);
 			}
 		}
 		// drone[0].sprite.setPosition(actorMan.zplayer.screenpos.x,
@@ -256,16 +264,16 @@ public class WorldRenderer {
 		hud.jumpbuttonsprite.draw(batch);
 
 		batch.setColor(Color.RED);
-		for (int i = 0; i < entityMan.ENEMY_LIMIT; i++) {
-			if (entityMan.zenemy[i] != null && entityMan.zenemy[i].sprite != null
-					&& !entityMan.zenemy[i].isDisposed) {
-				entityMan.zenemy[i].sprite.draw(batch);
-				if (!entityMan.zenemy[i].isOnLadder && entityMan.zenemy[i].isAlive) {
-					entityMan.zenemy[i].armsprite.draw(batch);
+		for (int i = 0; i < scene.ENEMY_LIMIT; i++) {
+			if (scene.zenemy[i] != null && scene.zenemy[i].sprite != null
+					&& !scene.zenemy[i].isDisposed) {
+				scene.zenemy[i].sprite.draw(batch);
+				if (!scene.zenemy[i].isOnLadder && scene.zenemy[i].isAlive) {
+					scene.zenemy[i].armsprite.draw(batch);
 				}
-				if (entityMan.zenemy[i].isOnLadder && entityMan.zenemy[i].isShooting
-						&& entityMan.zenemy[i].isAlive) {
-					entityMan.zenemy[i].armsprite.draw(batch);
+				if (scene.zenemy[i].isOnLadder && scene.zenemy[i].isShooting
+						&& scene.zenemy[i].isAlive) {
+					scene.zenemy[i].armsprite.draw(batch);
 				}
 			}
 		}
@@ -310,29 +318,30 @@ public class WorldRenderer {
 		//camera.rotate(1);
 		
 		}
-		for (int i = 0; i < entityMan.DESTROYABLE_LIMIT; i++) {
-			if (entityMan.destroyable[i] != null) {
-				entityMan.destroyable[i].sprite.draw(batch);
+		
+		for (int i = 0; i < scene.DESTROYABLE_LIMIT; i++) {
+			if (scene.destroyable[i] != null) {
+				scene.destroyable[i].sprite.draw(batch);
 			}
 		}
-		for (int i = 0; i < entityMan.DOOR_LIMIT; i++) {
-			if (entityMan.door[i] != null) {
-				entityMan.door[i].sprite.draw(batch);
-				entityMan.door[i].updateFrame();
+		for (int i = 0; i < scene.DOOR_LIMIT; i++) {
+			if (scene.door[i] != null) {
+				scene.door[i].sprite.draw(batch);
+				scene.door[i].updateFrame();
 			}
 		}
-		for (int i = 0; i < entityMan.ITEM_LIMIT; i++) {
-			if (entityMan.item[i] != null) {
-				if (entityMan.item[i].isAlive) {
-					entityMan.item[i].sprite.draw(batch);
+		for (int i = 0; i < scene.ITEM_LIMIT; i++) {
+			if (scene.item[i] != null) {
+				if (scene.item[i].isAlive) {
+					scene.item[i].sprite.draw(batch);
 				}
 			}
 		}
 		/*
 		 * Draw
 		 */
-		drawProjectile(entityMan.projMan);
-		drawProjectile(entityMan.aiProjMan);
+		drawProjectile(scene.projMan);
+		drawProjectile(scene.aiProjMan);
 
 		
 		if (entityMan.hudtarget.canDraw()){

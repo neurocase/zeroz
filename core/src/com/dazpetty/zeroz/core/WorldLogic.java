@@ -28,6 +28,7 @@ import com.dazpetty.zeroz.managers.OrthoCamController;
 import com.dazpetty.zeroz.managers.ParralaxCamera;
 import com.dazpetty.zeroz.managers.ProjectileManager;
 import com.dazpetty.zeroz.managers.LevelManager;
+import com.dazpetty.zeroz.managers.SceneManager;
 
 
 
@@ -44,6 +45,8 @@ public class WorldLogic {
 	
 	public EntityManager entityMan;
 	
+	
+	
 	//private TiledMapRenderer renderer;
 	
 
@@ -51,12 +54,14 @@ public class WorldLogic {
 	public OrthographicCamera camera;
 	public World world;
 	public LevelManager levelMan;
+	public SceneManager scene;
 	
-	public WorldLogic(OrthographicCamera camera, EntityManager entityMan, World world, LevelManager levelMan){
-		this.entityMan = entityMan;
-		this.camera = camera;
-		this.world = world;
-		this.levelMan = levelMan;
+	public WorldLogic(GameScreen gameScreen){
+		this.entityMan = gameScreen.entityMan;
+		this.camera = gameScreen.camera;
+		this.world = gameScreen.world;
+		this.levelMan = gameScreen.levelMan;
+		this.scene = gameScreen.scene;
 	
 		entityMan.zplayer = new PawnEntity(entityMan, levelMan.getPlayerSpawner());
 		DazDebug.print("playerstart at x" + levelMan.playerstart.x + " y:" + levelMan.playerstart.y);
@@ -89,8 +94,8 @@ public class WorldLogic {
 		}*/
 
 		
-		entityMan.aiProjMan.updateProjectiles();
-		entityMan.projMan.updateProjectiles();
+		scene.aiProjMan.updateProjectiles();
+		scene.projMan.updateProjectiles();
 		Item pickUpItem = entityMan.itemAtLoc(entityMan.zplayer.worldpos);
 		if (pickUpItem != null && pickUpItem.isAlive && entityMan.zplayer.isCrouching){
 			entityMan.zplayer.Pickup(pickUpItem);
@@ -107,24 +112,24 @@ public class WorldLogic {
 			 * UPDATE ENEMY AI
 			 */
 			if (pollCheck(6)){
-				for (int i = 0; i < entityMan.ENEMY_LIMIT; i++) {
-					if (entityMan.zenemy[i] != null) {
-						entityMan.zenemy[i].updateAI(entityMan.zplayer);
+				for (int i = 0; i < scene.ENEMY_LIMIT; i++) {
+					if (scene.zenemy[i] != null) {
+						scene.zenemy[i].updateAI(entityMan.zplayer);
 					}
 				}
-				for (int i = 0; i < entityMan.ENEMY_LIMIT; i++) {
-					if (entityMan.zenemy[i] != null) {
+				for (int i = 0; i < scene.ENEMY_LIMIT; i++) {
+					if (scene.zenemy[i] != null) {
 						boolean enemyAim = true;
 						if (enemyAim) {
-							entityMan.zenemy[i].update(true, camera);
+							scene.zenemy[i].update(true, camera);
 						} else {
-							entityMan.zenemy[i].update(true, camera);
+							scene.zenemy[i].update(true, camera);
 						}
 						// If too far away from player, dispose of enemy
-						if (Math.abs((double) (entityMan.zenemy[i].worldpos.x - entityMan.zplayer.worldpos.x)) > 30
-								|| (double) (entityMan.zenemy[i].worldpos.y - entityMan.zplayer.worldpos.y) > 30) {
-							entityMan.zenemy[i].isDisposed = true;
-							entityMan.zenemy[i].isAlive = false;
+						if (Math.abs((double) (scene.zenemy[i].worldpos.x - entityMan.zplayer.worldpos.x)) > 30
+								|| (double) (scene.zenemy[i].worldpos.y - entityMan.zplayer.worldpos.y) > 30) {
+							scene.zenemy[i].isDisposed = true;
+							scene.zenemy[i].isAlive = false;
 						}
 					}
 				}
@@ -175,36 +180,36 @@ public class WorldLogic {
 		boolean targetIsDrone[] = {false,false};
 		//boolean targetIsDrone_left[] = false;
 
-		int BIG_LIMIT = entityMan.ENEMY_LIMIT;
-		if (entityMan.ENEMY_LIMIT < entityMan.DRONE_LIMIT) {
-			BIG_LIMIT = entityMan.DRONE_LIMIT;
+		int BIG_LIMIT = scene.ENEMY_LIMIT;
+		if (scene.ENEMY_LIMIT < scene.DRONE_LIMIT) {
+			BIG_LIMIT = scene.DRONE_LIMIT;
 		}
 
 		for (int i = 0; i < BIG_LIMIT; i++) {
-			if (entityMan.zenemy[i] != null && entityMan.zenemy[i].isAlive
-					&& entityMan.zenemy[i].worldpos.x > entityMan.zplayer.worldpos.x) {
-				if (entityMan.zenemy[i].distanceFromPlayer < calcdist[0]) {
-					calcdist[0] = entityMan.zenemy[i].distanceFromPlayer;
+			if (scene.zenemy[i] != null && scene.zenemy[i].isAlive
+					&& scene.zenemy[i].worldpos.x > entityMan.zplayer.worldpos.x) {
+				if (scene.zenemy[i].distanceFromPlayer < calcdist[0]) {
+					calcdist[0] = scene.zenemy[i].distanceFromPlayer;
 					closest_enemy[0] = i;
 				}
-			} else if (entityMan.zenemy[i] != null && entityMan.zenemy[i].isAlive
-					&& entityMan.zenemy[i].worldpos.x < entityMan.zplayer.worldpos.x) {
-				if (entityMan.zenemy[i].distanceFromPlayer < calcdist[1]) {
-					calcdist[1] = entityMan.zenemy[i].distanceFromPlayer;
+			} else if (scene.zenemy[i] != null && scene.zenemy[i].isAlive
+					&& scene.zenemy[i].worldpos.x < entityMan.zplayer.worldpos.x) {
+				if (scene.zenemy[i].distanceFromPlayer < calcdist[1]) {
+					calcdist[1] = scene.zenemy[i].distanceFromPlayer;
 					closest_enemy[1] = i;
 				}
 			}
-			if (entityMan.drone[i] != null && entityMan.drone[i].isAlive
-					&& entityMan.drone[i].worldpos.x > entityMan.zplayer.worldpos.x) {
-				if (entityMan.drone[i].distanceFromPlayer < calcdist[0]) {
-					calcdist[0] = entityMan.drone[i].distanceFromPlayer;
+			if (scene.drone[i] != null && scene.drone[i].isAlive
+					&& scene.drone[i].worldpos.x > entityMan.zplayer.worldpos.x) {
+				if (scene.drone[i].distanceFromPlayer < calcdist[0]) {
+					calcdist[0] = scene.drone[i].distanceFromPlayer;
 					closest_enemy[0] = i;
 					targetIsDrone[0] = true;
 				}
-			} else if (entityMan.drone[i] != null && entityMan.drone[i].isAlive
-					&& entityMan.drone[i].worldpos.x < entityMan.zplayer.worldpos.x) {
-				if (entityMan.drone[i].distanceFromPlayer < calcdist[1]) {
-					calcdist[1] = entityMan.drone[i].distanceFromPlayer;
+			} else if (scene.drone[i] != null && scene.drone[i].isAlive
+					&& scene.drone[i].worldpos.x < entityMan.zplayer.worldpos.x) {
+				if (scene.drone[i].distanceFromPlayer < calcdist[1]) {
+					calcdist[1] = scene.drone[i].distanceFromPlayer;
 					closest_enemy[1] = i;
 					targetIsDrone[1] = true;
 				}
@@ -231,20 +236,20 @@ public class WorldLogic {
 			int checkVal = 0;
 			if (!entityMan.zplayer.isGoRight) checkVal = 1;
 				if (targetIsDrone[checkVal]) {
-					if (entityMan.drone[closest_enemy[checkVal]] != null) {
-						entityMan.zplayer.giveQuickTarget(entityMan.drone[closest_enemy[checkVal]]);
-						entityMan.hudtarget.setDrawTarget(entityMan.drone[closest_enemy[checkVal]]);
+					if (scene.drone[closest_enemy[checkVal]] != null) {
+						entityMan.zplayer.giveQuickTarget(scene.drone[closest_enemy[checkVal]]);
+						entityMan.hudtarget.setDrawTarget(scene.drone[closest_enemy[checkVal]]);
 					}
-					if (enemyTooFar[checkVal] || entityMan.drone[closest_enemy[checkVal]] == null) {
+					if (enemyTooFar[checkVal] || scene.drone[closest_enemy[checkVal]] == null) {
 						entityMan.zplayer.setTargetToNull();
 						entityMan.hudtarget.dontDraw();
 					}
 				} else {
-					if (entityMan.zenemy[closest_enemy[checkVal]] != null) {
-						entityMan.zplayer.giveQuickTarget(entityMan.zenemy[closest_enemy[checkVal]]);
-						entityMan.hudtarget.setDrawTarget(entityMan.zenemy[closest_enemy[checkVal]]);
+					if (scene.zenemy[closest_enemy[checkVal]] != null) {
+						entityMan.zplayer.giveQuickTarget(scene.zenemy[closest_enemy[checkVal]]);
+						entityMan.hudtarget.setDrawTarget(scene.zenemy[closest_enemy[checkVal]]);
 					}
-					if (enemyTooFar[checkVal] || entityMan.zenemy[closest_enemy[checkVal]] == null) {
+					if (enemyTooFar[checkVal] || scene.zenemy[closest_enemy[checkVal]] == null) {
 						entityMan.zplayer.setTargetToNull();
 						entityMan.hudtarget.dontDraw();
 					}
@@ -259,20 +264,20 @@ public class WorldLogic {
 			}
 				
 				if (targetIsDrone[checkVal]) {
-					if (entityMan.drone[closest_enemy[checkVal]] != null) {
-						entityMan.zplayer.giveQuickTarget(entityMan.drone[closest_enemy[checkVal]]);
-						entityMan.hudtarget.setDrawTarget(entityMan.drone[closest_enemy[checkVal]]);
+					if (scene.drone[closest_enemy[checkVal]] != null) {
+						entityMan.zplayer.giveQuickTarget(scene.drone[closest_enemy[checkVal]]);
+						entityMan.hudtarget.setDrawTarget(scene.drone[closest_enemy[checkVal]]);
 					}
-					if (enemyTooFar[checkVal] || entityMan.drone[closest_enemy[checkVal]] == null) {
+					if (enemyTooFar[checkVal] || scene.drone[closest_enemy[checkVal]] == null) {
 						entityMan.zplayer.setTargetToNull();
 						entityMan.hudtarget.dontDraw();
 					}
 				}else{
-					if (entityMan.zenemy[closest_enemy[checkVal]] != null) {
-						entityMan.zplayer.giveQuickTarget(entityMan.zenemy[closest_enemy[checkVal]]);
-						entityMan.hudtarget.setDrawTarget(entityMan.zenemy[closest_enemy[checkVal]]);
+					if (scene.zenemy[closest_enemy[checkVal]] != null) {
+						entityMan.zplayer.giveQuickTarget(scene.zenemy[closest_enemy[checkVal]]);
+						entityMan.hudtarget.setDrawTarget(scene.zenemy[closest_enemy[checkVal]]);
 					}
-					if (enemyTooFar[checkVal] || entityMan.zenemy[closest_enemy[checkVal]] == null) {
+					if (enemyTooFar[checkVal] || scene.zenemy[closest_enemy[checkVal]] == null) {
 						entityMan.zplayer.setTargetToNull();
 						entityMan.hudtarget.dontDraw();
 					}

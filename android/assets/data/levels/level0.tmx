@@ -4,12 +4,14 @@
   <image source="../tilemapnew1.png" trans="fe00fe" width="1024" height="1024"/>
   <tile id="27">
    <properties>
-    <property name="lockdowndoor" value="1"/>
+    <property name="door" value="1"/>
+    <property name="state" value="open"/>
+    <property name="triggervalue" value="1"/>
    </properties>
   </tile>
   <tile id="28">
    <properties>
-    <property name="id" value="1"/>
+    <property name="triggervalue" value="1"/>
     <property name="worldvolume" value="spawntrigger"/>
    </properties>
   </tile>
@@ -44,6 +46,7 @@
     <property name="enemycount" value="2"/>
     <property name="enemyspawn" value="triggered"/>
     <property name="lockdownspawn" value="1"/>
+    <property name="triggervalue" value="1"/>
    </properties>
   </tile>
   <tile id="63">
@@ -59,6 +62,12 @@
   <tile id="87">
    <properties>
     <property name="solid" value="solid"/>
+   </properties>
+  </tile>
+  <tile id="92">
+   <properties>
+    <property name="triggervalue" value="2"/>
+    <property name="worldvolume" value="spawntrigger"/>
    </properties>
   </tile>
   <tile id="94">
@@ -196,6 +205,11 @@
     <property name="solid" value=""/>
    </properties>
   </tile>
+  <tile id="271">
+   <properties>
+    <property name="solid" value=""/>
+   </properties>
+  </tile>
   <tile id="275">
    <properties>
     <property name="ladder" value=""/>
@@ -245,12 +259,12 @@
  </layer>
  <layer name="miscLayer" width="125" height="25">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3XQQqCQBSAYS8ieQ0XQSewLhB6kaijdBRv0lVqE5gIGjY91O+DgVm8Gf7VwGQZAACwFfsfzcDbLjpgI67RASxKHh2wEN4vUmqjAxI4zDhbd/bFvIzVKKMDAEjmHB3A312iAwCYrPs/fQzsbwNn7hPvLr7PGdUkuJNP1Wsde+sUWkRfPT5CkCY6AIDVeQJD5E261DAAAA==
+   H4sIAAAAAAAAA+3X0QmDMBRGYd2gCxS7Rh+ETlAdoKKLFDtKR+kmrmL7IISg+HAbf5KcDwIRcvFAQLAoAAAAAOSi/tMZYFGpAzIxqgMQlbM6IBJ8vxDSRx0QwM0w2zv7iy0jGVd1AIDonEp1AY7Gnafv6T1z5/nhztPVqQOwyf0/nVb2r5WZt+F9D8Psz2Ccx777dzXeaqVF8PX7RyAyqAMAAMmZARhqzs3UMAAA
   </data>
  </layer>
  <layer name="top" width="125" height="25">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3OwQkAIAwAsU6mk3QUd7cr+JBCSeD+FwEAAAAA71a1q9M9AgAAMFx2DwAAAAB8dAG/hk551DAAAA==
+   H4sIAAAAAAAAA+3OsQkAMAwEMU+WTObd/SukMgEJrr8qAAAAAHh30k29PQIAAAAAAADAtwai5ZS+1DAAAA==
   </data>
  </layer>
 </map>
