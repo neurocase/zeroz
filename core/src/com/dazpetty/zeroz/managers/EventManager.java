@@ -34,30 +34,49 @@ public class EventManager {
 	}
 
 	public void CallTriggerValue(int value){
-		
+		DazDebug.print("revieved trigger: " + value);
 		if (value == 0){
 			return;
 		}
+		
 		//Call doors, movers and spawners, with this trigger
-		for (int i = 0; i < levelMan.ENEMY_SPAWNER_LIMIT; i++){
+		for (int i = 0; i < scene.ACTUATOR_LIMIT; i++){
 			if (levelMan.enemyspawner[i] != null){
 				levelMan.enemyspawner[i].triggerOn(value);
 			}
-		}
 
-
-		for (int j = 0; j < scene.DOOR_LIMIT; j++) {
-			if (scene.door[j] != null && scene.door[j].checkKey(value)) {
-				DazDebug.print("opening door " + j);
-				scene.door[j].openDoor(value);
-			}
-		}
-		for (int j = 0; j < levelMan.ENEMY_SPAWNER_LIMIT; j++){
-			if (levelMan.enemyspawner[j] != null){
+			if (scene.door[i] != null && scene.door[i].checkKey(value)) {
 				
+				String doorstate = "";
+				if (scene.door[i].openDoor){
+					doorstate = "open";
+				}else{
+					doorstate = "closed";
+				}
+				
+				DazDebug.print("triggering " + doorstate + " door " + i + " with value: " + value);
+				scene.door[i].trigger(value);
 			}
+			
 		}
+
+
 		
+		
+		
+	}
+	
+	public void PollActuators(){
+		for (int i = 0; i < scene.ACTUATOR_LIMIT; i++){
+			if (levelMan.enemyspawner[i] != null){
+				levelMan.enemyspawner[i].update();
+			}
+
+			if (scene.door[i] != null) {
+				scene.door[i].update();
+			}
+			
+		}
 	}
 	
 }

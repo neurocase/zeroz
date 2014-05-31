@@ -14,6 +14,8 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.World;
+import com.dazpetty.zeroz.core.DazDebug;
+import com.dazpetty.zeroz.managers.EventManager;
 
 
 
@@ -35,6 +37,8 @@ public class Destroyable {
 	public Sprite sprite;
 	public Sprite spritedest;
 	
+	public EventManager eventMan;
+	
 	public BodyDef bodyDef = new BodyDef();
 	public Body body;
 	public FixtureDef fixtureDef;
@@ -49,15 +53,23 @@ public class Destroyable {
 		}
 		return 0;
 	}
-
+	
+	
 	public void Destroy(){
-		isAlive = false;
-		body.setAwake(false);
-		body.setActive(false);
-		sprite = spritedest;
+		if (isAlive){
+			isAlive = false;
+			body.setAwake(false);
+			body.setActive(false);
+			sprite = spritedest;
+		
+			DazDebug.print("Door, sending " + triggerkey +" to evene manager");
+					
+			eventMan.CallTriggerValue(triggerkey);
+		}
 	}
 	
-	public Destroyable(int x, int y, int triggerkey, World world){
+	public Destroyable(int x, int y, int triggerkey, World world, EventManager eventMan){
+		this.eventMan = eventMan;
 		isAlive = true;
 		this.triggerkey = triggerkey;
 		texture = new Texture(("data/gfx/objects/keyfuse.png"));

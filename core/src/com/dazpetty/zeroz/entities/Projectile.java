@@ -16,7 +16,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Pool.Poolable;
 import com.dazpetty.zeroz.core.DazDebug;
-import com.dazpetty.zeroz.managers.MyAssetManager;
+import com.dazpetty.zeroz.managers.ZeroAssetManager;
 
 
 /* The Projectile class holds data regarding the type, position and who owns each projectile,
@@ -48,7 +48,7 @@ public class Projectile implements Poolable {
 	public long nowtime = System.currentTimeMillis();
 	public long lifetime = 4500;
 	public Weapon weapon;
-	public MyAssetManager assetMan;
+	public ZeroAssetManager assetMan;
 	
 	
 	public PawnEntity pawn;
@@ -102,7 +102,7 @@ public class Projectile implements Poolable {
 		body.setLinearVelocity(velx,vely);
 	}
 	
-	public Projectile(PawnEntity pawn, World world, int id, float angle,  Weapon weapon, MyAssetManager assetMan) {
+	public Projectile(PawnEntity pawn, World world, int id, float angle,  Weapon weapon, ZeroAssetManager assetMan) {
 		this.assetMan = assetMan;
 		this.id = id;
 		this.weapon = weapon;

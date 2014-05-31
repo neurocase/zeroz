@@ -22,7 +22,8 @@ import com.dazpetty.zeroz.entities.EntitySpawner;
 import com.dazpetty.zeroz.entities.HUDTarget;
 import com.dazpetty.zeroz.entities.Item;
 import com.dazpetty.zeroz.managers.EntityManager;
-import com.dazpetty.zeroz.managers.DazContactListener;
+import com.dazpetty.zeroz.managers.EventManager;
+import com.dazpetty.zeroz.managers.ZeroContactListener;
 import com.dazpetty.zeroz.managers.InputHandler;
 import com.dazpetty.zeroz.managers.OrthoCamController;
 import com.dazpetty.zeroz.managers.ParralaxCamera;
@@ -55,6 +56,7 @@ public class WorldLogic {
 	public World world;
 	public LevelManager levelMan;
 	public SceneManager scene;
+	public EventManager eventMan;
 	
 	public WorldLogic(GameScreen gameScreen){
 		this.entityMan = gameScreen.entityMan;
@@ -62,6 +64,7 @@ public class WorldLogic {
 		this.world = gameScreen.world;
 		this.levelMan = gameScreen.levelMan;
 		this.scene = gameScreen.scene;
+		this.eventMan = gameScreen.eventMan;
 	
 		entityMan.zplayer = new PawnEntity(entityMan, levelMan.getPlayerSpawner());
 		DazDebug.print("playerstart at x" + levelMan.playerstart.x + " y:" + levelMan.playerstart.y);
@@ -81,7 +84,7 @@ public class WorldLogic {
 	
 		}
 		entityMan.zplayer.update(inputHandler.giveWorldPos, camera);
-		
+		eventMan.PollActuators();
 		/*
 		 * UPDATE PLAYER AND PROJECTILES
 		 */
@@ -104,7 +107,7 @@ public class WorldLogic {
 		 * SPAWN ENEMIES AT SPAWNPOINT NEAR PLAYER
 		 */
 		if (pollCheck(11)){
-			levelMan.checkSpawners();
+		//	levelMan.checkSpawners();
 		}
 		
 			

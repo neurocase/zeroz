@@ -425,7 +425,7 @@ public class PawnEntity {
 	}
 
 	public boolean checkLadder() {
-		if (levelMan.isCellLadder(worldpos.x, worldpos.y)) {
+		if (levelMan.cellMan.isCellLadder(worldpos.x, worldpos.y)) {
 			return true;
 		}
 		return false;

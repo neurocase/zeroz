@@ -22,7 +22,7 @@ import com.dazpetty.zeroz.managers.EntityManager;
 import com.dazpetty.zeroz.managers.Assets;
 import com.dazpetty.zeroz.managers.EventManager;
 import com.dazpetty.zeroz.managers.LevelManager;
-import com.dazpetty.zeroz.managers.MyAssetManager;
+import com.dazpetty.zeroz.managers.ZeroAssetManager;
 import com.dazpetty.zeroz.managers.OrthoCamController;
 import com.dazpetty.zeroz.managers.ParralaxCamera;
 import com.dazpetty.zeroz.managers.ProjectileManager;
@@ -84,7 +84,7 @@ public class WorldRenderer {
 		this.camera = gameScreen.camera;
 		this.world = gameScreen.world;
 		this.scene = gameScreen.scene;
-		eventMan = levelMan.eventMan;
+		this.eventMan = gameScreen.eventMan;
 		
 		/*
 		 * SETUP SPRITES AND TEXTURES

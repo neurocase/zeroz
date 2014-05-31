@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.dazpetty.zeroz.core.DazDebug;
 import com.dazpetty.zeroz.managers.Assets;
-import com.dazpetty.zeroz.managers.MyAssetManager;
+import com.dazpetty.zeroz.managers.ZeroAssetManager;
 
 public class Explosion {
 	
@@ -32,11 +32,11 @@ public class Explosion {
 	
 	private float angle = 0;
 	public boolean isAlive = true;
-	private MyAssetManager assetMan;
+	private ZeroAssetManager assetMan;
 	
 	String type = "";
 
-	public Explosion(float x, float y, int id, float angle, MyAssetManager assetMan){
+	public Explosion(float x, float y, int id, float angle, ZeroAssetManager assetMan){
 		this.assetMan = assetMan;
 		isAlive = true;
 		this.angle = angle;

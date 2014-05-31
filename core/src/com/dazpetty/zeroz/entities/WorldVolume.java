@@ -15,6 +15,13 @@ public class WorldVolume {
 /*
  *  DISPLAY MESSAGES AND TRIGGER EVENTS
  */
+	
+	/*
+	 *    World
+	 * 
+	 */
+	
+	
 	public Body body;
 	public FixtureDef worldVolFixDef;
 	public Fixture worldVolFix;
@@ -27,6 +34,8 @@ public class WorldVolume {
 	public String type;
 	LevelManager levelMan;
 	int triggerKey = 0;
+	
+	boolean onceOnly = false;
 	
 	public WorldVolume(float x, float y, String type, int triggerKey, World world, LevelManager levelMan){
 		this.triggerKey = triggerKey;
@@ -44,10 +53,34 @@ public class WorldVolume {
 	    worldVolFix = body.createFixture(worldVolFixDef);
 	    worldVolFix.setUserData(this);	
 		body.createFixture(worldVolFixDef);		
+		if (type.equals("once")){
+			DazDebug.print("****");
+			DazDebug.print("once only world volume created");
+			DazDebug.print("****");
+			onceOnly = true;
+		}else{
+			DazDebug.print("-----------------REPEATABLE world volume created");
+		}
 	}
 	
+	
+	public boolean ready(){
+		if (onceOnly = false){
+			return true;
+		}else{
+			if (!allreadyUsed){
+				allreadyUsed = true;
+				return true;
+			}else{
+				return false;
+			}
+		}
+	}
+	
+	public boolean allreadyUsed = false;
+	
 	public void triggerVolumeOn(){
-		if (!trigger){
+		if (!trigger && ready()){
 			trigger = true;
 			DazDebug.print("-=-=-=-=--=-=-=-=--=-=-=-=--=-=-=-=--=-=-=-=-=");
 			DazDebug.print("-=-=-=-=--=-=-=-=-TRIGGER ON:::" + type + "-=-=-=-=");
@@ -55,23 +88,11 @@ public class WorldVolume {
 		}
 		
 		levelMan.eventMan.CallTriggerValue(triggerKey);
-		
-		/*	for (int i = 0; i < levelMan.ENEMY_SPAWNER_LIMIT; i++){
-				
-			//	if (levelMan.enemyspawner[i].type.equals("triggered")){
-				if (levelMan.enemyspawner[i] != null){
-					
-					if (levelMan.enemyspawner[i].type.equals("triggered")){
-					levelMan.enemyspawner[i].triggerOn();
-				}
-				//}
-				}
-			//}
-		}*/
+	
 	}
 	
 	public void triggerVolumeOff(){
-		if (trigger){
+		if (trigger && ready()){
 			trigger = false;
 			DazDebug.print("-=-=-=-=--=-=-=-=--=-=-=-=--=-=-=-=-=-=-=-=--=-");
 			DazDebug.print("-=-=-=-=--=-=-=-=-TRIGGER OFF:::" + type + "-=-=-=-");

@@ -18,9 +18,9 @@ public class ProjectileManager {
 	private int activemuzzflash = 0;
 	public MuzzleFlash muzzleflash[] = new MuzzleFlash[MUZZLE_FLASH_LIMIT];
 	public World world;
-	public MyAssetManager assetMan;
+	public ZeroAssetManager assetMan;
 
-	public ProjectileManager(int proj_limit, World world, MyAssetManager assetMan) {
+	public ProjectileManager(int proj_limit, World world, ZeroAssetManager assetMan) {
 		this.assetMan = assetMan;
 		PROJECTILE_LIMIT = proj_limit;
 		Projectile[] proj = new Projectile[PROJECTILE_LIMIT];
@@ -63,6 +63,7 @@ public class ProjectileManager {
 		if (entityShooting.weapon.ready()) {
 			createMuzzFlash(entityShooting);
 			long soundId = 1;
+			if (SoundManager.soundOn){
 			switch (entityShooting.weapon.weaponid){
 			//assetMan.pistolSound.setVolume(soundId, 0f);
 			
@@ -77,6 +78,7 @@ public class ProjectileManager {
 					break;
 				default:
 					assetMan.pistolSound.play();
+			}
 			}
 			for (int i = 0; i < entityShooting.weapon.shots; i++) {
 

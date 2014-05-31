@@ -14,7 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.dazpetty.zeroz.managers.MyAssetManager;
+import com.dazpetty.zeroz.managers.ZeroAssetManager;
 
 public class MainMenu implements Screen {
 

@@ -24,13 +24,15 @@ import com.dazpetty.zeroz.entities.WorldVolume;
 
 
 public class SceneManager {
+	
+	public int ACTUATOR_LIMIT = 20;
 
-	private static final MyAssetManager MyAssetManager = null;
+	private static final ZeroAssetManager MyAssetManager = null;
 	public int KEYS_LIMIT = 10;
 	public boolean[] keys = new boolean[KEYS_LIMIT];
 	
-	public final int DESTROYABLE_LIMIT = 10;
-	public final int DOOR_LIMIT = 10;
+	public final int DESTROYABLE_LIMIT = ACTUATOR_LIMIT;
+	public final int DOOR_LIMIT = ACTUATOR_LIMIT;
 	
 	public int TOTAL_DESTROYABLES = 0;
 	public int TOTAL_DOORS = 0;
@@ -39,18 +41,18 @@ public class SceneManager {
 	public Destroyable[] destroyable = new Destroyable[DESTROYABLE_LIMIT];
 	public Door[] door = new Door[DOOR_LIMIT];
 	
-	public final int ENEMY_SPAWNER_LIMIT = 20;
+	public final int ENEMY_SPAWNER_LIMIT = ACTUATOR_LIMIT;
 	public EntitySpawner playerSpawner;
 	public EntitySpawner enemyspawner[] = new EntitySpawner[ENEMY_SPAWNER_LIMIT];
 	
 	public int worldvolumecount = 0;
-	public final int WORLD_VOLUME_LIMIT = 20;
+	public final int WORLD_VOLUME_LIMIT = ACTUATOR_LIMIT;
 	public WorldVolume worldvolume[] = new WorldVolume[WORLD_VOLUME_LIMIT];
 	
 	public ProjectileManager projMan;
 	public ProjectileManager aiProjMan;
 	
-	public final int ENEMY_LIMIT = 10;
+	public final int ENEMY_LIMIT = ACTUATOR_LIMIT;
 
 	
 	public final int DRONE_LIMIT = ENEMY_LIMIT;
@@ -75,14 +77,13 @@ public class SceneManager {
 	
 	public World world;
 	public GameScreen gamescreen;
-	public MyAssetManager assetMan;
+	public ZeroAssetManager assetMan;
 	
 	public SceneManager(World world, GameScreen gamescreen){
 		this.world = world;
 		this.gamescreen = gamescreen;
 		projMan = new ProjectileManager(PROJECTILE_LIMIT, world, MyAssetManager);
 		aiProjMan = new ProjectileManager(PROJECTILE_LIMIT, world, MyAssetManager);
-		
 	}
 	
 	

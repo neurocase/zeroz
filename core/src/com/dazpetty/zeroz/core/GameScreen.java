@@ -51,7 +51,8 @@ import com.dazpetty.zeroz.entities.Item;
 import com.dazpetty.zeroz.entities.Weapon;
 import com.dazpetty.zeroz.managers.EntityManager;
 import com.dazpetty.zeroz.managers.Assets;
-import com.dazpetty.zeroz.managers.DazContactListener;
+import com.dazpetty.zeroz.managers.EventManager;
+import com.dazpetty.zeroz.managers.ZeroContactListener;
 import com.dazpetty.zeroz.managers.InputHandler;
 import com.dazpetty.zeroz.managers.OrthoCamController;
 import com.dazpetty.zeroz.managers.ParralaxCamera;
@@ -119,6 +120,7 @@ public class GameScreen implements Screen {
 	
 	public SceneManager scene;
 	public EntityManager entityMan;
+	public EventManager eventMan;
 	public WorldLogic worldLogic;
 	final ZerozGame game;
 	public OrthographicCamera camera;

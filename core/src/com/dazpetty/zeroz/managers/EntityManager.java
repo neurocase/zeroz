@@ -44,11 +44,11 @@ public class EntityManager {
 	public LevelManager levelMan;
 	public EventManager eventMan;
 	public SceneManager scene;
-	public DazContactListener cl;
+	public ZeroContactListener cl;
 	public ContactHandler ch;
 
 
-	MyAssetManager assetMan = new MyAssetManager();;
+	ZeroAssetManager assetMan = new ZeroAssetManager();;
 
 	public EntityManager(OrthographicCamera camera, World world,
 			LevelManager levelMan) {
@@ -61,7 +61,7 @@ public class EntityManager {
 		hudtarget = new HUDTarget();
 
 		ch = new ContactHandler();
-		cl = new DazContactListener(ch);
+		cl = new ZeroContactListener(ch);
 		world.setContactListener(cl);
 	}
 

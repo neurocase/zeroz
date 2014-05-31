@@ -24,12 +24,6 @@ public class Assets {
 	public static final String shootbutton = "data/gfx/hud/shootbutton.png";
 	public static final String jumpbutton = "data/gfx/hud/jumpbutton.png";
 
-
-
-	
-	
-	
-	
 	public static void load(){
 		//manager.load(projExplosionTexAtlas,TextureAtlas.class, param);
 		manager.load(dirbuttons,Texture.class, param);

@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector3;
 import com.dazpetty.zeroz.managers.InputHandler;
-import com.dazpetty.zeroz.managers.MyAssetManager;
+import com.dazpetty.zeroz.managers.ZeroAssetManager;
 
 public class HUD {
 
@@ -27,7 +27,7 @@ public class HUD {
 	public HUD(OrthographicCamera camera, InputHandler inputHandler){
 		this.camera = camera;
 		this.inputHandler = inputHandler;
-		TextureRegion healthtexreg = new TextureRegion(MyAssetManager.healthtex, 0, 0, 64,
+		TextureRegion healthtexreg = new TextureRegion(ZeroAssetManager.healthtex, 0, 0, 64,
 				 64);
 		 
 		healthsprite = new Sprite(healthtexreg);
@@ -36,7 +36,7 @@ public class HUD {
 		healthsprite.setPosition(30, 0);
 
 		 
-		 TextureRegion dirbuttontexreg = new TextureRegion(MyAssetManager.dirbuttonstex, 0, 0, 256,
+		 TextureRegion dirbuttontexreg = new TextureRegion(ZeroAssetManager.dirbuttonstex, 0, 0, 256,
 				 64);
 		 
 		dirbuttonssprite = new Sprite(dirbuttontexreg);
@@ -45,14 +45,14 @@ public class HUD {
 		dirbuttonssprite.setPosition(0, 0);
 
 		
-		 TextureRegion jumpbuttontexreg = new TextureRegion(MyAssetManager.jumpbuttontex, 0, 0, 64,
+		 TextureRegion jumpbuttontexreg = new TextureRegion(ZeroAssetManager.jumpbuttontex, 0, 0, 64,
 				 64);
 		
 		jumpbuttonsprite = new Sprite(jumpbuttontexreg);
 		jumpbuttonsprite.setSize(2f,2f);
 		jumpbuttonsprite.setOrigin(0, 0);
 		
-		 TextureRegion shootbuttontexreg = new TextureRegion(MyAssetManager.shootbuttontex, 0, 0, 64,
+		 TextureRegion shootbuttontexreg = new TextureRegion(ZeroAssetManager.shootbuttontex, 0, 0, 64,
 				 64);
 
 		shootbuttonsprite = new Sprite(shootbuttontexreg);

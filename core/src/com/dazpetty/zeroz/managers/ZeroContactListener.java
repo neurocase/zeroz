@@ -18,7 +18,7 @@ import com.dazpetty.zeroz.entities.Item;
 import com.dazpetty.zeroz.entities.PawnFoot;
 import com.dazpetty.zeroz.entities.Projectile;
 
-public class DazContactListener implements ContactListener {
+public class ZeroContactListener implements ContactListener {
 
 	private int count;
 	private int numFootContacts;
@@ -30,7 +30,7 @@ public class DazContactListener implements ContactListener {
 	
 	ContactHandler ch;
 	
-	public DazContactListener(ContactHandler ch){
+	public ZeroContactListener(ContactHandler ch){
 		this.ch = ch;
 		 
 	}

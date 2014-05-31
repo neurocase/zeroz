@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.dazpetty.zeroz.managers.MyAssetManager;
+import com.dazpetty.zeroz.managers.ZeroAssetManager;
 
 public class MuzzleFlash {
 	public Vector2 worldpos;
@@ -16,7 +16,7 @@ public class MuzzleFlash {
 	
 	public Sprite sprite;
 	
-	public MuzzleFlash(PawnEntity parententity, MyAssetManager assetMan){
+	public MuzzleFlash(PawnEntity parententity, ZeroAssetManager assetMan){
 		worldpos = parententity.worldpos;
 		timeshoot = System.currentTimeMillis();
 		muzzTexture = assetMan.muzzleFlashTexture;

@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-public class MyAssetManager {
+public class ZeroAssetManager {
 	
 
 	public static TextureAtlas projExplosionTexAtlas;
@@ -34,7 +34,7 @@ public class MyAssetManager {
 	public static Texture jumpbuttontex;
 	
 	
-	public MyAssetManager(){
+	public ZeroAssetManager(){
 		
 		pistolSound = Gdx.audio.newSound(Gdx.files.internal("data/sound/weapon/pistol.mp3"));
 		shotgunSound = Gdx.audio.newSound(Gdx.files.internal("data/sound/weapon/shotgun.mp3"));
