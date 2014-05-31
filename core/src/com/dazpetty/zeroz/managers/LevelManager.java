@@ -313,19 +313,5 @@ public class LevelManager {
 		return playerStart;
 		
 	}
-/*
-	public void checkSpawners() {
-
-		for (int i = 0; i < enemyspawners; i++) {
-			if (Math.abs((double) (enemyspawner[i].worldpos.x - entityMan.zplayer.worldpos.x)) < 16) {
-				if (enemyspawner[i] != null ){
-					enemyspawner[i].createActor();
-				} else {
-					System.out.println("ERROR: There are no enemy spawners");
-				}
-			}
-		}
-	
-	}*/
 
 }

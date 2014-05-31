@@ -1,4 +1,4 @@
-package com.dazpetty.zeroz.entities;
+package com.dazpetty.zeroz.assets;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;

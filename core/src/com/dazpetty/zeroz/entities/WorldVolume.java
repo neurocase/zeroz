@@ -85,9 +85,10 @@ public class WorldVolume {
 			DazDebug.print("-=-=-=-=--=-=-=-=--=-=-=-=--=-=-=-=--=-=-=-=-=");
 			DazDebug.print("-=-=-=-=--=-=-=-=-TRIGGER ON:::" + type + "-=-=-=-=");
 			DazDebug.print("-=-=-=-=--=-=-=-=--=-=-=-=--=-=-=-=-=-=-=-=--=");
+			levelMan.eventMan.CallTriggerValue(triggerKey);
 		}
 		
-		levelMan.eventMan.CallTriggerValue(triggerKey);
+		
 	
 	}
 	
