@@ -13,15 +13,15 @@ import com.dazpetty.zeroz.entities.Explosion;
 import com.dazpetty.zeroz.entities.PawnEntity;
 import com.dazpetty.zeroz.entities.CopterBoss;
 import com.dazpetty.zeroz.entities.Destroyable;
-import com.dazpetty.zeroz.entities.Door;
 import com.dazpetty.zeroz.entities.Drone;
-import com.dazpetty.zeroz.entities.EntitySpawner;
 import com.dazpetty.zeroz.entities.HUDTarget;
 import com.dazpetty.zeroz.entities.Item;
 import com.dazpetty.zeroz.entities.MuzzleFlash;
 import com.dazpetty.zeroz.entities.Projectile;
 import com.dazpetty.zeroz.entities.Weapon;
-import com.dazpetty.zeroz.entities.WorldVolume;
+import com.dazpetty.zeroz.nodes.Door;
+import com.dazpetty.zeroz.nodes.EntitySpawner;
+import com.dazpetty.zeroz.nodes.WorldVolume;
 
 /* The EntityManager class manages game entities, the enemies that the player encounters, the player character, the destroyable objects,
  * the doors, explosions, the ProjectileManager and items.

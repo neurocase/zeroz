@@ -37,6 +37,7 @@ import com.dazpetty.zeroz.managers.EntityManager;
 import com.dazpetty.zeroz.managers.ProjectileManager;
 import com.dazpetty.zeroz.managers.LevelManager;
 import com.dazpetty.zeroz.managers.SceneManager;
+import com.dazpetty.zeroz.nodes.EntitySpawner;
 
 /*
  * Pawn Entity is the base class for entities controlled by the player or ai,

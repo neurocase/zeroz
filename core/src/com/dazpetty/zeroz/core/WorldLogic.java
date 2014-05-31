@@ -17,8 +17,6 @@ import com.badlogic.gdx.utils.Array;
 import com.dazpetty.zeroz.entities.PawnEntity;
 import com.dazpetty.zeroz.entities.CopterBoss;
 import com.dazpetty.zeroz.entities.Destroyable;
-import com.dazpetty.zeroz.entities.Door;
-import com.dazpetty.zeroz.entities.EntitySpawner;
 import com.dazpetty.zeroz.entities.HUDTarget;
 import com.dazpetty.zeroz.entities.Item;
 import com.dazpetty.zeroz.managers.EntityManager;
@@ -30,6 +28,8 @@ import com.dazpetty.zeroz.managers.ParralaxCamera;
 import com.dazpetty.zeroz.managers.ProjectileManager;
 import com.dazpetty.zeroz.managers.LevelManager;
 import com.dazpetty.zeroz.managers.SceneManager;
+import com.dazpetty.zeroz.nodes.Door;
+import com.dazpetty.zeroz.nodes.EntitySpawner;
 
 
 

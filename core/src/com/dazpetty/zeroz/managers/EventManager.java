@@ -2,7 +2,7 @@ package com.dazpetty.zeroz.managers;
 
 import com.dazpetty.zeroz.core.DazDebug;
 import com.dazpetty.zeroz.entities.Destroyable;
-import com.dazpetty.zeroz.entities.Door;
+import com.dazpetty.zeroz.nodes.Door;
 
 /*
  * 	The Event Manager handles messages between triggers; Buttons, Destroyable Objects, World Volumes etc.

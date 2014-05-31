@@ -1,4 +1,4 @@
-package com.dazpetty.zeroz.entities;
+package com.dazpetty.zeroz.nodes;
 
 public class ZeroTimer {
 	/*

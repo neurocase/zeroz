@@ -1,7 +1,9 @@
-package com.dazpetty.zeroz.entities;
+package com.dazpetty.zeroz.nodes;
 
 import com.badlogic.gdx.math.Vector2;
 import com.dazpetty.zeroz.core.DazDebug;
+import com.dazpetty.zeroz.entities.PawnEntity;
+import com.dazpetty.zeroz.entities.Weapon;
 import com.dazpetty.zeroz.managers.EntityManager;
 import com.dazpetty.zeroz.managers.SceneManager;
 

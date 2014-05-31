@@ -7,12 +7,12 @@ import com.badlogic.gdx.utils.Array;
 import com.dazpetty.zeroz.core.DazDebug;
 import com.dazpetty.zeroz.entities.CopterTurret;
 import com.dazpetty.zeroz.entities.Destroyable;
-import com.dazpetty.zeroz.entities.Door;
 import com.dazpetty.zeroz.entities.Drone;
 import com.dazpetty.zeroz.entities.PawnEntity;
 import com.dazpetty.zeroz.entities.PawnFoot;
 import com.dazpetty.zeroz.entities.Projectile;
-import com.dazpetty.zeroz.entities.WorldVolume;
+import com.dazpetty.zeroz.nodes.Door;
+import com.dazpetty.zeroz.nodes.WorldVolume;
 
 public class ContactHandler {
 

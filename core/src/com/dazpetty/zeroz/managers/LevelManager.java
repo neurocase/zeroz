@@ -19,11 +19,11 @@ import com.dazpetty.zeroz.core.DazDebug;
 import com.dazpetty.zeroz.core.GameScreen;
 import com.dazpetty.zeroz.entities.CopterBoss;
 import com.dazpetty.zeroz.entities.Destroyable;
-import com.dazpetty.zeroz.entities.Door;
-import com.dazpetty.zeroz.entities.EntitySpawner;
 import com.dazpetty.zeroz.entities.Item;
-import com.dazpetty.zeroz.entities.Trigger;
-import com.dazpetty.zeroz.entities.WorldVolume;
+import com.dazpetty.zeroz.nodes.Door;
+import com.dazpetty.zeroz.nodes.EntitySpawner;
+import com.dazpetty.zeroz.nodes.Trigger;
+import com.dazpetty.zeroz.nodes.WorldVolume;
 
 /*	The LevelManager contains functions for searching the tiled map filetype for playerstart , enemyspawner, door and  item locations.
  *  the levels may also contain special tiles which indicate whether the level is a boss level or a scrolling level (a level where the

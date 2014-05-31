@@ -1,4 +1,4 @@
-package com.dazpetty.zeroz.entities;
+package com.dazpetty.zeroz.nodes;
 
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.math.Vector2;

@@ -4,13 +4,13 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.dazpetty.zeroz.core.GameScreen;
 import com.dazpetty.zeroz.entities.CopterBoss;
 import com.dazpetty.zeroz.entities.Destroyable;
-import com.dazpetty.zeroz.entities.Door;
 import com.dazpetty.zeroz.entities.Drone;
-import com.dazpetty.zeroz.entities.EntitySpawner;
 import com.dazpetty.zeroz.entities.Explosion;
 import com.dazpetty.zeroz.entities.Item;
 import com.dazpetty.zeroz.entities.PawnEntity;
-import com.dazpetty.zeroz.entities.WorldVolume;
+import com.dazpetty.zeroz.nodes.Door;
+import com.dazpetty.zeroz.nodes.EntitySpawner;
+import com.dazpetty.zeroz.nodes.WorldVolume;
 
 /*
  *  Scene Manager maintains the arrays and lists of all the different types of objects in the scene, 

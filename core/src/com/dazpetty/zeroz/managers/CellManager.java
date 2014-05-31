@@ -3,7 +3,7 @@ package com.dazpetty.zeroz.managers;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.math.Vector2;
-import com.dazpetty.zeroz.entities.Trigger;
+import com.dazpetty.zeroz.nodes.Trigger;
 
 /*
  * 			CellManager grabs cells from layers, 
