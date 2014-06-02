@@ -15,8 +15,8 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Pool.Poolable;
+import com.dazpetty.zeroz.assets.ZeroAssetManager;
 import com.dazpetty.zeroz.core.DazDebug;
-import com.dazpetty.zeroz.managers.ZeroAssetManager;
 
 
 /* The Projectile class holds data regarding the type, position and who owns each projectile,

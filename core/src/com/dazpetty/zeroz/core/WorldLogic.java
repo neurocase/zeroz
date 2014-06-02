@@ -95,8 +95,33 @@ public class WorldLogic {
 				entityMan.explosion[i].update();
 			}
 		}*/
-
+		for (int i = 0; i < scene.MOVER_LIMIT; i++){
+			if (scene.mover[i] != null){
+				//DazDebug.print("UPDATE MOVER [" + i + "]" );
+				scene.mover[i].update();
+			}
+		}
 		
+		
+		
+		boolean noTimers = true;
+		for (int i = 0; i < scene.ZERO_TIMER_LIMIT; i++){
+			if (scene.zerotimer[i] != null){
+				//DazDebug.print("ZERO TIMER [" + i + "]" );
+				scene.zerotimer[i].update();
+				noTimers = false;
+			}
+		}
+		if (noTimers){
+			DazDebug.print("THERE ARE NO TIMERS");
+	
+		}
+
+		for (int i = 0; i < scene.WALLTURRET_LIMIT; i++){
+			if (scene.wallturret[i] != null){
+				scene.wallturret[i].update(entityMan.zplayer);
+			}
+		}
 		scene.aiProjMan.updateProjectiles();
 		scene.projMan.updateProjectiles();
 		Item pickUpItem = entityMan.itemAtLoc(entityMan.zplayer.worldpos);

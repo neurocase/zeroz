@@ -74,6 +74,8 @@ public class Destroyable {
 		this.triggerkey = triggerkey;
 		texture = new Texture(("data/gfx/objects/keyfuse.png"));
 		texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		TextureRegion texturereg = new TextureRegion(texture, 0, 0, 32,
+				64);
 		
 		texturedest = new Texture(("data/gfx/objects/keyfusedestroyed.png"));
 		texturedest.setFilter(TextureFilter.Linear, TextureFilter.Linear);
@@ -81,8 +83,8 @@ public class Destroyable {
 		isAlive = true;
 		worldpos.x = x;
 		worldpos.y = y;
-		TextureRegion texturereg = new TextureRegion(texture, 0, 0, 32,
-				64);
+		//TextureRegion texturereg = new TextureRegion(texture, 0, 0, 32,
+		//		64);
 		TextureRegion textureregdest = new TextureRegion(texturedest, 0, 0, 32,
 				64);
 		

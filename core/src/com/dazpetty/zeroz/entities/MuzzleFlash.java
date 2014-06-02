@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.dazpetty.zeroz.managers.ZeroAssetManager;
+import com.dazpetty.zeroz.assets.ZeroAssetManager;
 
 public class MuzzleFlash {
 	public Vector2 worldpos;

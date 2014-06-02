@@ -1,4 +1,4 @@
-package com.dazpetty.zeroz.managers;
+package com.dazpetty.zeroz.assets;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
@@ -14,11 +14,16 @@ public class ZeroAssetManager {
 	public static TextureAtlas projExplosionTexAtlas;
 
 	public static TextureAtlas fuseBoxExplosionTexAtlas;
+	public static TextureAtlas flamesTexAtlas;
 	
 	public static Texture muzzleFlashTexture;
 	public static Texture projtex;
 
 	public static Texture projtexreg;
+	
+	public static Texture flameturret;
+	public static Texture wallturret;
+	public static Texture wallturretbarrel;
 	
 	public static Sound pistolSound;
 	public static Sound shotgunSound;
@@ -39,6 +44,26 @@ public class ZeroAssetManager {
 		pistolSound = Gdx.audio.newSound(Gdx.files.internal("data/sound/weapon/pistol.mp3"));
 		shotgunSound = Gdx.audio.newSound(Gdx.files.internal("data/sound/weapon/shotgun.mp3"));
 		shotgunSound.setPitch(0, 0.5f);
+		
+		
+		/*
+		 * 		TEXTURES
+		 * 
+		 */
+		 
+		flameturret = new Texture(
+				Gdx.files.internal("data/gfx/wallturret/flameturret.png"));
+		flameturret.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		
+		wallturret = new Texture(
+				Gdx.files.internal("data/gfx/wallturret/turretbase.png"));
+		wallturret.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		
+		wallturretbarrel = new Texture(
+				Gdx.files.internal("data/gfx/wallturret/turretbarrel.png"));
+		wallturretbarrel.setFilter(TextureFilter.Linear, TextureFilter.Linear); 
+		 
+		 
 		
 		healthtex = new Texture(
 				Gdx.files.internal("data/gfx/hud/health.png"));
@@ -62,12 +87,26 @@ public class ZeroAssetManager {
 				Gdx.files.internal("data/gfx/effects/shotblast.png"));
 		muzzleFlashTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		
+		
+		
+		/*
+		 * 			TEXTURE ATLAS
+		 * 
+		 */
+		
+		
+		flamesTexAtlas = new TextureAtlas(
+				Gdx.files.internal("data/gfx/effects/flames.atlas"));
+		
 		projExplosionTexAtlas = new TextureAtlas(
 				Gdx.files.internal("data/gfx/effects/explosion/explosion.atlas"));
 		fuseBoxExplosionTexAtlas = new TextureAtlas(
 				Gdx.files.internal("data/gfx/effects/explosion/fuseexplosion.atlas"));
 		projtex = new Texture(Gdx.files.internal("data/gfx/effects/bullet2.png"));
 		projtex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		
+		
+		
 		
 		
 		

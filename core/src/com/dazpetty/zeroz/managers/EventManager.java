@@ -45,6 +45,11 @@ public class EventManager {
 				levelMan.enemyspawner[i].triggerOn(value);
 			}
 
+			
+			if (scene.zerotimer[i] != null){
+				scene.zerotimer[i].callTimer(value);
+			}
+			
 			if (scene.door[i] != null && scene.door[i].checkKey(value)) {
 				
 				String doorstate = "";

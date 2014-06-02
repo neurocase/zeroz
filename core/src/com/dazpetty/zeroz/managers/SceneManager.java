@@ -1,6 +1,7 @@
 package com.dazpetty.zeroz.managers;
 
 import com.badlogic.gdx.physics.box2d.World;
+import com.dazpetty.zeroz.assets.ZeroAssetManager;
 import com.dazpetty.zeroz.core.GameScreen;
 import com.dazpetty.zeroz.entities.CopterBoss;
 import com.dazpetty.zeroz.entities.Destroyable;
@@ -8,9 +9,12 @@ import com.dazpetty.zeroz.entities.Drone;
 import com.dazpetty.zeroz.entities.Explosion;
 import com.dazpetty.zeroz.entities.Item;
 import com.dazpetty.zeroz.entities.PawnEntity;
+import com.dazpetty.zeroz.entities.WallTurret;
 import com.dazpetty.zeroz.nodes.Door;
 import com.dazpetty.zeroz.nodes.EntitySpawner;
+import com.dazpetty.zeroz.nodes.Mover;
 import com.dazpetty.zeroz.nodes.WorldVolume;
+import com.dazpetty.zeroz.nodes.ZeroTimer;
 
 /*
  *  Scene Manager maintains the arrays and lists of all the different types of objects in the scene, 
@@ -28,6 +32,8 @@ public class SceneManager {
 	public int ACTUATOR_LIMIT = 20;
 
 	private static final ZeroAssetManager MyAssetManager = null;
+
+	public int TOTAL_ZEROTIMERS = 0;
 	public int KEYS_LIMIT = 10;
 	public boolean[] keys = new boolean[KEYS_LIMIT];
 	
@@ -53,31 +59,44 @@ public class SceneManager {
 	public ProjectileManager aiProjMan;
 	
 	public final int ENEMY_LIMIT = ACTUATOR_LIMIT;
-
+	public final int WALLTURRET_LIMIT = ACTUATOR_LIMIT;
 	
 	public final int DRONE_LIMIT = ENEMY_LIMIT;
 	public final int ITEM_LIMIT = 20;
 	public final int PROJECTILE_LIMIT = 20;
 	public final int EXPLOSION_LIMIT = 15;
-
+	public int ZERO_TIMER_LIMIT = 20;
+	
+	public int MOVER_LIMIT = 20;
 
 	public int TOTAL_EXPLOSIONS = 0;
 	public int TOTAL_ITEMS = 0;
+	
 
 	public int enemycount = 0;
 	public int dronecount = 0;
+	public int wallturretcount = 0;
+	public int zerotimercount = 0;
 
-	public CopterBoss copterBoss;// = new CopterBoss();
+	public CopterBoss copterBoss;
 
 	public PawnEntity[] zenemy = new PawnEntity[ENEMY_LIMIT];
 
 	public Item[] item = new Item[ITEM_LIMIT];
 	public Drone[] drone = new Drone[DRONE_LIMIT];
 	public Explosion[] explosion = new Explosion[EXPLOSION_LIMIT];
+	public WallTurret[] wallturret = new WallTurret[WALLTURRET_LIMIT];
+	
+	public ZeroTimer[] zerotimer = new ZeroTimer[ZERO_TIMER_LIMIT];
+	
+	public Mover[] mover = new Mover[MOVER_LIMIT];
+	
 	
 	public World world;
 	public GameScreen gamescreen;
 	public ZeroAssetManager assetMan;
+
+	public int movercountvalue = 0;
 	
 	public SceneManager(World world, GameScreen gamescreen){
 		this.world = world;

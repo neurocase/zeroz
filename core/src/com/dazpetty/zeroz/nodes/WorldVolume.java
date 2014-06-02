@@ -9,6 +9,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.World;
 import com.dazpetty.zeroz.core.DazDebug;
+import com.dazpetty.zeroz.managers.EventManager;
 import com.dazpetty.zeroz.managers.LevelManager;
 
 public class WorldVolume {
@@ -32,14 +33,14 @@ public class WorldVolume {
 	public boolean isAlive = true;
 	public boolean trigger = false;
 	public String type;
-	LevelManager levelMan;
+	EventManager eventMan;
 	int triggerKey = 0;
 	
 	boolean onceOnly = false;
 	
-	public WorldVolume(float x, float y, String type, int triggerKey, World world, LevelManager levelMan){
+	public WorldVolume(float x, float y, String type, int triggerKey, World world, EventManager eventMan){
 		this.triggerKey = triggerKey;
-		this.levelMan = levelMan;
+		this.eventMan = eventMan;
 		this.type = type;
 		BodyDef worldVolDef = new BodyDef();
 		worldVolDef.position.set(x, y);
@@ -85,10 +86,8 @@ public class WorldVolume {
 			DazDebug.print("-=-=-=-=--=-=-=-=--=-=-=-=--=-=-=-=--=-=-=-=-=");
 			DazDebug.print("-=-=-=-=--=-=-=-=-TRIGGER ON:::" + type + "-=-=-=-=");
 			DazDebug.print("-=-=-=-=--=-=-=-=--=-=-=-=--=-=-=-=-=-=-=-=--=");
-			levelMan.eventMan.CallTriggerValue(triggerKey);
+			eventMan.CallTriggerValue(triggerKey);
 		}
-		
-		
 	
 	}
 	

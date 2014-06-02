@@ -37,8 +37,8 @@ public class Door {
 	public Sprite doorsprite;
 	
 	public Sprite sprite;
-	public TextureRegion texRegion;
-	public Texture texture;
+	//public TextureRegion texRegion;
+	//public Texture texture;
 	public TextureAtlas textureAtlas;
 	float stateTime;
 	private int currentFrame = 1;

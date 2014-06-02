@@ -1,5 +1,8 @@
 package com.dazpetty.zeroz.nodes;
 
+import com.dazpetty.zeroz.core.DazDebug;
+import com.dazpetty.zeroz.managers.EventManager;
+
 public class ZeroTimer {
 	/*
 	 * 	TODO:
@@ -15,6 +18,83 @@ public class ZeroTimer {
 	 * 			     
 	 *  
 	 */
+	public int triggervalue = 0;
+	public int triggercallvalue = 0;
+	public int delay = 0;
+	public String type = "";
 	
+	public boolean allreadyused = false;
+	public boolean started = false;
+	
+	public EventManager eventMan;
+	
+	public ZeroTimer(int triggervalue, int triggercallvalue,int delay, String type, EventManager eventMan){
+		DazDebug.print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		DazDebug.print("CREATING TRIGGER, VALUE:" + triggervalue + " Call Value:" + triggercallvalue + " delay:" + delay + " type:" + type);
+		DazDebug.print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		
+		
+		this.triggervalue = triggervalue;
+		this.triggercallvalue = triggercallvalue;
+		
+		//TIMING IS IN TENTHS OF A SECOND
+		this.delay = delay * 100;
+		this.type = type;
+		this.eventMan = eventMan;
+	}
+	
+	public boolean checkTrigger(int triggertestvalue){
+		return triggervalue == triggertestvalue;
+	}
+	
+	public void callTimer(int triggertestvalue){
+		if (checkTrigger(triggertestvalue)){
+			start();
+		}
+	}
+	
+	public void callTrigger(){
+	eventMan.CallTriggerValue(triggercallvalue);
+	}
+	public void start(){
+		DazDebug.print("TTTTTTTTTTTTTTTTTTTT");
+		DazDebug.print("TIMER STARTED!::DELAY:" + delay);
+		DazDebug.print("TTTTTTTTTTTTTTTTTTTT");
+		
+		
+		started = true;
+		starttime = System.currentTimeMillis();
+	}
+	long starttime = System.currentTimeMillis();
+	
+	public boolean callOver = false;
+	
+	
+	public void update(){
+		
+		//DazDebug.print("!!!UPDATE TIMER!!!");
+		if (started && !callOver){
+			if (System.currentTimeMillis() - starttime > delay){
+				DazDebug.print("!!!DING!!!!!!!DING!!!!DING!!!!!!");
+				DazDebug.print("TIMER CALLING TRIGGER" + triggercallvalue + "!!");
+				DazDebug.print("!!!DING!!!!!!!DING!!!!DING!!!!!!");
+				
+				callTrigger();
+				
+				starttime = System.currentTimeMillis();
+				
+				if (type.equals("once")){
+					callOver = true;
+				}
+				
+			}else{
+
+		
+			}
+		}else{
+
+			
+		}
+	}
 	
 }

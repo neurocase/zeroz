@@ -3,6 +3,7 @@ package com.dazpetty.zeroz.managers;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.math.Vector2;
+import com.dazpetty.zeroz.core.DazDebug;
 import com.dazpetty.zeroz.nodes.Trigger;
 
 /*
@@ -35,7 +36,16 @@ public class CellManager {
 	public String diagonalKey = "diagonal";
 	public String doorKey = "door";
 	public String ladderKey = "ladder";
+	public String angleKey = "angle";
+	public String turretKey = "turret";
 	
+	public String calltriggerKey = "triggercall";
+	public String timerKey = "timer";
+	
+	public String moverKey = "mover";
+	public String movexKey = "movex";
+	public String moveyKey = "movey";
+	public String speedKey = "speed";
 	
 
 	public TiledMapTileLayer collisionLayer;
@@ -146,6 +156,7 @@ public class CellManager {
 				&& cell.getTile().getProperties().containsKey(diagonalKey);
 	}
 	
+	
 
 	public boolean isCellBlocked(float x, float y, boolean isActorLooking) {
 		Cell cell = collisionLayer.getCell((int) (x), (int) (y));
@@ -158,10 +169,133 @@ public class CellManager {
 		return cell != null && cell.getTile() != null
 				&& cell.getTile().getProperties().containsKey(platformKey);
 	}
+	
+	public boolean isCellTurret(float x, float y) {
+		Cell cell = nodeLayer.getCell((int) (x), (int) (y));
+		return cell != null && cell.getTile() != null
+				&& cell.getTile().getProperties().containsKey(turretKey);
+	}
+	
+	public boolean isCellAngle(float x, float y) {
+		Cell cell = nodeLayer.getCell((int) (x), (int) (y));
+		return cell != null && cell.getTile() != null
+				&& cell.getTile().getProperties().containsKey(angleKey);
+	}
+	
+	public boolean isCellTimer(float x, float y) {
+		Cell cell = nodeLayer.getCell((int) (x), (int) (y));
+		return cell != null && cell.getTile() != null
+				&& cell.getTile().getProperties().containsKey(timerKey);
+	}
+	
+	public boolean isCellCallTriggerValue(float x, float y) {
+		Cell cell = nodeLayer.getCell((int) (x), (int) (y));
+		return cell != null && cell.getTile() != null
+				&& cell.getTile().getProperties().containsKey(calltriggerKey);
+	}
+	
+	public boolean isCellMover(float x, float y) {
+		Cell cell = nodeLayer.getCell((int) (x), (int) (y));
+		return cell != null && cell.getTile() != null
+				&& cell.getTile().getProperties().containsKey(moverKey);
+	}
+	
+	public boolean isCellMoveX(float x, float y) {
+		Cell cell = nodeLayer.getCell((int) (x), (int) (y));
+		return cell != null && cell.getTile() != null
+				&& cell.getTile().getProperties().containsKey(movexKey);
+	}
+	public boolean isCellMoveY(float x, float y) {
+		Cell cell = nodeLayer.getCell((int) (x), (int) (y));
+		return cell != null && cell.getTile() != null
+				&& cell.getTile().getProperties().containsKey(moveyKey);
+	}
+	public boolean isCellSpeed(float x, float y) {
+		Cell cell = nodeLayer.getCell((int) (x), (int) (y));
+		return cell != null && cell.getTile() != null
+				&& cell.getTile().getProperties().containsKey(speedKey);
+	}
+	
+
 	/*
 	 * 					GET PROPERTY FUNCTIONS
 	 */
+	
+	public int getSpeedValue(float x, float y) {
+		if (isCellSpeed(x, y)){
+			Cell cell = nodeLayer.getCell((int) (x), (int) (y));
+			String val = (String) cell.getTile().getProperties().get(speedKey);
 
+			return Integer.parseInt(val);
+		}
+		DazDebug.print("TRIED TO GET speedKey, BUT FOUND NO PROPERTY CALLED speedKey");
+		return 0;
+	}
+	
+	
+	public int getMoveXValue(float x, float y) {
+		if (isCellMoveX(x, y)){
+			Cell cell = nodeLayer.getCell((int) (x), (int) (y));
+			String val = (String) cell.getTile().getProperties().get(movexKey);
+
+			return Integer.parseInt(val);
+		}
+		DazDebug.print("TRIED TO GET movexKey, BUT FOUND NO PROPERTY CALLED movexKey");
+		return 0;
+	}
+	public int getMoveYValue(float x, float y) {
+		if (isCellMoveY(x, y)){
+			Cell cell = nodeLayer.getCell((int) (x), (int) (y));
+			String val = (String) cell.getTile().getProperties().get(moveyKey);
+
+			return Integer.parseInt(val);
+		}
+		DazDebug.print("TRIED TO GET moveyKey, BUT FOUND NO PROPERTY CALLED moveyKey");
+		return 0;
+	}
+	
+	
+	public String getMoverType(float x, float y) {
+		if (isCellMover(x, y)){
+			Cell cell = nodeLayer.getCell((int) (x), (int) (y));
+			String val = (String) cell.getTile().getProperties().get(moverKey);
+
+			return val;
+		}
+		DazDebug.print("TRIED TO GET MOVERVALUE, BUT FOUND NO PROPERTY CALLED moverKey");
+		return "";
+	}
+
+	public int getTriggerCallValue(float x, float y) {
+		if (isCellCallTriggerValue(x, y)){
+			Cell cell = nodeLayer.getCell((int) (x), (int) (y));
+			String val = (String) cell.getTile().getProperties().get(calltriggerKey);
+
+			return Integer.parseInt(val);
+		}
+		DazDebug.print("TRIED TO GET calltriggerKey VALUE, BUT FOUND NO PROPERTY CALLED calltriggerKey");
+		return 0;
+	}
+	
+	public int getAngle(float x, float y) {
+		if (isCellAngle(x,y)){
+			Cell cell = nodeLayer.getCell((int) (x), (int) (y));
+			String ang = (String) cell.getTile().getProperties().get(angleKey);
+			return Integer.parseInt(ang);
+		}
+		return 0;
+	}
+	
+	
+	public String getTurretType(float x, float y) {
+		Cell cell = nodeLayer.getCell((int) (x), (int) (y));
+		String value = "null";
+		if (isCellTurret(x, y)) {
+			value = (String) cell.getTile().getProperties().get(turretKey);
+		}
+		return value;
+	}
+	
 	public String getItemValue(float x, float y) {
 		Cell cell = nodeLayer.getCell((int) (x), (int) (y));
 		String value = "null";

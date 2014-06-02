@@ -3,6 +3,7 @@ package com.dazpetty.zeroz.nodes;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.math.Vector2;
 import com.dazpetty.zeroz.managers.CellManager;
+import com.dazpetty.zeroz.managers.EventManager;
 import com.dazpetty.zeroz.managers.LevelManager;
 
 public class Trigger {
@@ -31,7 +32,7 @@ public class Trigger {
 	
 	public String enemySpawnType = "";
 	
-	public Trigger(Cell cell, float x, float y, CellManager cellManager){
+	public Trigger(Cell cell, float x, float y, CellManager cellManager, EventManager eventMan){
 		
 		countvalue = cellManager.getCellCount(x,y);
 		triggerValue = cellManager.getCellTriggerValue(x, y);

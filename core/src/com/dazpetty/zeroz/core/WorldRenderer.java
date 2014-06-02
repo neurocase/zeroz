@@ -17,12 +17,12 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.dazpetty.zeroz.assets.Assets;
+import com.dazpetty.zeroz.assets.ZeroAssetManager;
 import com.dazpetty.zeroz.entities.Explosion;
 import com.dazpetty.zeroz.entities.HUD;
 import com.dazpetty.zeroz.managers.EntityManager;
 import com.dazpetty.zeroz.managers.EventManager;
 import com.dazpetty.zeroz.managers.LevelManager;
-import com.dazpetty.zeroz.managers.ZeroAssetManager;
 import com.dazpetty.zeroz.managers.OrthoCamController;
 import com.dazpetty.zeroz.managers.ParralaxCamera;
 import com.dazpetty.zeroz.managers.ProjectileManager;
@@ -224,6 +224,18 @@ public class WorldRenderer {
 		
 		batch.begin();
 		
+		
+		for (int i = 0; i < scene.WALLTURRET_LIMIT; i++){
+			if (scene.wallturret[i] != null){
+				scene.wallturret[i].draw(batch);
+			}
+		}
+		
+		for (int i = 0; i < scene.MOVER_LIMIT; i++){
+			if (scene.mover[i] != null){
+				scene.mover[i].sprite.draw(batch);
+			}
+		}
 		
 		
 		if (levelMan.isBossLevel){

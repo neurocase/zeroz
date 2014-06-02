@@ -8,8 +8,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.dazpetty.zeroz.assets.Assets;
+import com.dazpetty.zeroz.assets.ZeroAssetManager;
 import com.dazpetty.zeroz.core.DazDebug;
-import com.dazpetty.zeroz.managers.ZeroAssetManager;
 
 public class Explosion {
 	

@@ -315,6 +315,10 @@
   </tile>
   <tile id="97">
    <properties>
+    <property name="mover" value="circular"/>
+    <property name="movex" value="7"/>
+    <property name="movey" value="15"/>
+    <property name="speed" value="20"/>
     <property name="triggervalue" value="1"/>
    </properties>
   </tile>
@@ -322,9 +326,46 @@
    <properties>
     <property name="count" value="1"/>
     <property name="delay" value="30"/>
-    <property name="secondtriggervalue" value=""/>
+    <property name="instancetype" value="once"/>
     <property name="timer" value=""/>
+    <property name="triggercall" value="1"/>
     <property name="triggervalue" value="1"/>
+   </properties>
+  </tile>
+  <tile id="129">
+   <properties>
+    <property name="angle" value="180"/>
+    <property name="turret" value="flamer"/>
+   </properties>
+  </tile>
+  <tile id="130">
+   <properties>
+    <property name="angle" value="90"/>
+    <property name="turret" value="wallturret"/>
+   </properties>
+  </tile>
+  <tile id="131">
+   <properties>
+    <property name="angle" value="0"/>
+    <property name="turret" value="wallturret"/>
+   </properties>
+  </tile>
+  <tile id="132">
+   <properties>
+    <property name="angle" value="270"/>
+    <property name="turret" value="wallturret"/>
+   </properties>
+  </tile>
+  <tile id="133">
+   <properties>
+    <property name="angle" value="180"/>
+    <property name="turret" value="wallturret"/>
+   </properties>
+  </tile>
+  <tile id="134">
+   <properties>
+    <property name="angle" value="0"/>
+    <property name="turret" value="flamer"/>
    </properties>
   </tile>
  </tileset>
@@ -335,7 +376,7 @@
  </layer>
  <layer name="collision" width="125" height="25">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+2Yv28TMRTHHZAoIU2VoWOXFv6EVoj/A5qKbkRVB9QNMbBGVbp06MLAilohEP2RbGxRxczOFnWIMvVfwBa28vTynt855wtczl/pK+ee/e5sf3w/HKWSkpKSaLVq4V4jXLRqC7hGVdSKMJeJebmUmFdPMeYyMS+XEvPqKTGvnhLz6qlqzNdLtHZcX4faDVsum6gxuVgs5tslYD6xNn015UhNSygzJ5vaW8SYil7bG5HOg8cEYxTzefiVgXld9/GJ9kvtpvYqKp1rwJg9Nc6nOvbM5rprSG7Y9qH/w51liPn6YK7b020ugQfq75zAGJwDzmVgbvRGTfsKOXPMoZt2vWSZjzym9F37WvtKu29/34CYKXvARgdo3K7sqVlhfqYd1xcTh/NYBknMO0ROB+Vy9d+Yax5qn6jZc+Nj6V37yxPDLI+Zc2Rh7vrySHsF+DFYl8vEvEvkdFEuV+9j/kXNnhsfj/1dV/eeGGZ5zpwjhDmlMjHH33Ac889Erotx43T1PuawHc5zwszNM31gDZ/j7tnetzFTj1n+ZPqyKOZDf/VCBL/h6gzvpjAOaZwSc0nSfR7ybA8RHtdX7bdMW4o55DshjPVCOI6pLN9wPnHMbz2xCzVlTq19GBsTMfhtZ/geoXxqHYQq730+AvV439AA7XZAvYnj4+c5x8EpD/N3TP2dEHPMR0Q7GBuDGPU9b97dpyifeseHihqXxNzl1BHfmmUJ7bSr3Ra8N4dfa+97xicxh/2n1ixsK9X72nG5Lo73jQ8YPxTq5tkvrs6ZJ+0/X1nunNsebnjNQX0Qctz6DN2fF7EPz7I3X6RC/jPIq/fWoaL68wkdc/9LxWbO9Y9r879w/lf6aB0qas5+EO2o93To+7yI+7zKinmf/ybaxWAu9cN3LyfWs4rJnFII8z/mFOKS1DAAAA==
+   H4sIAAAAAAAAA+2Yv28TMRTHHZAoIU2VoWOXFv6EVoj/A5qKbkRVB9QNMbBGVbp06MLAilohEP2RbGxRxczOFnWIMvVfwBa28vTynt855wtczl/pK+ee/e5sf3w/HKWSkpKSaLVqsnG7NcJFq7aAa1RFrQhzmZiXS4l59RRjLhPzcikxr54S8+opMa+eqsZ8vURrx/V1qN2w5bKJGpOLxWK+XQLmE2vTV1OO1LSEMnOyqb1FjKnotb0R6Tx4TDBGMZ+HXxmY13Ufn2i/1G5qr6LSuQaM2VPjfKpjz2yuu4bkhm0f+j/cWYaYrw/muj3d5hJ4oP7OCYzBOeBcBuZGb9S0r5Azxxy6addLlvnIY0rfta+1r7T79vcNiJmyB2x0gMbtyp6aFeZn2nF9MXE4j2WQxLxD5HRQLlf/jbnmofaJmj03Ppbetb88MczymDlHFuauL4+0V4Afg3W5TMy7RE4X5XL1PuZf1Oy58fHY33V174lhlufMOUKYUyoTc/wNxzH/TOS6GDdOV+9jDtvhPCfM3DzTB9bwOe6e7X0bM/WY5U+mL4tiPvRXL0TwG67O8G4K45DGKTGXJN3nIc/2EOFxfdV+y7SlmEO+E8JYL4TjmMryDecTx/zWE7tQU+bU2oexMRGD33aG7xHKp9ZBqPLe5yNQj/cNDdBuB9SbOD5+nnMcnPIwf8fU3wkxx3xEtIOxMYhR3/Pm3X2K8ql3fKiocUnMXU4d8a1ZltBOu9ptwXtz+LX2vmd8EnPYf2rNwrZSva8dl+vieN/4gPFDoW6e/eLqnHnS/vOV5c657eGG1xzUByHHrc/Q/XkR+/Ase/NFKuQ/g7x6bx0qqj+f0DH3v1Rs5lz/uDb/C+d/pY/WoaLm7AfRjnpPh77Pi7jPq6yY9/lvol0M5lI/fPdyYj2rmMwphTD/A0veRoLUMAAA
   </data>
  </layer>
  <layer name="declayer" width="125" height="25">
@@ -345,7 +386,7 @@
  </layer>
  <layer name="miscLayer" width="125" height="25">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3XwQmEMBAFUGUtQNwKbME9ebUAtQRrsP+DnkVYBDUxvgdzCSEM/DlksgwAAIBUdcX++Vz8v0M8chlxQGVeolPLhIOaE2bmjDe4Thu6AeBxyjx0B9xN5u8j8/R9N390mUN8Pju79M9+nbR+rWFTY9CO4Dmm0A0AkJwFybN5+9QwAAA=
+   H4sIAAAAAAAAA+3YywnCQBQF0AmmANEKbEFXbi1ALUEswRL8tq3LEEYnuMgz8RyYXQiXdx9MSEoA37vX0QkAgJKH+/qvbd70f6rLz/A7qkZH50xfNx3SMOuwDxc706tFZt5HHfDBsrAf1w77U3oHsdbRAYDBmVbRCeibzv+Pzsdv3vpG1zmRcv8YSWmSmcvKrEZt+zq71tmHJoLhOEQHAGB0nvcTzW/UMAAA
   </data>
  </layer>
  <layer name="top" width="125" height="25">

@@ -1,6 +1,7 @@
 package com.dazpetty.zeroz.managers;
 
 import com.badlogic.gdx.physics.box2d.World;
+import com.dazpetty.zeroz.assets.ZeroAssetManager;
 import com.dazpetty.zeroz.core.DazDebug;
 import com.dazpetty.zeroz.entities.PawnEntity;
 import com.dazpetty.zeroz.entities.MuzzleFlash;
