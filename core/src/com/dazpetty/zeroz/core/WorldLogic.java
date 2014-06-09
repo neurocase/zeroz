@@ -96,7 +96,8 @@ public class WorldLogic {
 			}
 		}*/
 		
-		scene.Update();
+		scene.update();
+		levelMan.update();
 		
 		for (int i = 0; i < scene.MOVER_LIMIT; i++){
 			if (scene.mover[i] != null){

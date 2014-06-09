@@ -43,6 +43,7 @@ public class LevelManager {
 	private static final Object[] Vector2 = null;
 	public TiledMapTileLayer collisionLayer;
 	public TiledMapTileLayer nodeLayer;
+	public TiledMapTileLayer animatedLayer;
 
 	public TiledMap map;
 
@@ -72,7 +73,7 @@ public class LevelManager {
 
 	public EventManager eventMan;
 	public SceneManager scene;
-
+	public AnimatedTilesManager animTileMan;
 	public CellManager cellMan;
 
 	public LevelManager(int level, GameScreen gameScreen, World world) {
@@ -84,9 +85,11 @@ public class LevelManager {
 		map = new TmxMapLoader().load("data/levels/level" + levelstr + ".tmx");
 		collisionLayer = (TiledMapTileLayer) map.getLayers().get("collision");
 		nodeLayer = (TiledMapTileLayer) map.getLayers().get("nodelayer");
+		animatedLayer = (TiledMapTileLayer) map.getLayers().get("animlayer");
 
-		cellMan = new CellManager(nodeLayer, collisionLayer);
-
+		cellMan = new CellManager(nodeLayer, collisionLayer, animatedLayer);
+		animTileMan = new AnimatedTilesManager(cellMan, scene, map);
+		
 		Arrays.fill(keys, Boolean.FALSE);
 
 		eventMan = new EventManager(this);
@@ -383,7 +386,13 @@ public class LevelManager {
 							cellMan.getMoveYValue(w, h), world);
 					scene.crushercount++;
 				}
-
+				
+				if (cellMan.isCellAnimated(w, h)){
+					DazDebug.print("ANIMATED TILE FOUND");
+					DazDebug.print("AAAAAAAAAAAAAAAAAAAAAAAA");					
+					animTileMan.addAnimatedCell(w,h,cellMan.getAnimatedCell(w, h), cellMan.getAnimatedTileFrames(w, h), cellMan);
+					
+				}
 				/*
 				 * if (!isLevelScrolling) { if (isLevelScrolling(w, h)) {
 				 * isLevelScrolling = true; } } if (!isBossLevel) { if
@@ -393,8 +402,13 @@ public class LevelManager {
 
 			}
 		}
+		
 	}
-
+	
+	public void update(){
+		animTileMan.update();
+	}
+	
 	EntitySpawner playerStart;
 
 	public EntitySpawner getPlayerSpawner() {

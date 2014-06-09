@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" width="128" height="64" tilewidth="32" tileheight="32" backgroundcolor="#7c6194">
- <tileset firstgid="1" source="greysci.tsx"/>
+ <tileset firstgid="1" name="greyscitiles" tilewidth="32" tileheight="32">
+  <image source="greyscitiles.png" width="512" height="512"/>
+  <tile id="86">
+   <properties>
+    <property name="animated" value="2"/>
+   </properties>
+  </tile>
+ </tileset>
  <tileset firstgid="257" name="nodes" tilewidth="32" tileheight="32">
   <image source="nodes.png" width="512" height="512"/>
   <tile id="0">
@@ -182,6 +189,11 @@
  <layer name="lights" width="128" height="64">
   <data encoding="base64" compression="zlib">
    eJzt2sEKwjAMANA6T+pJPan//5/24kGpA0vn1vQ9CAx22ZqSJmMpAQAAAAAAAAAAAKxjN6U05dhPaz8JazjkvB9znOR/SEvkv0VNUZf+45bX957j0XCdW+wpdalf8j+2FjVliboEANGd87l5yXGd3q8/79Uyn9WJsm768zpR1i3Ke/xbi9q7BeazbXvlZy7kDgDYkihzMnV6nS/t2zZ6zX+vzz1njT3d6/eFiPmP+E5L6XXfzvnlm6Xzb2xqxdjkf2wRzz+AUZV6en3+OEo9nT5vHKX5P8p/TAB8V5rpzfkAAAAAQFRPv1wIvQ==
+  </data>
+ </layer>
+ <layer name="animlayer" width="128" height="64">
+  <data encoding="base64" compression="zlib">
+   eJztzgENAAAIA6C3tH8TY9xNSEACAAAAAAAAAAAAAAAAAAAAAAAAXDftAAAAAAAAAAAAAAAAADywGgYAWA==
   </data>
  </layer>
 </map>

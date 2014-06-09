@@ -42,6 +42,7 @@ public class CellManager {
 	public String flamerturretKey = "flamerturret";
 	public String crusherKey = "crusher";
 	public String deathKey = "death";
+	public String animatedKey = "animated";
 	
 	
 	
@@ -56,10 +57,12 @@ public class CellManager {
 
 	public TiledMapTileLayer collisionLayer;
 	public TiledMapTileLayer nodeLayer;
+	public TiledMapTileLayer animatedLayer;
 	
-	public CellManager(TiledMapTileLayer nodeLayer, TiledMapTileLayer collisionLayer){
+	public CellManager(TiledMapTileLayer nodeLayer, TiledMapTileLayer collisionLayer,TiledMapTileLayer animatedLayer){
 		this.nodeLayer = nodeLayer;
 		this.collisionLayer = collisionLayer;
+		this.animatedLayer = animatedLayer;
 	}
 	
 	
@@ -128,6 +131,13 @@ public class CellManager {
 				&& cell.getTile().getProperties().containsKey(countKey);
 
 	}
+	
+	public boolean isCellAnimated(float x, float y) {
+		Cell cell = animatedLayer.getCell((int) (x), (int) (y));
+		return cell != null && cell.getTile() != null
+				&& cell.getTile().getProperties().containsKey(animatedKey);
+
+	}
 
 	public boolean isCellCallValue(float x, float y) {
 		Cell cell = nodeLayer.getCell((int) (x), (int) (y));
@@ -135,6 +145,7 @@ public class CellManager {
 				&& cell.getTile().getProperties().containsKey(callvalueKey);
 
 	}
+	
 
 	public boolean isCellItem(float x, float y) {
 		Cell cell = nodeLayer.getCell((int) (x), (int) (y));
@@ -250,6 +261,19 @@ public class CellManager {
 	/*
 	 * 					GET PROPERTY FUNCTIONS
 	 */
+	public Cell getAnimatedCell(float x, float y) {
+		return	animatedLayer.getCell((int) (x), (int) (y));
+	}
+	public int getAnimatedTileFrames(float x, float y) {
+		if (isCellAnimated(x, y)){
+			Cell cell = animatedLayer.getCell((int) (x), (int) (y));
+			String val = (String) cell.getTile().getProperties().get(animatedKey);
+
+			return Integer.parseInt(val);
+		}
+		DazDebug.print("TRIED TO GET animatedKey, BUT FOUND NO PROPERTY CALLED animatedKey");
+		return 0;
+	}
 	
 	public String getCrusherType(float x, float y) {
 		Cell cell = nodeLayer.getCell((int) (x), (int) (y));

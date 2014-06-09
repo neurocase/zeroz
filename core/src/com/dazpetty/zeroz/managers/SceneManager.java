@@ -147,7 +147,7 @@ public class SceneManager {
 		}
 	}
 	
-	public void Update(){
+	public void update(){
 		for (int i = 0; i < flamerturretcount; i++){
 			if (flamerturret[i] != null){
 				flamerturret[i].update();
