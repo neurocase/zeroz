@@ -14,7 +14,10 @@ public class ZeroAssetManager {
 	public static TextureAtlas projExplosionTexAtlas;
 
 	public static TextureAtlas fuseBoxExplosionTexAtlas;
+	
 	public static TextureAtlas flamesTexAtlas;
+	
+	public static TextureAtlas powerCableTexAtlas;
 	
 	public static Texture muzzleFlashTexture;
 	public static Texture projtex;
@@ -24,6 +27,8 @@ public class ZeroAssetManager {
 	public static Texture flameturret;
 	public static Texture wallturret;
 	public static Texture wallturretbarrel;
+	
+	public static Texture hazardcrusher;
 	
 	public static Sound pistolSound;
 	public static Sound shotgunSound;
@@ -44,13 +49,14 @@ public class ZeroAssetManager {
 		pistolSound = Gdx.audio.newSound(Gdx.files.internal("data/sound/weapon/pistol.mp3"));
 		shotgunSound = Gdx.audio.newSound(Gdx.files.internal("data/sound/weapon/shotgun.mp3"));
 		shotgunSound.setPitch(0, 0.5f);
-		
-		
 		/*
 		 * 		TEXTURES
-		 * 
 		 */
-		 
+		
+		hazardcrusher = new Texture(
+				Gdx.files.internal("data/gfx/crusher/crusherhazard.png"));
+		hazardcrusher.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		
 		flameturret = new Texture(
 				Gdx.files.internal("data/gfx/wallturret/flameturret.png"));
 		flameturret.setFilter(TextureFilter.Linear, TextureFilter.Linear);
@@ -63,8 +69,6 @@ public class ZeroAssetManager {
 				Gdx.files.internal("data/gfx/wallturret/turretbarrel.png"));
 		wallturretbarrel.setFilter(TextureFilter.Linear, TextureFilter.Linear); 
 		 
-		 
-		
 		healthtex = new Texture(
 				Gdx.files.internal("data/gfx/hud/health.png"));
 		healthtex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
@@ -97,6 +101,10 @@ public class ZeroAssetManager {
 		
 		flamesTexAtlas = new TextureAtlas(
 				Gdx.files.internal("data/gfx/effects/flames.atlas"));
+		
+		powerCableTexAtlas = new TextureAtlas(
+				Gdx.files.internal("data/gfx/power/powercable.atlas"));
+		
 		
 		projExplosionTexAtlas = new TextureAtlas(
 				Gdx.files.internal("data/gfx/effects/explosion/explosion.atlas"));

@@ -50,7 +50,7 @@ public class Door {
 	
 	
 	public Body body;
-	public FixtureDef fixtureDef;
+	//public FixtureDef fixtureDef;
 	public Fixture doorfix;
 	public boolean isAlive;
 	public int keyValue;

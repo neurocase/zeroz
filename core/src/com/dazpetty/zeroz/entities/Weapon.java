@@ -28,7 +28,7 @@ public class Weapon {
 	public int[] shotsary = new int[]          {1  ,1  ,3  ,3   ,1   ,1   ,6,7,8,12};
 	public int[] damageary =  new int[]        {15 ,15 ,50 ,3   ,40  ,50  ,6,7,8,1};
 	public int[] rateoffiredelayary = new int[]{30 ,25 ,60 ,3   ,60  ,60  ,6,7,8,2};
-	public int[] lifetimeary = new int[]       {5  ,200,200,1000,1000,10000,6,7,8,9};
+	public int[] lifetimeary = new int[]       {5  ,800,800,1400,1400,10000,6,7,8,9};
 	
 	public int bulletspeed = 0;
 	public int accuracyscatter = 0;

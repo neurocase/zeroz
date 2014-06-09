@@ -18,6 +18,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.dazpetty.zeroz.assets.ZeroAssetManager;
 import com.dazpetty.zeroz.core.DazDebug;
 import com.dazpetty.zeroz.managers.EntityManager;
+import com.dazpetty.zeroz.managers.SceneManager;
 
 public class WallTurret {
 
@@ -66,7 +67,7 @@ public class WallTurret {
 	public Body body;
 	public FixtureDef fixtureDef;
 	public Fixture doorfix;
-	public boolean isAlive;
+	public boolean isAlive = true;
 	public int keyValue;
 	public boolean openDoor = false;
 	
@@ -76,12 +77,20 @@ public class WallTurret {
 	public float minangle = 0;
 	
 	public PawnEntity zplayer;
-	
 	public EntityManager entityMan;
+	public SceneManager scene;
+	public boolean isAI = true;
+	//public boolean isAlive1 = true;
 	
-	public WallTurret(float x, float y, String type, int angle, World world, EntityManager entityMan){
-		
+	public Weapon weapon = new Weapon(1);
+	public int angle = 0;
+	
+	
+	public WallTurret(float x, float y, String type, int angle, World world, EntityManager entityMan, SceneManager scene){
+		Weapon weapon = new Weapon(1);
+		this.scene = scene;
 		this.entityMan = entityMan;
+		this.angle = angle;
 		
 		worldpos.x = x;
 		worldpos.y = y;
@@ -170,11 +179,7 @@ public class WallTurret {
 	}
 	
 	public void attemptShoot(float ang) {
-
-
-		if (isAlive) {
-			
-		}
+		scene.aiProjMan.shootProjectile(ang, this);
 	}
 	
 	
@@ -191,6 +196,11 @@ public class WallTurret {
 			aimangle = maxangle;
 		}else if (aimangle < minangle){
 			aimangle = minangle;
+		}else{
+		//	DazDebug.print("WALL TURRET ATTEMPT SHOOT");
+			
+			
+		attemptShoot(aimangle+90);	
 		}
 		
 	}
@@ -204,6 +214,7 @@ public class WallTurret {
 	
 	
 	
+	
 	public void draw(SpriteBatch batch){
 		if (TurretType.equals("flamer")){
 				flamerturretsprite.draw(batch);
@@ -214,8 +225,8 @@ public class WallTurret {
 		}
 	}
 
-	public void update(){
+	//public void update(){
 		
-	}
+	//}
 	
 }

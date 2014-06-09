@@ -33,9 +33,28 @@ public class PawnFoot {
 	
 	public void platformMode(){
 		for(Fixture fixture : body.getFixtureList()){
-				fixture.setSensor(false);			
+				fixture.setSensor(false);
 			}
 	}
+	public void moveMode(){
+		
+		for(Fixture fixture : body.getFixtureList()){
+				fixture.setSensor(false);
+				fixture.setFriction(1);
+				//fixture.refilter();
+			//	fixture.
+			}
+	}
+	public void stopMode(){
+		for(Fixture fixture : body.getFixtureList()){
+				fixture.setSensor(false);
+			//	fixture.setFriction(500);
+				fixture.setFriction(100);
+				
+			}
+	}
+	
+	
 	
 	
 	public PawnFoot(PawnEntity parentPawn, World world, Body body){
@@ -55,9 +74,9 @@ public class PawnFoot {
 
 		footfixture = body.createFixture(footfixtureDef);
 		footfixture.setUserData(this);
-		footfixtureDef.friction = 10;
+		//footfixtureDef.friction = 10000;
 		footfixtureDef.restitution = 0;
-		
+
 		body.createFixture(footfixtureDef);
 
 	}

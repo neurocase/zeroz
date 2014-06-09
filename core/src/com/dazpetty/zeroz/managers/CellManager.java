@@ -24,6 +24,7 @@ public class CellManager {
 	public String idkey = "id";
 	public String itemKey = "item";
 	public String callvalueKey = "callvalue";
+	public String powercableKey = "powercable";
 	public String worldvolumeKey = "worldvolume";
 	public String triggervalueKey = "triggervalue";
 	public String blockedKey = "solid";
@@ -38,6 +39,11 @@ public class CellManager {
 	public String ladderKey = "ladder";
 	public String angleKey = "angle";
 	public String turretKey = "turret";
+	public String flamerturretKey = "flamerturret";
+	public String crusherKey = "crusher";
+	public String deathKey = "death";
+	
+	
 	
 	public String calltriggerKey = "triggercall";
 	public String timerKey = "timer";
@@ -150,6 +156,12 @@ public class CellManager {
 				&& cell.getTile().getProperties().containsKey(delaykey);
 	}
 	
+	public boolean isCellPowerCable(float x, float y) {
+		Cell cell = nodeLayer.getCell((int) (x), (int) (y));
+		return cell != null && cell.getTile() != null
+				&& cell.getTile().getProperties().containsKey(powercableKey);
+	}
+	
 	public boolean isCellDiagonal(float x, float y) {
 		Cell cell = collisionLayer.getCell((int) (x), (int) (y));
 		return cell != null && cell.getTile() != null
@@ -163,6 +175,12 @@ public class CellManager {
 		return cell != null && cell.getTile() != null
 				&& cell.getTile().getProperties().containsKey(blockedKey);
 	}
+	
+	public boolean isCellDeath(float x, float y) {
+		Cell cell = collisionLayer.getCell((int) (x), (int) (y));
+		return cell != null && cell.getTile() != null
+				&& cell.getTile().getProperties().containsKey(deathKey);
+	}
 
 	public boolean isCellPlatform(float x, float y) {
 		Cell cell = collisionLayer.getCell((int) (x), (int) (y));
@@ -174,6 +192,11 @@ public class CellManager {
 		Cell cell = nodeLayer.getCell((int) (x), (int) (y));
 		return cell != null && cell.getTile() != null
 				&& cell.getTile().getProperties().containsKey(turretKey);
+	}
+	public boolean isCellFlamerTurret(float x, float y) {
+		Cell cell = nodeLayer.getCell((int) (x), (int) (y));
+		return cell != null && cell.getTile() != null
+				&& cell.getTile().getProperties().containsKey(flamerturretKey);
 	}
 	
 	public boolean isCellAngle(float x, float y) {
@@ -200,6 +223,13 @@ public class CellManager {
 				&& cell.getTile().getProperties().containsKey(moverKey);
 	}
 	
+	public boolean isCellCrusher(float x, float y) {
+		Cell cell = nodeLayer.getCell((int) (x), (int) (y));
+		return cell != null && cell.getTile() != null
+				&& cell.getTile().getProperties().containsKey(crusherKey);
+	}
+
+	
 	public boolean isCellMoveX(float x, float y) {
 		Cell cell = nodeLayer.getCell((int) (x), (int) (y));
 		return cell != null && cell.getTile() != null
@@ -220,6 +250,15 @@ public class CellManager {
 	/*
 	 * 					GET PROPERTY FUNCTIONS
 	 */
+	
+	public String getCrusherType(float x, float y) {
+		Cell cell = nodeLayer.getCell((int) (x), (int) (y));
+		String value = "null";
+		if (isCellCrusher(x, y)) {
+			value = (String) cell.getTile().getProperties().get(crusherKey);
+		} 
+		return value;
+	}
 	
 	public int getSpeedValue(float x, float y) {
 		if (isCellSpeed(x, y)){
@@ -253,7 +292,31 @@ public class CellManager {
 		DazDebug.print("TRIED TO GET moveyKey, BUT FOUND NO PROPERTY CALLED moveyKey");
 		return 0;
 	}
-	
+	public int getPowerCablePiece(float x, float y) {
+		int val = 0;
+		int check = 0;
+		if (isCellPowerCable(x-1, y)){
+			val += 1;
+			check++;
+		}
+		if (isCellPowerCable(x, y+1)){
+			val += 2;
+			check++;
+		}
+		if (isCellPowerCable(x+1, y)){
+			val += 4;
+			check++;
+		}
+		if (isCellPowerCable(x, y-1)){
+			val += 8;
+			check++;
+		}
+		if (check != 2){
+			val = 0;
+		}
+		
+		return val;
+	}
 	
 	public String getMoverType(float x, float y) {
 		if (isCellMover(x, y)){
@@ -292,6 +355,15 @@ public class CellManager {
 		String value = "null";
 		if (isCellTurret(x, y)) {
 			value = (String) cell.getTile().getProperties().get(turretKey);
+		}
+		return value;
+	}
+	
+	public String getFlamerTurretType(float x, float y) {
+		Cell cell = nodeLayer.getCell((int) (x), (int) (y));
+		String value = "null";
+		if (isCellFlamerTurret(x, y)) {
+			value = (String) cell.getTile().getProperties().get(flamerturretKey);
 		}
 		return value;
 	}
@@ -336,6 +408,9 @@ public class CellManager {
 		String value = "0";
 		if (isCellTriggerValue(x, y)) {
 			value = (String) cell.getTile().getProperties().get(triggervalueKey);
+			if (value.equals("")){
+				value = "0";
+			}
 		}
 		return Integer.parseInt(value);
 	}
@@ -414,6 +489,8 @@ public class CellManager {
 		return trigary[trigcount-1];
 		
 	}
+
+
 
 
 	

@@ -50,8 +50,13 @@ public class Mover {
 		startpos.x = x;
 		startpos.y = y;
 		
+		if (movertype.equals("backward")){
+			worldpos.x = moveto.x;
+			worldpos.y = moveto.y;
+		}else{
 		worldpos.x = x;
 		worldpos.y = y;
+		}
 		this.movertype = movertype;
 		this.speed = speed;
 		
@@ -73,9 +78,9 @@ public class Mover {
 		
 		doorfixDef.friction = 0;
 		
-		DazDebug.print("NEW MOVER AT: X:" +  worldpos.x + " Y:"+ worldpos.y);
-		DazDebug.print("MOVETO X: " + moveto.x + " Y:" + moveto.y);
-		DazDebug.print("STARTPOS X: " + startpos.x + " Y:" + startpos.y);
+		//DazDebug.print("NEW MOVER AT: X:" +  worldpos.x + " Y:"+ worldpos.y);
+	//	DazDebug.print("MOVETO X: " + moveto.x + " Y:" + moveto.y);
+		//DazDebug.print("STARTPOS X: " + startpos.x + " Y:" + startpos.y);
 		
 		
 	}
@@ -103,15 +108,15 @@ public class Mover {
 				//body.setLinearVelocity(1, body.getLinearVelocity().y);
 				//body.set
 				Movement.x = 1;
-				DazDebug.print("MOVE MOVER X to end" );
+			//	DazDebug.print("MOVE MOVER X to end" );
 			} 
 			if (worldpos.y <  moveto.y){
-				DazDebug.print("MOVE MOVER Y to end" );
+			//	DazDebug.print("MOVE MOVER Y to end" );
 				//body.setLinearVelocity(body.getLinearVelocity().x, 1);
 				Movement.y = 1;
 			}
 			
-			if ((worldpos.y >=  moveto.y) && (worldpos.x >  moveto.x)){
+			if ((worldpos.y >=  moveto.y) && (worldpos.x >=  moveto.x)){
 				goForward = false;
 			}
 			
@@ -119,14 +124,14 @@ public class Mover {
 			if (worldpos.x >  startpos.x){
 				//body.setLinearVelocity(-1, body.getLinearVelocity().y);
 				Movement.x = -1;
-				DazDebug.print("MOVE MOVER X to start" );
+			//	DazDebug.print("MOVE MOVER X to start" );
 			} 
 			if (worldpos.y >  startpos.y){
 				Movement.y = -1;
 				
-				DazDebug.print("MOVE MOVER Y to start" );
+		//		DazDebug.print("MOVE MOVER Y to start" );
 			}
-			if ((worldpos.y <=  startpos.y) && (worldpos.x <  startpos.x)){
+			if ((worldpos.y <=  startpos.y) && (worldpos.x <=  startpos.x)){
 				goForward = true;
 			}
 		}

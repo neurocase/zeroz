@@ -52,13 +52,15 @@ public class Projectile implements Poolable {
 	
 	
 	public PawnEntity pawn;
+	public WallTurret wallTurret;
 	
 	public float speed = 25;
-	
+	public boolean isAI = false;
 	
 	public boolean isAI(){
-		return pawn.isAI;
+		return isAI;
 	}
+
 	
 	public void killProj(){
 		isDead = true;
@@ -73,7 +75,15 @@ public class Projectile implements Poolable {
 	}
 	
 	public void reUseProjectile(PawnEntity pawn, float angle,  Weapon newweapon){
+		
+		
+		//depleted ensures that a projectile does not harm a player twice, by flagging when it is used
+		depleted = false;
+		
+		
+		isTurret = false;
 		this.pawn = pawn;
+		this.isAI = pawn.isAI;
 		weapon = newweapon;
 		speed = weapon.bulletspeed;
 		spawntime = System.currentTimeMillis();
@@ -137,6 +147,105 @@ public class Projectile implements Poolable {
 	    reUseProjectile(pawn, angle,  weapon);
 	}
 	
+	public Projectile(WallTurret wallTurret, World world, int activeproj,
+			float angle, Weapon weapon, ZeroAssetManager assetMan2) {
+		this.assetMan = assetMan;
+		this.id = id;
+		this.weapon = weapon;
+		speed = weapon.bulletspeed;
+		bodyDef.type = BodyType.DynamicBody;  
+		body = world.createBody(bodyDef);  
+		
+		/*
+		 *  180 = y + 1;
+		 *  0 = y - 1;  
+		 *  90 = x + 1;
+		 *  270 =  x - 1;
+		 */
+		float xoffset = 1;
+		float yoffset = -1;
+
+		
+		bodyDef.position.set(wallTurret.worldpos.x+xoffset, wallTurret.worldpos.y+yoffset);  
+		isAlive = true;
+		isDead = false;
+		
+		body.setGravityScale(0);
+		if (weapon.hasGravity){
+			body.setGravityScale(1);
+		}
+		int str = id;
+		//body.setUserData(this);
+		body.setBullet(true);
+				
+		
+		TextureRegion projtexreg = new TextureRegion(assetMan.projtex, 0, 0,16,
+				8);
+		
+		projsprite = new Sprite(projtexreg);
+		projsprite.setSize(0.5f, 0.25f);
+		projsprite.setOrigin(projsprite.getWidth() / 2, projsprite.getHeight() / 2);
+		projsprite.setPosition(0f, 0f);
+		fixtureDef = new FixtureDef(); 
+	    dynamicCircle = new CircleShape();  
+	 
+	    
+	    dynamicCircle.setRadius(0.2f);  
+	    reUseProjectile(wallTurret, angle,  weapon);
+	}
+
+	public boolean depleted = false;
+	public boolean isTurret = false;
+	public void reUseProjectile(WallTurret wallTurret, float angle,
+			Weapon newweapon) {
+		depleted = false;
+		isTurret = true;
+		this.wallTurret = wallTurret;
+		this.isAI = wallTurret.isAI;
+		weapon = newweapon;
+		speed = weapon.bulletspeed;
+		spawntime = System.currentTimeMillis();
+		killProj();
+		setupFixture(true);
+		
+		isAlive = true;
+		isDead = false;
+		
+		//DazDebug.print("PROJECTILE:" + weapon.weaponName + "is firing");
+		
+		//weapon.
+		float scatterammount = (float) (weapon.accuracyscatter * Math.random());
+		
+		angle -= (weapon.accuracyscatter/2);
+		
+		body.setActive(true);
+		body.setAwake(true);
+		
+		rad = (float) Math.toRadians(angle+scatterammount);
+		float velx = (float) (speed * Math.cos(rad));
+		float vely = (float) (speed * Math.sin(rad));
+		float yoffset = 0.5f;
+		float xoffset = 0.5f;
+		if (wallTurret.angle != 0){
+		// yoffset = -0.75f;
+		}else{
+			//yoffset = 1;
+		}
+		
+		projsprite.setRotation(angle);
+		body.setTransform(wallTurret.worldpos.x+xoffset, wallTurret.worldpos.y+yoffset, angle);
+		body.setLinearVelocity(velx,vely);
+		
+	}
+	
+	public int getParentDamage(){
+		if (isTurret){
+			return wallTurret.weapon.damage;
+		}else{
+			return pawn.weapon.damage;
+		}
+	}
+
 	public void setupFixture(boolean isAI){
 		Filter a = fixtureDef.filter;
 	    

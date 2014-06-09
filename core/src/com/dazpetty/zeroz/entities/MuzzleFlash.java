@@ -27,6 +27,17 @@ public class MuzzleFlash {
 		sprite.setSize(1,1);
 		sprite.setPosition(worldpos.x, worldpos.y);
 	}
+	public MuzzleFlash(WallTurret wallTurret, ZeroAssetManager assetMan) {
+		worldpos = wallTurret.worldpos;
+		timeshoot = System.currentTimeMillis();
+		muzzTexture = assetMan.muzzleFlashTexture;
+		TextureRegion muzzTexRegion = new TextureRegion(muzzTexture, 0, 0, 32,
+				32);
+		
+		sprite = new Sprite (muzzTexRegion);
+		sprite.setSize(1,1);
+		sprite.setPosition(worldpos.x, worldpos.y);
+	}
 	long timenow = 0;
 	public void update(){
 		long timenow = System.currentTimeMillis();

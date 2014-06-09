@@ -95,13 +95,21 @@ public class WorldLogic {
 				entityMan.explosion[i].update();
 			}
 		}*/
+		
+		scene.Update();
+		
 		for (int i = 0; i < scene.MOVER_LIMIT; i++){
 			if (scene.mover[i] != null){
 				//DazDebug.print("UPDATE MOVER [" + i + "]" );
 				scene.mover[i].update();
 			}
 		}
-		
+		for (int i = 0; i < scene.CRUSHER_LIMIT; i++){
+			if (scene.crusher[i] != null){
+				//DazDebug.print("UPDATE MOVER [" + i + "]" );
+				scene.crusher[i].update();
+			}
+		}
 		
 		
 		boolean noTimers = true;
@@ -113,7 +121,7 @@ public class WorldLogic {
 			}
 		}
 		if (noTimers){
-			DazDebug.print("THERE ARE NO TIMERS");
+		//	DazDebug.print("THERE ARE NO TIMERS");
 	
 		}
 

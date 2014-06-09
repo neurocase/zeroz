@@ -116,8 +116,8 @@ public class Drone {
           
           //currentFrame = 1;
           // ATTENTION! String.format() doesnt work under GWT 
-          currentAtlasKey = String.format("%04d", currentFrame);
-          sprite.setRegion(textureAtlas.findRegion(currentAtlasKey));
+	    currentAtlasKey = String.format("%04d", currentFrame);
+	    sprite.setRegion(textureAtlas.findRegion(currentAtlasKey));
   		
   		Vector3 tmpVec3 = new Vector3(worldpos.x,worldpos.y,0); 
 

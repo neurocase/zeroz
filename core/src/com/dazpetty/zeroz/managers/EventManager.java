@@ -38,6 +38,11 @@ public class EventManager {
 		if (value == 0){
 			return;
 		}
+		for (int i = 0; i < scene.powercablecount; i++){
+			if (scene.powercable[i] != null){
+				scene.powercable[i].Trigger(value);
+			}
+		}
 		
 		//Call doors, movers and spawners, with this trigger
 		for (int i = 0; i < scene.ACTUATOR_LIMIT; i++){

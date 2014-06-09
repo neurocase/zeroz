@@ -223,7 +223,7 @@ public class WorldRenderer {
 		renderer.render();
 		
 		batch.begin();
-		
+		scene.Draw(batch);
 		
 		for (int i = 0; i < scene.WALLTURRET_LIMIT; i++){
 			if (scene.wallturret[i] != null){

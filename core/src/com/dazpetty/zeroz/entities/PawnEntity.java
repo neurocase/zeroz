@@ -67,21 +67,17 @@ public class PawnEntity {
 	public boolean isShooting = false;
 	public boolean aimOnLadder = false;
 	public boolean isLevelScrolling = false;
-
 	/*
 	 * INPUT HELPERS
 	 */
-
 	public boolean pressUp = false;
 	public boolean pressDown = false;
 	public boolean pressRight = false;
 	public boolean pressLeft = false;
 	public boolean pressShoot = false;
-
 	/*
 	 * ORDINARY VARIABLES
 	 */
-
 	public int goDirection = 0;
 	public int deathanim = 0;
 	public float jumpSpeed = 16;
@@ -94,7 +90,6 @@ public class PawnEntity {
 	public float deceleration = 0.6f;
 	public int blinking = 60;
 	public int BLINK_DURATION = 60;
-
 	/*
 	 * Strings
 	 */
@@ -107,15 +102,12 @@ public class PawnEntity {
 	/*
 	 * Vectors
 	 */
-
 	public Vector2 worldpos = new Vector2(0, 0);
 	public Vector2 velocity = new Vector2(0, 0);
 	public Vector3 targetWorldVec = new Vector3(0, 0, 0);
 	public Vector3 targetScreenVec = new Vector3(0, 0, 0);
-
 	public Vector3 aimingAt = new Vector3(0, 0, 0);
 	public Vector2 actorTarget = new Vector2(0, 0);
-
 	public float aimAtPlayer = 0;
 	public int activeBullet = 0;
 	public float height = 0;
@@ -134,12 +126,10 @@ public class PawnEntity {
 	/*
 	 * Armsprites
 	 */
-
 	public Sprite armsprite;
 	public Sprite armswordsprite;
 	public Sprite armuzisprite;
 	public Sprite armshotgunsprite;
-
 	public Sprite aimladdersprite;
 	public String type = null;
 	public Sprite idlesprite;
@@ -180,7 +170,6 @@ public class PawnEntity {
 	public Sprite grensprite;
 	public FixtureDef fixtureDef;
 	public Camera camera;
-
 	/*
 	 * AI's VARIABLES
 	 */
@@ -191,12 +180,10 @@ public class PawnEntity {
 	float relativetoplayery = 0;
 	public Vector2 relativepos = new Vector2(relativetoplayerx,
 			relativetoplayery);
-
 	/*
 	 * FUNCTIONS
 	 */
 	public void useEntity(EntitySpawner spawner) {
-
 		this.weapon = spawner.weapon;
 		worldpos = spawner.worldpos;
 		mainbody.setTransform(spawner.worldpos, 0);
@@ -205,20 +192,17 @@ public class PawnEntity {
 		isDisposed = false;
 		isOnLadder = false;
 		isAlive = true;
-
 		health = startinghealth;
 		DazDebug.print("ENTITY IN AT" + worldpos.x + worldpos.y);
 	}
 
 	public void attemptShoot(float ang) {
 		projMan.setWorld(world);
-
 		if (isAlive) {
 			aimAngle = ang;
 			projMan.shootProjectile(ang, this);
 		}
 	}
-
 	public EntitySpawner spawner;
 	public SceneManager scene; 
 	public EntityManager entMan;
@@ -425,6 +409,13 @@ public class PawnEntity {
 		return false;
 	}
 
+	public boolean checkDeath(){
+		if (levelMan.cellMan.isCellDeath(worldpos.x, worldpos.y)) {
+			return true;
+		}
+		return false;
+	}
+	
 	public boolean checkLadder() {
 		if (levelMan.cellMan.isCellLadder(worldpos.x, worldpos.y)) {
 			return true;
@@ -460,10 +451,12 @@ public class PawnEntity {
 
 	public void stopVelocity(boolean b) {
 		if (b) {
+			//blue = true;
 			// mainbodyfixture.setFriction(1000);
 			fixtureDef.friction = 0;
 			pawnFoot.footfixtureDef.friction = 1000;
 		} else {
+		//	blue = false;
 			mainbodyfixture.setFriction(1);
 			fixtureDef.friction = 1;
 			pawnFoot.footfixtureDef.friction = 1;
@@ -482,7 +475,11 @@ public class PawnEntity {
 	boolean nextFall = false;
 
 	public void update(boolean isWorldCoord, Camera camera) {
-
+			//blue = true;
+		//pawnFoot.moveMode();
+		if (checkDeath()){
+			takeDamage(1000);
+		}
 		velocityCheck();
 		// if (numFootContacts != 0){
 		if (!isAI) {
@@ -530,25 +527,30 @@ public class PawnEntity {
 
 		fixtureDef.filter.categoryBits = 3;
 
-		if (!groundCheck()) {
-
-		} else {
-
-		}
+		
+		blue = false;
 
 		if (pressRight) {
 			goRight();
+			//blue = true;
 		} else if (pressLeft) {
 			goLeft();
+			
+		}else{
+
+			if (isGrounded && groundCheck()){
+				mainbody.setLinearVelocity(mainbody.getLinearVelocity().x/1.2f, mainbody.getLinearVelocity().y);
+				//DazDebug.print("MAINBODY LINEAR VEL X" + mainbody.getLinearVelocity().x);
+				blue = true;
+			}
+		}
+		
+		if (!isGrounded && groundCheck()){
+			//DazDebug.print("WTF?");
+		}else{
+			//DazDebug.print("NOT GROUNDED");
 		}
 
-		if (!pressLeft && !pressRight && !pressUp && isGrounded) {
-			stopVelocity(true);
-
-			// System.out.println("STOPSTOPSTOPSTOPSTOPSTOP");
-		} else {
-			stopVelocity(false);
-		}
 		goDirection = 0;
 
 		calculateFrame();
@@ -684,8 +686,12 @@ public class PawnEntity {
 		}
 	}
 
+	private boolean blue = false;
+	
 	private boolean isPlayerGrounded() {// (float deltaTime) {
 		// groundedPlatform = null;
+		
+		
 		Array<Contact> contactList = world.getContactList();
 		for (int i = 0; i < contactList.size; i++) {
 			Contact contact = contactList.get(i);
@@ -964,10 +970,17 @@ public class PawnEntity {
 		armsprite.setRotation(aimAngle - 180);
 		armsprite.setPosition(worldpos.x - 1.76f, worldpos.y + armyadd);
 
+		if (blue){
+			sprite.setColor(Color.BLUE);
+		}else{
+			sprite.setColor(Color.WHITE);
+		}
+		
+		
 		if (type == "enemy") {
 			sprite.setColor(Color.RED);
 		} else {
-			sprite.setColor(Color.WHITE);
+		//	sprite.setColor(Color.WHITE);
 		}
 		if (!aimless) {
 			isShooting = true;

@@ -6,6 +6,7 @@ import com.dazpetty.zeroz.core.DazDebug;
 import com.dazpetty.zeroz.entities.PawnEntity;
 import com.dazpetty.zeroz.entities.MuzzleFlash;
 import com.dazpetty.zeroz.entities.Projectile;
+import com.dazpetty.zeroz.entities.WallTurret;
 import com.dazpetty.zeroz.entities.Weapon;
 
 public class ProjectileManager {
@@ -23,6 +24,7 @@ public class ProjectileManager {
 
 	public ProjectileManager(int proj_limit, World world, ZeroAssetManager assetMan) {
 		this.assetMan = assetMan;
+		this.world = world;
 		PROJECTILE_LIMIT = proj_limit;
 		Projectile[] proj = new Projectile[PROJECTILE_LIMIT];
 	}
@@ -97,6 +99,63 @@ public class ProjectileManager {
 				// return false;
 			}
 		}
+	}
+
+	public void shootProjectile(float ang, WallTurret wallTurret) {
+		
+		
+		if (wallTurret.weapon.ready()) {
+			DazDebug.print("WALLTURRET READY AND SHOOTING");
+			createMuzzFlash(wallTurret);
+			long soundId = 1;
+			if (SoundManager.soundOn){
+			switch (wallTurret.weapon.weaponid){
+			//assetMan.pistolSound.setVolume(soundId, 0f);
+			
+				case 0:
+					
+					break;
+				case 1:
+					assetMan.pistolSound.play();
+					break;
+				case 2:
+					assetMan.shotgunSound.play();
+					break;
+				default:
+					assetMan.pistolSound.play();
+			}
+			}
+			for (int i = 0; i < wallTurret.weapon.shots; i++) {
+
+				DazDebug.print("shooting, " + wallTurret.weapon.weaponName + "," + wallTurret.weapon.shots
+						+ " shots, weaponid: " + wallTurret.weapon.weaponid);
+				activeproj++;
+				if (activeproj == PROJECTILE_LIMIT - 1)
+					activeproj = 0;
+
+				if (proj[activeproj] == null) {
+					proj[activeproj] = new Projectile(wallTurret, world,
+							activeproj, ang, wallTurret.weapon, assetMan);
+				}
+				proj[activeproj].reUseProjectile(wallTurret, ang, wallTurret.weapon);
+				// return false;
+			}
+		}
+		
+		
+		
+		
+		
+		
+	}
+
+	private void createMuzzFlash(WallTurret wallTurret) {
+		activemuzzflash++;
+		if (activemuzzflash > MUZZLE_FLASH_LIMIT-1){
+			activemuzzflash = 0;
+		}
+		muzzleflash[activemuzzflash] = new MuzzleFlash(wallTurret , assetMan);
+		
 	}
 
 }

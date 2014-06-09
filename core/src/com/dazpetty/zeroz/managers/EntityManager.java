@@ -11,6 +11,7 @@ import com.dazpetty.zeroz.assets.ZeroAssetManager;
 import com.dazpetty.zeroz.core.DazDebug;
 import com.dazpetty.zeroz.entities.CopterTurret;
 import com.dazpetty.zeroz.entities.Explosion;
+import com.dazpetty.zeroz.entities.FlamerTurret;
 import com.dazpetty.zeroz.entities.PawnEntity;
 import com.dazpetty.zeroz.entities.CopterBoss;
 import com.dazpetty.zeroz.entities.Destroyable;
@@ -105,6 +106,17 @@ public class EntityManager {
 		/*
 		 * DEACTIVATE DOORS, ENEMIES AND DESTROYED OBJECTS
 		 */
+		
+		if (ch.killPlayer){
+			zplayer.takeDamage(1000);
+		}
+		
+		zplayer.takeDamage(ch.damagePlayer);
+		
+		if (ch.damagePlayer != 0){
+			DazDebug.print("Player Takes " + ch.damagePlayer + " Damage.");
+		}
+		
 		for (int i = 0; i < scene.EXPLOSION_LIMIT; i++) {
 			if (scene.explosion[i] != null) {
 				scene.explosion[i].update();
@@ -175,6 +187,17 @@ public class EntityManager {
 				tur.takeDamage(damage);
 			}
 		}
+		
+		Array<FlamerTurret> flameTurretToDamage = ch.getFlameTurretToTrigger();
+		if (flameTurretToDamage != null) {
+			for (int i = 0; i < flameTurretToDamage.size; i++) {
+				FlamerTurret fturret = (FlamerTurret) flameTurretToDamage.get(i);
+				fturret.shoot();
+			}
+		}
+		
+		
+		
 
 		ch.clearCollisions();
 

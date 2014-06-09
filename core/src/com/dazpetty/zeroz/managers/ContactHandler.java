@@ -8,9 +8,11 @@ import com.dazpetty.zeroz.core.DazDebug;
 import com.dazpetty.zeroz.entities.CopterTurret;
 import com.dazpetty.zeroz.entities.Destroyable;
 import com.dazpetty.zeroz.entities.Drone;
+import com.dazpetty.zeroz.entities.FlamerTurret;
 import com.dazpetty.zeroz.entities.PawnEntity;
 import com.dazpetty.zeroz.entities.PawnFoot;
 import com.dazpetty.zeroz.entities.Projectile;
+import com.dazpetty.zeroz.nodes.Crusher;
 import com.dazpetty.zeroz.nodes.Door;
 import com.dazpetty.zeroz.nodes.WorldVolume;
 
@@ -35,6 +37,12 @@ public class ContactHandler {
 	private Array<WorldVolume> worldVolumesToTrigger;
 	public Array<WorldVolume> getWorldVolumesToTrigger() { return worldVolumesToTrigger; }
 	
+	private Array<FlamerTurret> flameTurretToTrigger;
+	public Array<FlamerTurret> getFlameTurretToTrigger() { return flameTurretToTrigger; }
+	
+	
+	public boolean killPlayer = false;
+	public int damagePlayer = 0;
 	
 	public ContactHandler(){
 		enemiesToDamage = new Array<PawnEntity>(); 
@@ -43,6 +51,9 @@ public class ContactHandler {
 		droneToDamage = new Array<Drone>();
 		copterTurretToDamage = new Array<CopterTurret>();
 		worldVolumesToTrigger = new Array<WorldVolume>();
+		flameTurretToTrigger = new Array<FlamerTurret>();
+		//flameTurretToCease
+
 		
 	}
 	
@@ -50,16 +61,40 @@ public class ContactHandler {
 		boolean removeProj = false;
 		for (int i = 0; i < 2; i++){
 			Object objBb = objB;
-
+			
+			if (objA instanceof PawnEntity && (objB instanceof Crusher)){
+				if (!((PawnEntity) objA).isAI) {
+					
+					if (!((Crusher) objB).goForward){
+						DazDebug.print("KILL PLAYER");
+						killPlayer = true;
+					}
+				//	flameTurretToTrigger.add((FlamerTurret)objB);
+				}
+			}
+			
+			if ((objA instanceof PawnEntity) && (objB instanceof FlamerTurret)){
+				if (!((PawnEntity) objA).isAI) {
+					DazDebug.print("FLAMER TURRET");
+				//	flameTurretToTrigger.add((FlamerTurret)objB);
+				}
+			}
 			
 			if ((objA instanceof PawnEntity) && (objB instanceof WorldVolume)){
 				if (!((PawnEntity) objA).isAI) {
-					worldVolumesToTrigger.add((WorldVolume) objB);
+					if (objB instanceof WorldVolume){
+						worldVolumesToTrigger.add((WorldVolume) objB);
+					}
 				}
 			}
-			if ((objA instanceof String || objA instanceof CopterTurret
+			if ((objA instanceof String || objA instanceof CopterTurret || objA instanceof Crusher
 					|| objA instanceof PawnEntity || objA instanceof Destroyable || objA instanceof Drone || objA instanceof Door)
 					&& objB instanceof Projectile) {
+				
+				if (objA instanceof Crusher){
+					removeProj = true;
+				}
+				
 				
 				if (objA instanceof Door){
 					DazDebug.print("ITS A FUCKEN DOOR MATE!");
@@ -80,7 +115,11 @@ public class ContactHandler {
 						if (objA instanceof PawnEntity) {
 							if (!((PawnEntity) objA).isAI) {
 								//DazDebug.print("::: PLAYER TAKES DAMAGE");
-								removeProj = true;
+								if (!((Projectile) objB).depleted){
+									damagePlayer += ((Projectile) objB).getParentDamage();
+									((Projectile) objB).depleted = true;
+									removeProj = true;
+								}
 							}
 						}
 					} else {
@@ -135,6 +174,9 @@ public class ContactHandler {
 		droneToDamage.clear();	
 		copterTurretToDamage.clear();
 		worldVolumesToTrigger.clear();
+		flameTurretToTrigger.clear();
+		damagePlayer = 0;
+		killPlayer = false;
 	}
 
 

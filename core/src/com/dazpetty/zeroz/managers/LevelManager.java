@@ -19,11 +19,14 @@ import com.dazpetty.zeroz.core.DazDebug;
 import com.dazpetty.zeroz.core.GameScreen;
 import com.dazpetty.zeroz.entities.CopterBoss;
 import com.dazpetty.zeroz.entities.Destroyable;
+import com.dazpetty.zeroz.entities.FlamerTurret;
 import com.dazpetty.zeroz.entities.Item;
 import com.dazpetty.zeroz.entities.WallTurret;
+import com.dazpetty.zeroz.nodes.Crusher;
 import com.dazpetty.zeroz.nodes.Door;
 import com.dazpetty.zeroz.nodes.EntitySpawner;
 import com.dazpetty.zeroz.nodes.Mover;
+import com.dazpetty.zeroz.nodes.PowerCable;
 import com.dazpetty.zeroz.nodes.Trigger;
 import com.dazpetty.zeroz.nodes.WorldVolume;
 import com.dazpetty.zeroz.nodes.ZeroTimer;
@@ -80,7 +83,7 @@ public class LevelManager {
 		String levelstr = Integer.toString(level);
 		map = new TmxMapLoader().load("data/levels/level" + levelstr + ".tmx");
 		collisionLayer = (TiledMapTileLayer) map.getLayers().get("collision");
-		nodeLayer = (TiledMapTileLayer) map.getLayers().get("miscLayer");
+		nodeLayer = (TiledMapTileLayer) map.getLayers().get("nodelayer");
 
 		cellMan = new CellManager(nodeLayer, collisionLayer);
 
@@ -200,6 +203,10 @@ public class LevelManager {
 						groundBox.dispose();
 					}
 				}
+			}
+		}
+		for (int h = 0; h < collisionLayer.getHeight(); h++) {
+			for (int w = 0; w < collisionLayer.getWidth(); w++) {
 				if (cellMan.isCellEnemySpawn(w, h)) {
 					String type = (String) cellMan.getEnemyType(w, h);
 					int rand = (int) (Math.random() * 10);
@@ -296,10 +303,25 @@ public class LevelManager {
 							+ " TYPE:" + type);
 					if (scene.wallturretcount < scene.WALLTURRET_LIMIT) {
 						scene.wallturret[scene.wallturretcount] = new WallTurret(
-								w, h, type, angle, world, entityMan);
+								w, h, type, angle, world, entityMan, scene);
 						scene.wallturretcount++;
 					}
 				}
+				if (cellMan.isCellFlamerTurret(w, h)) {
+
+					String type = cellMan.getFlamerTurretType(w, h);
+					//int angle = cellMan.getAngle(w, h);
+					DazDebug.print("++++FLAMERTURRET AT: X:" + w + " Y:" + h
+							+ " TYPE:" + type);
+					if (scene.flamerturretcount < scene.FLAMER_TURRET_LIMIT) {
+						scene.flamerturret[scene.flamerturretcount] = new FlamerTurret(
+								w, h, type, world, entityMan);
+						scene.flamerturretcount++;
+					}
+				}
+				
+				
+				
 				if (cellMan.isCellTimer(w, h)) {
 
 					// String type = cellMan.(x, y)(w, h);
@@ -336,14 +358,30 @@ public class LevelManager {
 								cellMan.getSpeedValue(w, h),
 								cellMan.getCellTriggerValue(w, h),
 								cellMan.getMoveXValue(w, h),
-								cellMan.getMoveYValue(w, h), 
-								world);
+								cellMan.getMoveYValue(w, h), world);
 						scene.movercountvalue++;
 					} else {
 
 						DazDebug.print("CANT CREATE MOVER, TOO MANY");
 						DazDebug.print("MMMMMMMMMMMMMMMMMMMMMMMMMMM");
 					}
+				}
+				if (cellMan.isCellPowerCable(w, h)) {
+					scene.powercable[scene.powercablecount] = new PowerCable(w,
+							h, cellMan.getPowerCablePiece(w, h),
+							cellMan.getCellTriggerValue(w, h));
+					scene.powercablecount++;
+				}
+				if (cellMan.isCellCrusher(w, h)) {
+					DazDebug.print("CRUSHER CREATED");
+					DazDebug.print("CCCCCCCCCCCCCCCCCCCCCCCCCCCC");
+					
+					scene.crusher[scene.crushercount] = new Crusher(w, h,
+							cellMan.getCrusherType(w,h),
+							cellMan.getSpeedValue(w, h), cellMan.getCellDelay(
+									w, h), cellMan.getMoveXValue(w, h),
+							cellMan.getMoveYValue(w, h), world);
+					scene.crushercount++;
 				}
 
 				/*
