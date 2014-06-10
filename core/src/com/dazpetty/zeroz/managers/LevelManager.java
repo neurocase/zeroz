@@ -3,9 +3,12 @@ package com.dazpetty.zeroz.managers;
 import java.util.Arrays;
 
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
+import com.badlogic.gdx.maps.tiled.tiles.AnimatedTiledMapTile;
+import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -15,6 +18,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.utils.Array;
 import com.dazpetty.zeroz.core.DazDebug;
 import com.dazpetty.zeroz.core.GameScreen;
 import com.dazpetty.zeroz.entities.CopterBoss;
@@ -22,6 +26,7 @@ import com.dazpetty.zeroz.entities.Destroyable;
 import com.dazpetty.zeroz.entities.FlamerTurret;
 import com.dazpetty.zeroz.entities.Item;
 import com.dazpetty.zeroz.entities.WallTurret;
+import com.dazpetty.zeroz.nodes.AnimatedTile;
 import com.dazpetty.zeroz.nodes.Crusher;
 import com.dazpetty.zeroz.nodes.Door;
 import com.dazpetty.zeroz.nodes.EntitySpawner;
@@ -63,6 +68,8 @@ public class LevelManager {
 	public EntityManager entityMan;
 	public World world;
 
+	public int animTileCount = 0;
+	public final int ANIMATED_TILES_LIMIT = 128;
 	public final int ENEMY_SPAWNER_LIMIT = 20;
 	public EntitySpawner playerSpawner;
 	public EntitySpawner enemyspawner[] = new EntitySpawner[ENEMY_SPAWNER_LIMIT];
@@ -73,14 +80,23 @@ public class LevelManager {
 
 	public EventManager eventMan;
 	public SceneManager scene;
-	public AnimatedTilesManager animTileMan;
 	public CellManager cellMan;
+	
+	public AnimatedTile animatedTiles[]  = new AnimatedTile[ANIMATED_TILES_LIMIT];
+	
+
+	public int animatedTilesCount = 0;
+	
+	//public AnimatedTiledMapTile animatedTiles[] = new AnimatedTiledMapTile[ANIMATED_TILES_LIMIT];
 
 	public LevelManager(int level, GameScreen gameScreen, World world) {
 		this.entityMan = gameScreen.entityMan;
 		this.scene = gameScreen.scene;
 		this.world = world;
-
+		
+		
+		
+		
 		String levelstr = Integer.toString(level);
 		map = new TmxMapLoader().load("data/levels/level" + levelstr + ".tmx");
 		collisionLayer = (TiledMapTileLayer) map.getLayers().get("collision");
@@ -88,9 +104,10 @@ public class LevelManager {
 		animatedLayer = (TiledMapTileLayer) map.getLayers().get("animlayer");
 
 		cellMan = new CellManager(nodeLayer, collisionLayer, animatedLayer);
-		animTileMan = new AnimatedTilesManager(cellMan, scene, map);
+		//animTileMan = new AnimatedTilesManager(cellMan, scene, map);
 		
 		Arrays.fill(keys, Boolean.FALSE);
+		
 
 		eventMan = new EventManager(this);
 		gameScreen.eventMan = this.eventMan;
@@ -388,25 +405,40 @@ public class LevelManager {
 				}
 				
 				if (cellMan.isCellAnimated(w, h)){
-					DazDebug.print("ANIMATED TILE FOUND");
-					DazDebug.print("AAAAAAAAAAAAAAAAAAAAAAAA");					
-					animTileMan.addAnimatedCell(w,h,cellMan.getAnimatedCell(w, h), cellMan.getAnimatedTileFrames(w, h), cellMan);
+				//	frameTile.clear();**
+					int count = cellMan.getAnimatedTileFrames(w, h);
+					int tileID = cellMan.getAnimatedCell(w, h).getTile().getId();
+					DazDebug.print("ANIMATED CELL WITH COUNT " + count + " AND TILE-ID " + tileID);
+					animatedTiles[animTileCount] = new AnimatedTile(tileID);
+					/*
+					 * SEACH ARRAY FOR EXISTING TILE
+					 */
+					boolean animExists = false;
+					
+					for (int i = 0; i < animTileCount; i++){
+						if (animatedTiles[i].tileID == tileID && !animExists){
+							animExists = true;
+							cellMan.getAnimatedCell(w, h).setTile(animatedTiles[i].getAnimatedTiledMapTile());
+						}
+					}
+					if (!animExists){
+						for (int i = 0; i < count; i++){
+							DazDebug.print("ANIMATED CELL TILE || ADDING | TILE ID " + tileID+i);
+							animatedTiles[animTileCount].AddAnimationTileFrame((StaticTiledMapTile) map.getTileSets().getTile(tileID+i));
+						}
+						cellMan.getAnimatedCell(w, h).setTile(animatedTiles[animTileCount].getAnimatedTiledMapTile());
+						animTileCount++;
+					}
 					
 				}
-				/*
-				 * if (!isLevelScrolling) { if (isLevelScrolling(w, h)) {
-				 * isLevelScrolling = true; } } if (!isBossLevel) { if
-				 * (isCellBoss(w, h)) { isBossLevel = true; scene.copterBoss =
-				 * new CopterBoss(w, h, world); } }
-				 */
-
 			}
 		}
 		
 	}
 	
+
 	public void update(){
-		animTileMan.update();
+		//animTileMan.update();
 	}
 	
 	EntitySpawner playerStart;
