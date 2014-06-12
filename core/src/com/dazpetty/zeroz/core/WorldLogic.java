@@ -57,6 +57,7 @@ public class WorldLogic {
 	public LevelManager levelMan;
 	public SceneManager scene;
 	public EventManager eventMan;
+	public DazDebug dazDebug;
 	
 	public WorldLogic(GameScreen gameScreen){
 		this.entityMan = gameScreen.entityMan;
@@ -66,8 +67,8 @@ public class WorldLogic {
 		this.scene = gameScreen.scene;
 		this.eventMan = gameScreen.eventMan;
 	
-		entityMan.zplayer = new PawnEntity(entityMan, levelMan.getPlayerSpawner());
-		DazDebug.print("playerstart at x" + levelMan.playerstart.x + " y:" + levelMan.playerstart.y);
+		entityMan.zplayer = new PawnEntity(entityMan, levelMan.getPlayerSpawner(),0);
+		dazDebug.print("playerstart at x" + levelMan.playerstart.x + " y:" + levelMan.playerstart.y);
 		playerSpawned = true;
 		inputHandler.LoadInputHandler(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), camera, entityMan.zplayer);
 	}

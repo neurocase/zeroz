@@ -21,6 +21,7 @@ public class PawnFoot {
 	public Fixture footfixture;
 	public Body body;
 	public int numFootContacts = 0;
+	public int numFootConveyer = 0;
 	
 	public void fallMode(){
 		for(Fixture fixture : body.getFixtureList()){
@@ -86,4 +87,23 @@ public class PawnFoot {
 	public void decFootContact(){
 		numFootContacts--;
 	}
+
+	/*	CONVEYER BELTS:
+	 * 
+	 *  LEFT DECREASE, RIGHT INCRESE
+	 *  
+	 *   if value > 0, move right
+	 *   if value < 0, move left
+	 *   if value == 0, do nothing
+	 */
+	
+	public void decFootConveyer() {
+		numFootConveyer--;
+	}
+
+	public void incFootConveyer() {
+		numFootConveyer++;
+	}
+
+
 }

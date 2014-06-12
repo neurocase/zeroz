@@ -8,7 +8,7 @@ public class DazDebug {
 
 	public long milliTimeTick = System.nanoTime();
 	
-	
+	String lastTimeString = "";
 	
 	public void tick(){
 	/*	t++;
@@ -21,7 +21,25 @@ public class DazDebug {
 		}*/
 	}
 	static long startTime = System.currentTimeMillis();
+	public int stringCalledXTimes = 0;
 	public static void print(String str){
-		System.out.println(str + "at:" + ((System.currentTimeMillis() - startTime)) + " milli secs");
+	/*	if (str == lastTimeString){
+			stringCalledXTimes++;
+		}else{
+			if (stringCalledXTimes > 1){
+				System.out.println("REPEATED  [ " + stringCalledXTimes + " ]  TIMES");
+			}
+			
+			*/
+			System.out.println(str + "at:" + ((System.currentTimeMillis() - startTime)) + " milli secs");
+		/*	stringCalledXTimes = 0;
+		}
+		
+		lastTimeString = str;*/
+		
+	}
+	
+	public void update(){
+		
 	}
 }

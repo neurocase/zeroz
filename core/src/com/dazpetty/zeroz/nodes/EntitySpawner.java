@@ -33,24 +33,27 @@ public class EntitySpawner {
 	public boolean triggerOn = false;
 	EntityManager entMan;
 	int triggerkey = 0;
-	
+	int patrolarea = 0;
 	public SceneManager scene;
 	
 	//public EntitySpawner(float w, float h, Trigger trigger, EntityManager entMan){
-	public EntitySpawner(float w, float h, String enemySpawnType, int callCounts, int triggerValue,int delay, EntityManager entMan){
-		
+	public EntitySpawner(float w, float h, String enemySpawnType, int callCounts, int triggerValue,int delay, EntityManager entMan, int enemypatrol){
+		patrolarea =  enemypatrol;
 		this.scene = entMan.scene;
 		
 		this.type = enemySpawnType;
 		this.TOTAL_SPAWNS = callCounts;
 		this.triggerkey = triggerValue;
 		DazDebug.print("-=-=-=-=+++++++++++++++++++++++++++++++++++=-=-=");
-		DazDebug.print("-=-SPAWNER::" + type + ":" + TOTAL_SPAWNS + "|KEY: " +triggerkey + "-=-");
+		DazDebug.print("-=-SPAWNER::" + type + ":" + TOTAL_SPAWNS + "|KEY: " +triggerkey + "|patrol " + enemypatrol);
 		DazDebug.print("-=-=-=-=+++++++++++++++++++++++++++++++++++=-=-=");
 		this.entMan = entMan;
 		worldpos.x = w;
 		worldpos.y = h+ 0.5f;
 	
+		
+		
+		
 		if (type.equals("player")){
 			isAI = false;
 			
@@ -61,6 +64,9 @@ public class EntitySpawner {
 		//}else{
 		//	triggerOn = true;
 	//	}
+		if (triggerValue == 0){
+			triggerOn = true;
+		}
 	}
 	public void triggerOn(int triggerkey) {
 		if (this.triggerkey == triggerkey){
@@ -112,7 +118,7 @@ public class EntitySpawner {
 		if (isReady()) {
 			DazDebug.print("TRIGGER IS READY");
 			if (scene.zenemy[scene.enemycount] == null) {
-				scene.zenemy[scene.enemycount] = new PawnEntity(entMan, this);
+				scene.zenemy[scene.enemycount] = new PawnEntity(entMan, this, patrolarea);
 				SpawnSuccessful();
 				if (spawnSuccessfull)
 					DazDebug.print("TRIGGER spawnSuccessfull");

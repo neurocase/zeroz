@@ -45,7 +45,7 @@ public class WorldRenderer {
 	private SpriteBatch batch;
 	private SpriteBatch bgbatch;
 	
-	private boolean showDebug = true;
+	private boolean showDebug = false;
 	
 	Box2DDebugRenderer debugRenderer;
 	private Texture levelCompleteTex;

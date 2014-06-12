@@ -55,6 +55,10 @@ public class EventManager {
 				scene.zerotimer[i].callTimer(value);
 			}
 			
+			if (scene.mover[i] != null){
+				scene.mover[i].triggerOn(value);
+			}
+			
 			if (scene.door[i] != null && scene.door[i].checkKey(value)) {
 				
 				String doorstate = "";

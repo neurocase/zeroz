@@ -155,6 +155,12 @@ public class ContactHandler {
 					}else if (((String)objB).equals("platform")){
 						((PawnFoot)objA).incFootContact();
 						((PawnFoot)objA).isOnPlatform = true;
+					}else if(((String)objB).equals("conveyerleft")){
+						((PawnFoot)objA).incFootContact();
+						((PawnFoot)objA).decFootConveyer();
+					}else if(((String)objB).equals("conveyerright")){
+						((PawnFoot)objA).incFootContact();
+						((PawnFoot)objA).incFootConveyer();
 					}
 				}
 			}
@@ -192,7 +198,13 @@ public class ContactHandler {
 			}
 		}	
 		if (objA instanceof PawnFoot && objB instanceof String){
-			if (((String)objB).equals("solid")){
+			if (((String)objB).equals("conveyerleft")){
+				((PawnFoot)objA).incFootConveyer();
+			}
+			if (((String)objB).equals("conveyerright")){
+				((PawnFoot)objA).decFootConveyer();
+			}
+			if (((String)objB).equals("solid") || ((String)objB).equals("conveyerleft") || ((String)objB).equals("conveyerright")){
 				((PawnFoot)objA).decFootContact();
 			}else if (((String)objB).equals("platform")){
 				((PawnFoot)objA).decFootContact();

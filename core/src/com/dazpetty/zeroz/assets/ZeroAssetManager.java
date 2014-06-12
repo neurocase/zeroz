@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.physics.box2d.CircleShape;
 
 public class ZeroAssetManager {
 	
@@ -42,10 +43,11 @@ public class ZeroAssetManager {
 	public static Texture dirbuttonstex;
 	public static Texture shootbuttontex;
 	public static Texture jumpbuttontex;
-	
+
+
 	
 	public ZeroAssetManager(){
-		
+		  
 		pistolSound = Gdx.audio.newSound(Gdx.files.internal("data/sound/weapon/pistol.mp3"));
 		shotgunSound = Gdx.audio.newSound(Gdx.files.internal("data/sound/weapon/shotgun.mp3"));
 		shotgunSound.setPitch(0, 0.5f);
@@ -120,4 +122,6 @@ public class ZeroAssetManager {
 		
 		
 	}
+
+	
 }

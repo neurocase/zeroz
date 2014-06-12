@@ -51,6 +51,7 @@ public class Projectile implements Poolable {
 	public ZeroAssetManager assetMan;
 	
 	
+	
 	public PawnEntity pawn;
 	public WallTurret wallTurret;
 	
@@ -110,6 +111,7 @@ public class Projectile implements Poolable {
 		projsprite.setRotation(angle);
 		body.setTransform(pawn.worldpos.x, pawn.worldpos.y+1, angle);
 		body.setLinearVelocity(velx,vely);
+		
 	}
 	
 	public Projectile(PawnEntity pawn, World world, int id, float angle,  Weapon weapon, ZeroAssetManager assetMan) {
@@ -268,6 +270,7 @@ public class Projectile implements Poolable {
 	    	fixture.setUserData(this);
 	    	body.setUserData("playerproj");
 	    }
+	    
 	}
 
 	

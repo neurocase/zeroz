@@ -40,16 +40,13 @@ public class Item {
 	
 	/*
 	 *  HEALTH ITEM
-	 *  0 = health
-	 *   
+	 *  0 = health 
 	 */	
-	
 	
 	public void dropWeapon(int weaponid){
 		
 		TextureRegion itemTexReg = new TextureRegion(texture,
 				0, 0, 64, 64);
-		
 		switch (weaponid) {
 			case 1:
 				itemType = "uzi";
@@ -122,9 +119,6 @@ public class Item {
 			isWeapon = true;
 		}
 		
-
-
-		
 		sprite = new Sprite(itemTexReg);
 		if(itemType.equals("shotgun") || itemType.equals("uzi")){
 			sprite.setSize(1.5f, 0.5f);
@@ -135,7 +129,4 @@ public class Item {
 		sprite.setPosition(x, y);
 	
 	}
-
-
-	
 }

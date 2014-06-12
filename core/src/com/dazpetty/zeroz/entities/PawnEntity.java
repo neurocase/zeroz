@@ -175,7 +175,7 @@ public class PawnEntity {
 	 */
 	public int id = 0;
 	public boolean isJumpy = false;
-	public float shootDist = 4;
+	public float shootDist = 10;
 	float relativetoplayerx = 0;
 	float relativetoplayery = 0;
 	public Vector2 relativepos = new Vector2(relativetoplayerx,
@@ -206,8 +206,11 @@ public class PawnEntity {
 	public EntitySpawner spawner;
 	public SceneManager scene; 
 	public EntityManager entMan;
-
-	public PawnEntity(EntityManager entMan, EntitySpawner spawner) {
+	
+	public float patrolstart = 0;
+	public float patrolend = 0;
+	
+	public PawnEntity(EntityManager entMan, EntitySpawner spawner, int patrolarea) {
 
 		this.scene = entMan.scene;
 		this.spawner = spawner;
@@ -233,6 +236,16 @@ public class PawnEntity {
 		}
 		worldpos = spawner.worldpos;
 
+		patrolstart = spawner.worldpos.x;
+		patrolend = spawner.worldpos.x + patrolarea;
+		DazDebug.print("-----------------------");
+		DazDebug.print("PATROL AREA :  "  + patrolarea);
+		if (patrolstart > patrolend){
+			float temphold = patrolstart;
+			patrolstart = patrolend;
+			patrolend = temphold;
+		}
+		
 		BodyDef bodyDef = new BodyDef();
 		bodyDef.position.set(worldpos);
 		bodyDef.type = BodyType.DynamicBody;
@@ -389,6 +402,31 @@ public class PawnEntity {
 		}
 	}
 
+	
+	public void conveyRight(){
+		velocity = mainbody.getLinearVelocity();
+		if (velocity.x < MAX_MOVE_SPEED+3) {
+			mainbody.applyLinearImpulse(moveSpeed/2, 0, 0, 0, true);
+		}
+		if (velocity.x < -2){
+			//mainbody.applyLinearImpulse(moveSpeed/2, 0, 0, 0, true);
+			velocity.x = -2;
+			mainbody.setLinearVelocity(velocity);
+		}
+	}
+	public void conveyLeft(){
+		velocity = mainbody.getLinearVelocity();
+		if (velocity.x > -MAX_MOVE_SPEED-3) {
+			mainbody.applyLinearImpulse(-moveSpeed/2, 0, 0, 0, true);
+		}
+		if (velocity.x > 2){
+			velocity.x = 2;
+			//mainbody.applyLinearImpulse(-moveSpeed/2, 0, 0, 0, true);
+		}
+	}
+	
+	
+	
 	public void goJumpDown() {
 		isGrounded = false;
 		isOnLadder = false;
@@ -462,6 +500,10 @@ public class PawnEntity {
 			pawnFoot.footfixtureDef.friction = 1;
 		}
 
+	}
+	
+	public int getConveyerCheck(){
+		return pawnFoot.numFootConveyer;
 	}
 
 	public void resetInputFlags() {
@@ -545,10 +587,10 @@ public class PawnEntity {
 			}
 		}
 		
-		if (!isGrounded && groundCheck()){
-			//DazDebug.print("WTF?");
-		}else{
-			//DazDebug.print("NOT GROUNDED");
+		if (getConveyerCheck() > 0){
+			conveyRight();
+		}else if (getConveyerCheck() < 0){
+			conveyLeft();
 		}
 
 		goDirection = 0;
@@ -592,12 +634,14 @@ public class PawnEntity {
 			targetWorldVec.y = zplayer.worldpos.y;
 			aimAtPlayer = relativepos.angle();
 			aimAngle = aimAtPlayer;
-			if (relativetoplayerx < -shootDist) {
+			if (relativetoplayerx < -shootDist && worldpos.x > patrolstart) {
 				goLeft();
-			} else if (relativetoplayerx > shootDist) {
+			} else if (relativetoplayerx > shootDist && worldpos.x < patrolend) {
 				goRight();
 
 			} else {
+				if (Math.abs(relativetoplayerx) < shootDist)
+				
 				attemptShoot(relativepos.angle());
 			}
 			if (relativetoplayery > 2) {

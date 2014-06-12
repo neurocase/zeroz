@@ -34,7 +34,14 @@ public class Mover {
 	
 	public Sprite sprite;
 	
+	public boolean triggered = false;
+	public int triggervalue = 0;
+	
 	public Mover(float x, float y, String movertype, int speed, int triggervalue, float movex, float movey, World world){
+		this.triggervalue = triggervalue;
+		if (triggervalue == 0){
+			triggered = true;
+		}
 		
 		texture = new Texture(("data/gfx/movers/hoverplatform.png"));
 		texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
@@ -91,56 +98,47 @@ public class Mover {
 	
 	public void update(){
 		
-		Movement.x = 0;
-		Movement.y = 0;
-		
 	
-
-		
-		worldpos = body.getPosition();
-		
-		sprite.setPosition(worldpos.x-2, worldpos.y-1.5f);
-		
-		
-		if (goForward){
-			if (worldpos.x <  moveto.x){
-				//body.applyLinearImpulse(1, 0, 1, 1, true);
-				//body.setLinearVelocity(1, body.getLinearVelocity().y);
-				//body.set
-				Movement.x = 1;
-			//	DazDebug.print("MOVE MOVER X to end" );
-			} 
-			if (worldpos.y <  moveto.y){
-			//	DazDebug.print("MOVE MOVER Y to end" );
-				//body.setLinearVelocity(body.getLinearVelocity().x, 1);
-				Movement.y = 1;
-			}
+			Movement.x = 0;
+			Movement.y = 0;
 			
-			if ((worldpos.y >=  moveto.y) && (worldpos.x >=  moveto.x)){
-				goForward = false;
-			}
+			worldpos = body.getPosition();
 			
-		}else{
-			if (worldpos.x >  startpos.x){
-				//body.setLinearVelocity(-1, body.getLinearVelocity().y);
-				Movement.x = -1;
-			//	DazDebug.print("MOVE MOVER X to start" );
-			} 
-			if (worldpos.y >  startpos.y){
-				Movement.y = -1;
+			sprite.setPosition(worldpos.x-2, worldpos.y-1.5f);
+			
+		if (triggered){
+			if (goForward){
+				if (worldpos.x <  moveto.x){
+					Movement.x = 1;
+				} 
+				if (worldpos.y <  moveto.y){
+					Movement.y = 1;
+				}
 				
-		//		DazDebug.print("MOVE MOVER Y to start" );
+				if ((worldpos.y >=  moveto.y) && (worldpos.x >=  moveto.x)){
+					goForward = false;
+				}
+				
+			}else{
+				if (worldpos.x >  startpos.x){
+					Movement.x = -1;
+				} 
+				if (worldpos.y >  startpos.y){
+					Movement.y = -1;
+				}
+				if ((worldpos.y <=  startpos.y) && (worldpos.x <=  startpos.x)){
+					goForward = true;
+				}
 			}
-			if ((worldpos.y <=  startpos.y) && (worldpos.x <=  startpos.x)){
-				goForward = true;
-			}
+			body.setLinearVelocity(Movement);
 		}
-		body.setLinearVelocity(Movement);
 		
 	}
 	
 	public void triggerOn(int trigval){
-		
+		if (trigval == triggervalue){
+			triggered = true;
+		}
 	}
 	
 }

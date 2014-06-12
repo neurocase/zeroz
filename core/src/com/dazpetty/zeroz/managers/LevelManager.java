@@ -223,6 +223,32 @@ public class LevelManager {
 						groundBox.dispose();
 					}
 				}
+				if (cellMan.isCellConveyer(w, h)) {
+					int c = 0;
+					while (cellMan.isCellConveyer(w + c, h)) {
+						c++;
+					}
+					
+					String conveyerdirection = cellMan.getConveyerType(w, h);
+					
+					BodyDef groundBodyDef = new BodyDef();
+					groundBodyDef.position.set(new Vector2(w + c * 0.5f,
+							h + 0.5f));
+					Body groundBody = world.createBody(groundBodyDef);
+					PolygonShape groundBox = new PolygonShape();
+					groundBox.setAsBox(c * 0.5f, 0.5f);
+					groundBody.createFixture(groundBox, 0.0f);
+					groundBody.setUserData("conveyer" + conveyerdirection);
+					FixtureDef fixtureDef = new FixtureDef();
+					fixtureDef.shape = groundBox;
+					fixtureDef.filter.categoryBits = 2;
+					Fixture gfix = groundBody.createFixture(groundBox, 0.0f);
+					gfix.setUserData("conveyer" + conveyerdirection);
+					for (int d = 0; d < c - 1; d++) {
+						w++;
+					}
+					groundBox.dispose();
+				}
 			}
 		}
 		for (int h = 0; h < collisionLayer.getHeight(); h++) {
@@ -241,7 +267,7 @@ public class LevelManager {
 					// Trigger trigger = new Trigger(cell, w, h, cellMan);
 					enemyspawner[enemyspawners] = new EntitySpawner(w, h, type,
 							count, cellMan.getCellTriggerValue(w, h),
-							cellMan.getCellDelay(w, h), entityMan);
+							cellMan.getCellDelay(w, h), entityMan, cellMan.getEnemyPatrol(w, h));
 					/*
 					 * enemyspawner[enemyspawners] = new EntitySpawner( w, h,
 					 * trigger, entityMan);
@@ -252,6 +278,7 @@ public class LevelManager {
 					DazDebug.print("-=-=-=-=+++++++++++++++++++++++++++++++++++=-=-=");
 					enemyspawners++;
 				}
+				
 				if (cellMan.isCellDestroyable(w, h)) {
 
 					if (scene.TOTAL_DESTROYABLES < scene.DESTROYABLE_LIMIT) {
@@ -299,7 +326,7 @@ public class LevelManager {
 					 * EntitySpawner(w, h, trigger, entityMan);
 					 */
 					playerStart = new EntitySpawner(w, h, "player", 1, 0, 0,
-							entityMan);
+							entityMan, 0);
 				}
 				if (cellMan.isCellWorldVolume(w, h)) {
 
@@ -393,8 +420,8 @@ public class LevelManager {
 					scene.powercablecount++;
 				}
 				if (cellMan.isCellCrusher(w, h)) {
-					DazDebug.print("CRUSHER CREATED");
-					DazDebug.print("CCCCCCCCCCCCCCCCCCCCCCCCCCCC");
+					//DazDebug.print("CRUSHER CREATED");
+					//DazDebug.print("CCCCCCCCCCCCCCCCCCCCCCCCCCCC");
 					
 					scene.crusher[scene.crushercount] = new Crusher(w, h,
 							cellMan.getCrusherType(w,h),
@@ -408,7 +435,7 @@ public class LevelManager {
 				//	frameTile.clear();**
 					int count = cellMan.getAnimatedTileFrames(w, h);
 					int tileID = cellMan.getAnimatedCell(w, h).getTile().getId();
-					DazDebug.print("ANIMATED CELL WITH COUNT " + count + " AND TILE-ID " + tileID);
+					//DazDebug.print("ANIMATED CELL WITH COUNT " + count + " AND TILE-ID " + tileID);
 					animatedTiles[animTileCount] = new AnimatedTile(tileID);
 					/*
 					 * SEACH ARRAY FOR EXISTING TILE
@@ -423,7 +450,7 @@ public class LevelManager {
 					}
 					if (!animExists){
 						for (int i = 0; i < count; i++){
-							DazDebug.print("ANIMATED CELL TILE || ADDING | TILE ID " + tileID+i);
+							//DazDebug.print("ANIMATED CELL TILE || ADDING | TILE ID " + tileID+i);
 							animatedTiles[animTileCount].AddAnimationTileFrame((StaticTiledMapTile) map.getTileSets().getTile(tileID+i));
 						}
 						cellMan.getAnimatedCell(w, h).setTile(animatedTiles[animTileCount].getAnimatedTiledMapTile());

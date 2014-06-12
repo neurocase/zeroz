@@ -45,6 +45,7 @@ public class Destroyable {
 	public boolean isAlive = true;
 	public int triggerkey = 0;
 	
+	
 	public int health = 100;
 	
 	public int getTriggerKey(){

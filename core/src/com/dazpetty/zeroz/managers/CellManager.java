@@ -43,7 +43,8 @@ public class CellManager {
 	public String crusherKey = "crusher";
 	public String deathKey = "death";
 	public String animatedKey = "animated";
-	
+	public String conveyerKey = "conveyer";
+	public String patrolKey = "enemypatrol";
 	
 	
 	public String calltriggerKey = "triggercall";
@@ -192,6 +193,12 @@ public class CellManager {
 		return cell != null && cell.getTile() != null
 				&& cell.getTile().getProperties().containsKey(deathKey);
 	}
+	
+	public boolean isCellConveyer(float x, float y) {
+		Cell cell = collisionLayer.getCell((int) (x), (int) (y));
+		return cell != null && cell.getTile() != null
+				&& cell.getTile().getProperties().containsKey(conveyerKey);
+	}
 
 	public boolean isCellPlatform(float x, float y) {
 		Cell cell = collisionLayer.getCell((int) (x), (int) (y));
@@ -256,11 +263,36 @@ public class CellManager {
 		return cell != null && cell.getTile() != null
 				&& cell.getTile().getProperties().containsKey(speedKey);
 	}
+	public boolean isEnemyPatrol(float x, float y) {
+		Cell cell = nodeLayer.getCell((int) (x), (int) (y));
+		return cell != null && cell.getTile() != null
+				&& cell.getTile().getProperties().containsKey(patrolKey);
+	}
 	
 
 	/*
 	 * 					GET PROPERTY FUNCTIONS
 	 */
+	/*
+	public int isEnemyPatrol(float x, float y) {
+		Cell cell = nodeLayer.getCell((int) (x), (int) (y));
+		return cell != null && cell.getTile() != null
+				&& cell.getTile().getProperties().containsKey(patrolKey);
+	}*/
+	
+	public int getEnemyPatrol(float x, float y) {
+		if (isEnemyPatrol(x, y)){
+			Cell cell = nodeLayer.getCell((int) (x), (int) (y));
+			String val = (String) cell.getTile().getProperties().get(patrolKey);
+
+			return Integer.parseInt(val);
+		}
+		DazDebug.print("TRIED TO GET patrolKey, BUT FOUND NO PROPERTY CALLED patrolKey");
+		return 0;
+	}
+	
+	
+	
 	public Cell getAnimatedCell(float x, float y) {
 		return	animatedLayer.getCell((int) (x), (int) (y));
 	}
@@ -423,6 +455,15 @@ public class CellManager {
 		String value = "null";
 		if (isCellEnemySpawn(x, y)) {
 			value = (String) cell.getTile().getProperties().get(enemyKey);
+		} 
+		return value;
+	}
+	
+	public String getConveyerType(float x, float y) {
+		Cell cell = collisionLayer.getCell((int) (x), (int) (y));
+		String value = "right";
+		if (isCellConveyer(x, y)) {
+			value = (String) cell.getTile().getProperties().get(conveyerKey);
 		} 
 		return value;
 	}

@@ -1,6 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" width="128" height="64" tilewidth="32" tileheight="32" backgroundcolor="#7c6194">
- <tileset firstgid="1" source="greysci.tsx"/>
+<map version="1.0" orientation="orthogonal" width="64" height="64" tilewidth="32" tileheight="32" backgroundcolor="#7c6194">
+ <tileset firstgid="1" name="greyscitiles" tilewidth="32" tileheight="32">
+  <image source="greyscitiles.png" width="512" height="512"/>
+  <tile id="80">
+   <properties>
+    <property name="animated" value="2"/>
+   </properties>
+  </tile>
+  <tile id="86">
+   <properties>
+    <property name="animated" value="2"/>
+   </properties>
+  </tile>
+  <tile id="88">
+   <properties>
+    <property name="animated" value="2"/>
+   </properties>
+  </tile>
+  <tile id="96">
+   <properties>
+    <property name="animated" value="2"/>
+   </properties>
+  </tile>
+  <tile id="102">
+   <properties>
+    <property name="animated" value="2"/>
+   </properties>
+  </tile>
+  <tile id="104">
+   <properties>
+    <property name="animated" value="2"/>
+   </properties>
+  </tile>
+  <tile id="112">
+   <properties>
+    <property name="animated" value="2"/>
+   </properties>
+  </tile>
+  <tile id="118">
+   <properties>
+    <property name="animated" value="2"/>
+   </properties>
+  </tile>
+  <tile id="120">
+   <properties>
+    <property name="animated" value="2"/>
+   </properties>
+  </tile>
+  <tile id="142">
+   <properties>
+    <property name="animated" value="2"/>
+   </properties>
+  </tile>
+ </tileset>
  <tileset firstgid="257" name="nodes" tilewidth="32" tileheight="32">
   <image source="nodes.png" width="512" height="512"/>
   <tile id="0">
@@ -19,6 +71,12 @@
    <properties>
     <property name="destroyable" value=""/>
     <property name="triggervalue" value="2"/>
+   </properties>
+  </tile>
+  <tile id="3">
+   <properties>
+    <property name="destroyable" value=""/>
+    <property name="triggervalue" value="3"/>
    </properties>
   </tile>
   <tile id="17">
@@ -56,7 +114,7 @@
   </tile>
   <tile id="65">
    <properties>
-    <property name="count" value="1"/>
+    <property name="count" value="2"/>
     <property name="delay" value="0"/>
     <property name="enemyspawn" value="footsoldier"/>
     <property name="triggervalue" value="1"/>
@@ -114,6 +172,20 @@
     <property name="triggervalue" value="0"/>
    </properties>
   </tile>
+  <tile id="115">
+   <properties>
+    <property name="mover" value=""/>
+    <property name="movex" value="0"/>
+    <property name="movey" value="36"/>
+    <property name="speed" value="4"/>
+    <property name="triggervalue" value="3"/>
+   </properties>
+  </tile>
+  <tile id="128">
+   <properties>
+    <property name="conveyer" value="right"/>
+   </properties>
+  </tile>
   <tile id="129">
    <properties>
     <property name="flamerangle" value="0"/>
@@ -135,6 +207,11 @@
    <properties>
     <property name="angle" value="0"/>
     <property name="turret" value="wallturret"/>
+   </properties>
+  </tile>
+  <tile id="144">
+   <properties>
+    <property name="conveyer" value="left"/>
    </properties>
   </tile>
   <tile id="160">
@@ -163,33 +240,61 @@
     <property name="speed" value="0"/>
    </properties>
   </tile>
+  <tile id="241">
+   <properties>
+    <property name="item" value="shotgun"/>
+   </properties>
+  </tile>
  </tileset>
- <tileset firstgid="513" name="lights" tilewidth="32" tileheight="32">
-  <image source="lights.png" width="256" height="256"/>
- </tileset>
- <layer name="Tile Layer 5" width="128" height="64">
+ <tileset firstgid="513" source="lights.tsx"/>
+ <layer name="Tile Layer 5" width="64" height="64">
   <data encoding="base64" compression="zlib">
-   eJztm1tugzAQRfntirqEfmQB7Q7aHbTLL6hURRYPm9rcO/gcacRHIPH4TAaHwGMYhkdBnKXkM1qO40oi5DCN47kg9jh6Hf5wqXmXOoRjWtQB/uNR05nCf865BPap5a3kfXDmRY0a+F3/DUP+Og88qO0/hTrwh/UbUANADQA1AE7XlkEHNQDUAHA+APz3Df6BGugb/PcN/vsG/32D/77B/zrLe17udO/5GpHH3orU/8tBRJ7DyGNvBf49qf280FbQ/z0pfS6pJD7H+Jq3qf+jYyPNYUqksbf0/zrG27zFvye5/kuZjnkf42Pe4t+Tlv7p//609E//96fl+X+r/+dEpDlMiTR2xfof/z60/M2/7P9njo+Ky9hbfa9zv7/L/r+cE/xfg9r/sv+7zMkVuOR6xlvuezwd7LfW/3vBJVe1/63+f3dcclX7p/9rUfun/2tR+6f/a1H7p/9rUfun/2tR+6f/a1H7p/9rUfqfgv6vRe2f/q9F7Z/+r0V9/r/L/3mluOSq9t8rLrnjX4NL7vjX4JI7/jW45I5/DWu5K9bA+Newl/uVdYB/DTm5X1EH+NdQknvNOti7l3rNYc4+Jfvh/4czude4Tqb03/P1vpT/5n52/vDvQe1+Xrq/S/RK7dwjzmuUcbagde6R6qBH1tx8A+s6RTs=
+   eJztmVEKwjAQBfunnqhH8MMDibfXQIuypCTZZmO3OwOPQnnYDGkTMNP05dE5AOCTeQkAAAAAAIAl0f97SON/ffJcrom5IWfwl+CPP/4x/HNE94+0/+VITuvc3gvBf9yYrLL3WSNY58Qikt+17SjrH/46lxL45+/h79O/5/dfkxb/vftUdH/v+7/lHGqDf36cFvT0l2z1boWeV/+riLbn1T/6+49/bP+LiLbn1V+y1Tvr+i/BH3+Nf+638LcBf/zxxx9//PHHH/94/pozjppOSy+yf+35hwVH9d9zptHb/x+JTHT/kbwBpYdJMA==
   </data>
  </layer>
- <layer name="Tile Layer 6" width="128" height="64">
+ <layer name="Tile Layer 7" width="64" height="64">
   <data encoding="base64" compression="zlib">
-   eJzt0TsKg0AYhVGtYuyyhGQT7n9nQUgxYJAhPgZzz4FBi1v88HUdAAAAAAAAAAAAAAAAAAC0MbU+gKb0z6Y/AABcw734H1d2t8od11Lbv6T//9A/m/7Z9M+mfzb9s+mfTf9s+mfb2r/f8RbOt7X/Y8dbOJ/+2fTPpn82/bPpn03/bPpn0z/b3H/4vLX+Q/Etd8+D7gLgN68vr2ZTuwMAlt4r5wYJ
+   eJztz7ERACAMA7EsF/YfKaxAg4tId+79VQAAAAAAAAAAAAAAALzou5M+EdTpA2H6d9O/m/7d9APwwwD8KgL5
   </data>
  </layer>
- <layer name="Tile Layer 4" width="128" height="64">
+ <layer name="Tile Layer 10" width="64" height="64">
   <data encoding="base64" compression="zlib">
-   eJzt2UsKgzAUBVBH1jq2LsEVtKvo/vfTBgxIsB9HGt858LgKUYQ7MGLTAAAAAAAAAAAAAADA8T33fgB2pf/Y9B+b/mO5FefDLk/BXvRfv3bO/j2XDXNt1vtvG2oyztlvvC73n/tOOSzuRx2mOVP/3YbJ/ee+Uw6L+3F+qf/cd0rv/1js/wCgHuW3/L9r17RFEstYJLFMRQIA52f/H5v9f2z2/3GV/3+IRf+x6T+W+3seiwEAAACOq/tw/G3tr3UAAACRvADeGwad
+   eJztzzEBACAMwLB5xb8HNPCwo4mCdgYAAAAAAAAAAAAAAIAXZztgmf82/23+2/y31f8BfrmwWgPf
   </data>
  </layer>
- <layer name="collision" width="128" height="64" visible="0">
+ <layer name="Tile Layer 6" width="64" height="64">
   <data encoding="base64" compression="zlib">
-   eJzt3GEKgjAAhuE8WkfoCB2hI3XTflRgYjWlueX3PDDqx8DhS4ErPRwAAAAAAAAAAAAAAKB/l+H1fclgP6b9l8ynnq3Os/59Kv0u/sUYH7NkXdTX4jzr3w/9s+mfq9V1lv590D9bz/ssva5rT/TPttX1/tpj8b/m+pND/2z6Z9M/m/7Z9M+mfzb9s+mfTf9s+jOmf4bjm876Z9A/03m4j9Pj1e+5mZ6ff70z6Z9N/2z6Z9M/m/7Z9M+mfztL/0tfuj+zZh9H/+196nydGdNnMszNKZ1nv6+9Hvp/Wwv11L6fy/1bAMvdAMpqeO8=
+   eJzt07ENwjAQQFFTEegoMgBZgiHYfx8KItkFik7BYIzfk05OccX9IikBAAAAAAAA8Am31gc0ph+A3pyK7/PG3jG415tof3QPRnEvplej//97uvT/D/2Z/phy71Dxlhbe7b9UvKWFWv1znXO+Tn+mP0Z/pv9Jf5/0pzSts9U/FW+5d13fXvtrGb3/1ywvJrIT3QPaeAD4GQd3
   </data>
  </layer>
- <layer name="nodelayer" width="128" height="64" visible="0">
+ <layer name="animlayer" width="64" height="64">
   <data encoding="base64" compression="zlib">
-   eJzt2bEJgEAQRNFbS7IkS9COrlJDAwVBkFPmPdh84YfTGgAAAAAAAAAAAADAf001+gNG6HUceXTPpn82/bPpn03/bPpn0//b6uU++mfTP9usPwAAAAAAAADcWi729fXB5r7Z6QEAAAAAAABOdm25CSc=
+   eJzt2EEKwjAQQNHcwCN5ABfiSlyJK3HpSjxFr2wHFULtaJtCJs78B6FYU0jlU0tSAgAAAAAAgLXb4PPaZBV1Hfqxz465bf3lVHfpxzk75o71l1PdPT27fx+j+da/d5v02X9nuqK65P4j9y/3T//68z8CD/2vJpwbmyMi9y/o///7X4L+6T9q//KuO+w/0vuvaKV/7f95zpxf+zVj13vqv2S/xtPzv2S/ppX+rXjqv4Sn/ku00P+pH7vXuCrnte/yc9p12jxB//Rv3b8l+qd/+qd/+qd/+o+H/umf/unfun9t372bMGfOvKHI/cvvRP9t9A/ArwcnvFOR
+  </data>
+ </layer>
+ <layer name="Tile Layer 4" width="64" height="64">
+  <data encoding="base64" compression="zlib">
+   eJzt19EKwiAYhmGP1tpx2yXsCtr931oLFMaPzaTIfr/3AbGWwV4HRiEAAAAAAADgH9xa30Bj9GujX5t6PwANc+aa0vnXQ/8Q52kfl4pxDX30L3GeKr9n+9M+eutf4/zsHyuG7U/76K3/E8f+tI+q/YlSP+CR/S1/d+2ZofB575bykq6t5SUAOsX5r03x/M/9/1FCv5b7PrbDmM37rd2tNaH2/C36tdGvjX6fxhevz9bm1nnt/xb1fgD4hQdJ6waH
+  </data>
+ </layer>
+ <layer name="nodelayer" width="64" height="64" visible="0">
+  <data encoding="base64" compression="zlib">
+   eJzt1sENgzAQRUEcpRFaoISUkhKAiiiRCjihXBIJOZi1xYzE/T9f2K4DAAAAAIB6PFL0ghhL+nx3dNfunf7oBbH0Ry+I1XL/64Tttfenwvtq7y/tV3/f0Lusf2wdGuoEgKOe/m8AwMXeX+6PMeMmmdwxAABkmN2RQCEb6wQK+Q==
+  </data>
+ </layer>
+ <layer name="Tile Layer 8" width="64" height="64">
+  <data encoding="base64" compression="zlib">
+   eJzt0bEJgDAUBNAsZe0IjuAsOrlYCBIQsTr8eQ+uSfG5I60BAAAAAAAAAABzukDYki4QZv/Y7K9n6/L0fubav9/ydq+/+2cV//8L+8c2+v41XQCKmNIFAAAAKOcAu4YM/w==
+  </data>
+ </layer>
+ <layer name="lights" width="64" height="64">
+  <data encoding="base64" compression="zlib">
+   eJzt2LEKgzAQBuAYJ+tkO9m+/3t6rmKlImhqvg9uCTfkIHA/SQkAAAAAytHklHJUm6++yTW6mPsR1Vc6/xBzP6Nelc4PQNnW9tTyzC4DgPL8sp+P7vC7ZwD/Nf5r7vy+AaiXjCPjyDgAAPy7MfLs+0umnc8/ebtnTx8A55oAN3UDxA==
+  </data>
+ </layer>
+ <layer name="collision" width="64" height="64" visible="0">
+  <data encoding="base64" compression="zlib">
+   eJztmYsJwyAQQONoHaEjdISO0BE6QjctoUhs0fSMXs7PeyAEf3cPIwazLAAAAAAAAAAA53N35aVnSvPHv04eVuBvO94a/G3HWxPLf/bzr3enHHrxr/GdJn1/W3z/W1yTFfzHipML/mPFyQX/seLkkpOX5hnew/nf4hqe+f2Hv868JeAvq9OKZQ3+sjqtWJ6n+y6p+rDt4bbyb75wrOT804D115m3BPxldVqxrJndP8YM/pedXPDXidmC/819ytVtz79lZH/PrOvvwT/dhr9OTPx15j0C/uk2/HViHr1Ll963H72Xj81jwRr3FSlhPqk+0n7S/x8W7K1/+Bz67PWTxCj9p1MTyb6Q7p/cPQagzRu0bJNp
   </data>
  </layer>
 </map>
