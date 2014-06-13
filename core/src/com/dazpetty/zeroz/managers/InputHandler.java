@@ -39,13 +39,17 @@ public class InputHandler {
 	/*
 	 *  TOUCH VARIABLES
 	 */
-	float tleft = 0.25f;
-	float crouchbegin = 0.14f;
-	float crouchend = 0.36f;
-	float tright = 0.5f;
-	float tjump = 0.60f;
-	float tshoot = 0.80f;
-	float touchAreaHeight = 96;
+	float tleft = 0.1f;
+	float tright = 0.3f;
+	float tdown = 0.5f;
+	float tjump = 0.7f;
+	float tshoot = 0.9f;
+	
+	//float crouchbegin = 0.5f;
+	//float crouchend = 0.6f;
+	
+
+	float touchAreaHeight = 128;
 	
 	int goDirection = 0;
 	
@@ -57,7 +61,16 @@ public class InputHandler {
 		InputHandlerLoaded = true;
 	}
 	
-
+	float buttonarea = 0.075f;
+	public boolean checkTouch(float section, float value){
+		if (Math.abs(section - value) < buttonarea){
+			return true;
+		}
+		return false;
+			
+	}
+	
+	
 	public void checkKeyboard() {
 		zplayer.isShooting = false;
 		zplayer.isCrouching = false;
@@ -91,6 +104,8 @@ public class InputHandler {
 		}
 	}
 	
+	
+	
 	public void checkTouch() {
 		for (int p = 0; p < 5; p++) {
 			boolean wantJump = false;
@@ -110,24 +125,42 @@ public class InputHandler {
 				}
 				if (!inTarget) {
 
-					if (!(section > 0.2 && section < 0.3)) {
-						if (section < tleft) {
+				//	if (!(section > 0.2 && section < 0.3)) {
+						/*if (section < tleft) {
 							zplayer.pressLeft = true;
-						} else if (section < tright) {
-							zplayer.pressRight = true;
-						}
+						} 
+						if (section < tright) {
+							zplayer.pressRight = true;*/
+					//	}
+				//	}
+					if (checkTouch(section, tleft)){
+						zplayer.pressLeft = true;
+					}else if (checkTouch(section, tright)){
+						zplayer.pressRight = true;
 					}
-					if (section >= crouchbegin && section <= crouchend) {
+					if (checkTouch(section, tdown)){
 						zplayer.pressDown = true;
 					}
-					if (section >= tjump && section <= tshoot) {
+					if (checkTouch(section, tjump)){
+						zplayer.pressUp = true;
+					}
+					if (checkTouch(section, tshoot)){
+						zplayer.pressShoot = true;
+						zplayer.isShooting = false;
+					}
+					
+						
+				/*	if (section >= crouchbegin && section <= crouchend) {
+						
+					}*/
+				/*	if (section >= tjump && section <= tshoot) {
 						zplayer.pressUp = true;
 					}
 					if (section > tshoot && section < 1) {
 					//	zplayer.actorTarget = aimlessVec;
 						zplayer.pressShoot = true;
 						zplayer.isShooting = false;
-					}
+					}*/
 				}
 				if (inTarget) {
 					Vector2 newAimVec = new Vector2();
@@ -171,10 +204,8 @@ public class InputHandler {
 		float x = 0;
 		if(str == "left"){
 			x =  tleft * viewwidth;
-		}else if(str == "crouchbegin"){
-			x = crouchbegin * viewwidth;
-		}else if(str == "crouchend"){
-			x = crouchend * viewwidth;
+		}else if(str == "down"){
+			x = tdown * viewwidth;
 		}else if(str == "right"){
 			x = tright * viewwidth;
 		}else if(str == "jump"){

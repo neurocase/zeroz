@@ -16,6 +16,15 @@ public class HUD {
 	public Texture dirbuttonstex;
 	public Sprite dirbuttonssprite;
 	
+	public Texture downbuttonstex;
+	public Sprite downbuttonsprite;
+	
+	public Texture leftbuttonstex;
+	public Sprite leftbuttonsprite;
+	
+	public Texture rightbuttonstex;
+	public Sprite rightbuttonsprite;
+	
 	public Texture jumpbuttontex;
 	public Sprite jumpbuttonsprite;
 	public Texture shootbuttontex;
@@ -44,13 +53,35 @@ public class HUD {
 		dirbuttonssprite.setOrigin(0, 0);
 		dirbuttonssprite.setPosition(0, 0);
 
+		 TextureRegion leftbuttontexreg = new TextureRegion(ZeroAssetManager.leftbuttontex, 0, 0, 64,
+				 64);
+		
+		leftbuttonsprite = new Sprite(leftbuttontexreg);
+		leftbuttonsprite.setSize(2f,2f);
+		leftbuttonsprite.setOrigin(leftbuttonsprite.getWidth()/2, 0);
+		
+		 TextureRegion rightbuttontexreg = new TextureRegion(ZeroAssetManager.rightbuttontex, 0, 0, 64,
+				 64);
+		
+		rightbuttonsprite = new Sprite(rightbuttontexreg);
+		rightbuttonsprite.setSize(2f,2f);
+		rightbuttonsprite.setOrigin(rightbuttonsprite.getWidth()/2, 0);
+		
+		 TextureRegion downbuttontexreg = new TextureRegion(ZeroAssetManager.downbuttontex, 0, 0, 64,
+				 64);
+		
+		downbuttonsprite = new Sprite(downbuttontexreg);
+		downbuttonsprite.setSize(2f,2f);
+		downbuttonsprite.setOrigin(downbuttonsprite.getWidth()/2, 0);
+		
 		
 		 TextureRegion jumpbuttontexreg = new TextureRegion(ZeroAssetManager.jumpbuttontex, 0, 0, 64,
 				 64);
 		
 		jumpbuttonsprite = new Sprite(jumpbuttontexreg);
 		jumpbuttonsprite.setSize(2f,2f);
-		jumpbuttonsprite.setOrigin(0, 0);
+		jumpbuttonsprite.setOrigin(jumpbuttonsprite.getWidth()/2, 0);
+		
 		
 		 TextureRegion shootbuttontexreg = new TextureRegion(ZeroAssetManager.shootbuttontex, 0, 0, 64,
 				 64);
@@ -71,15 +102,33 @@ public class HUD {
 		
 		Vector3 tmpVec3 = new Vector3((inputHandler.getXInputPosition("jump")),
 				0, 0);
-		
+		tmpVec3.x = (inputHandler.getXInputPosition("jump"));
+		tmpVec3.y = camera.position.y - camera.viewportHeight/2.5f;
 		camera.unproject(tmpVec3);
-		tmpVec3.y = camera.position.y - camera.viewportHeight/2;
-		jumpbuttonsprite.setPosition(tmpVec3.x, tmpVec3.y);
+		tmpVec3.y = camera.position.y - camera.viewportHeight/2.5f;
+		jumpbuttonsprite.setCenter(tmpVec3.x, tmpVec3.y);
 
 		tmpVec3.x = (inputHandler.getXInputPosition("shoot"));
 		camera.unproject(tmpVec3);
-		tmpVec3.y = camera.position.y - camera.viewportHeight/2;
-		shootbuttonsprite.setPosition(tmpVec3.x, tmpVec3.y);
+		tmpVec3.y = camera.position.y - camera.viewportHeight/2.5f;
+		shootbuttonsprite.setCenter(tmpVec3.x, tmpVec3.y);
+		
+		tmpVec3.x = (inputHandler.getXInputPosition("left"));
+		//tmpVec3.x = 10f;
+		camera.unproject(tmpVec3);
+		tmpVec3.y = camera.position.y - camera.viewportHeight/2.5f;
+		leftbuttonsprite.setOrigin(0, leftbuttonsprite.getWidth());
+		leftbuttonsprite.setCenter(tmpVec3.x, tmpVec3.y);
+		
+		tmpVec3.x = (inputHandler.getXInputPosition("right"));
+		camera.unproject(tmpVec3);
+		tmpVec3.y = camera.position.y - camera.viewportHeight/2.5f;
+		rightbuttonsprite.setCenter(tmpVec3.x, tmpVec3.y);
+		
+		tmpVec3.x = (inputHandler.getXInputPosition("down"));
+		camera.unproject(tmpVec3);
+		tmpVec3.y = camera.position.y - camera.viewportHeight/2.5f;
+		downbuttonsprite.setCenter(tmpVec3.x, tmpVec3.y);
 		
 		dirbuttonssprite.setPosition(camera.position.x - camera.viewportWidth/2,
 				tmpVec3.y);

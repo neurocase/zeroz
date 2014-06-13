@@ -190,6 +190,7 @@ public class WorldLogic {
 	}
 	
 	public void huntClosestEnemy(){
+		entityMan.zplayer.setTargetToNull();
 		/*
 		 * TODO: CYCLE THROUGH ENEMY ACTORS AND GIVE PLAYER CLOSEST ONE FOR
 		 * QUICK SHOOT
@@ -198,7 +199,7 @@ public class WorldLogic {
 		 * 
 		 *  NEED TO FIX HERE, CODE IS UGLY, WANT TO REFACTOR
 		 */
-		
+		/*
 		float targetPosX = 0;
 		float targetPosY = 0;
 		boolean drawTarget = false;
@@ -320,7 +321,8 @@ public class WorldLogic {
 						entityMan.hudtarget.dontDraw();
 					}
 				}
-			} 
+			}
+			*/ 
 	}
 	
 	public int loopcount = 0;
@@ -329,6 +331,7 @@ public class WorldLogic {
 			return true;
 		}
 		return false;
+		
 	}
 	
 	

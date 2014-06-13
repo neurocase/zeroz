@@ -197,8 +197,9 @@ public class PawnEntity {
 	}
 
 	public void attemptShoot(float ang) {
+		
 		projMan.setWorld(world);
-		if (isAlive) {
+		if (isAlive && !isOnLadder) {
 			aimAngle = ang;
 			projMan.shootProjectile(ang, this);
 		}
@@ -209,6 +210,8 @@ public class PawnEntity {
 	
 	public float patrolstart = 0;
 	public float patrolend = 0;
+	float xpulse = 0;
+	float ypulse = 0;
 	
 	public PawnEntity(EntityManager entMan, EntitySpawner spawner, int patrolarea) {
 
@@ -267,8 +270,8 @@ public class PawnEntity {
 		Vector2[] collisionShape = new Vector2[5];
 		collisionShape[0] = new Vector2(0f, (float) (1.6 - hadjust));
 		collisionShape[1] = new Vector2(0.3f, (float) (1 - hadjust));
-		collisionShape[2] = new Vector2(0.15f, -0.1f - hadjust);
-		collisionShape[3] = new Vector2(-0.15f, -0.1f - hadjust);
+		collisionShape[2] = new Vector2(0.15f, -0.18f - hadjust);
+		collisionShape[3] = new Vector2(-0.15f, -0.18f - hadjust);
 		collisionShape[4] = new Vector2(-0.3f, (float) (1 - hadjust));
 		pBox.set(collisionShape);
 		// pBox.setPosition(new Vector2(0, -0.8f));
@@ -465,7 +468,7 @@ public class PawnEntity {
 
 		if (checkLadder()) {
 			isOnLadder = true;
-			mainbody.setLinearVelocity(0, 1);
+			mainbody.setLinearVelocity(0, 1.5f);
 
 		} else {
 			if (System.currentTimeMillis() - lasttimejump > 300) {
@@ -486,19 +489,24 @@ public class PawnEntity {
 					mainbody.getLinearVelocity().x, jumpSpeed));
 		}
 	}
+	
+	long stillTime = 0;
 
 	public void stopVelocity(boolean b) {
-		if (b) {
+	/*	if (b && stillTime > 0.2) {
 			//blue = true;
 			// mainbodyfixture.setFriction(1000);
 			fixtureDef.friction = 0;
 			pawnFoot.footfixtureDef.friction = 1000;
+			pawnFoot.stopMode();
 		} else {
 		//	blue = false;
+			stillTime = 0;
+			pawnFoot.moveMode();
 			mainbodyfixture.setFriction(1);
 			fixtureDef.friction = 1;
 			pawnFoot.footfixtureDef.friction = 1;
-		}
+		}*/
 
 	}
 	
@@ -541,7 +549,7 @@ public class PawnEntity {
 
 		if (pressUp) {
 			goJump();
-		}
+		} 
 		if (pressShoot) {
 			quickShoot();
 		}
@@ -549,47 +557,56 @@ public class PawnEntity {
 		if (pressDown) {
 			pawnFoot.fallMode();
 			isCrouching = true;
-			if (isOnLadder) {
+		/*	if (isOnLadder) {
 				mainbody.setLinearVelocity(0, -1);
-			}
+			}*/
 		}
+		
+		
 
 		/*
 		 * if (checkLadder() && !isGrounded){ isOnLadder = true; }
 		 */
 
-		if (checkLadder() && isOnLadder) {
+		/*if (checkLadder() && isOnLadder) {
 			mainbody.setGravityScale(0);
 			if (!pressDown && !pressUp) {
 				mainbody.setLinearVelocity(0, 0);
 			}
 		} else if (!checkLadder()) {
 			mainbody.setGravityScale(1);
-		}
+		}*/
 
 		fixtureDef.filter.categoryBits = 3;
 
 		
-		blue = false;
-
+		//blue = false;
+		//stopVelocity(false);
 		if (pressRight) {
+			stillTime = 0;
 			goRight();
 			//blue = true;
 		} else if (pressLeft) {
+			stillTime = 0;
 			goLeft();
 			
 		}else{
-
+			stillTime += Gdx.graphics.getDeltaTime();
+			//stopVelocity(true);
 			if (isGrounded && groundCheck()){
 				mainbody.setLinearVelocity(mainbody.getLinearVelocity().x/1.2f, mainbody.getLinearVelocity().y);
 				//DazDebug.print("MAINBODY LINEAR VEL X" + mainbody.getLinearVelocity().x);
-				blue = true;
+				//blue = true;
 			}
 		}
 		
 		if (getConveyerCheck() > 0){
+			stopVelocity(false);
+			stillTime = 0;
 			conveyRight();
 		}else if (getConveyerCheck() < 0){
+			stopVelocity(false);
+			stillTime = 0;
 			conveyLeft();
 		}
 
@@ -600,6 +617,7 @@ public class PawnEntity {
 		if (levelMan == null) {
 			System.out.println("levelMan IN ACTOR IS NULL");
 		}
+		
 
 		goThruPlatform = false;
 		isShooting = false;
@@ -610,10 +628,42 @@ public class PawnEntity {
 		if (worldpos.y < -10) {
 			isAlive = false;
 		}
-
+		wantMove = false;
+		if (pressLeft || pressRight){
+			wantMove = true;
+		}
+		if (!wantMove && !pressUp && pawnFoot.numFootContacts > 0 && pawnFoot.numFootConveyer == 0){
+			xpulse = -mainbody.getLinearVelocity().x/2;
+			ypulse = 0;
+			if (pawnFoot.numFootMover > 0){
+				if (!landed){
+					//this is to try to prevent "bouncing" bug that occurs on movers moving upwards
+				pawnFoot.fallMode();
+				landed = true;
+				landedPoll = 0;
+				}
+				ypulse = -5;
+			}else{
+				landed = false;
+			}
+			
+			mainbody.applyLinearImpulse(xpulse, ypulse, 0, 0, true);
+		}
+		
+		drawMoveLeft = pressLeft;
+		drawMoveRight = pressRight;
+		
 		resetInputFlags();
 	}
-
+	boolean drawMoveLeft = false;
+	boolean drawMoveRight = false;
+	boolean wantMove = false;
+	
+	//landed exists to counter a "bouncing" bug that occurs when player is on an upward moving mover
+	boolean landed = false;
+	int landedPoll = 0;
+	
+	
 	public float distanceFromPlayer = 0;
 
 	public void updateAI(PawnEntity zplayer) {
@@ -703,16 +753,16 @@ public class PawnEntity {
 	}
 
 	public void quickShoot() {
-		if (!targetIsNull) {
+		/*if (!targetIsNull) {
 			attemptShoot(actorTarget.angle());
 			aimingAt.x = actorTarget.x;
 			aimingAt.y = actorTarget.y;
-		} else {
+		} else {*/
 			if (movingdirection == "right") {
 				attemptShoot(180);
 			} else {
 				attemptShoot(0);
-			}
+			//}
 		}
 	}
 
@@ -771,25 +821,26 @@ public class PawnEntity {
 		return false;
 	}
 
+
 	public void calculateFrame() {
 
-		float minMove = 2;
+		float minMove = 0.5f;
 		worldpos = mainbody.getPosition();
 
 		if (isAI) {
-			boolean facingtarget = true;
-			boolean flip = false;
-			boolean aimless = false;
+			//boolean facingtarget = true;
+			//boolean flip = false;
+		//	boolean aimless = false;
 			aimingAt.x = 0;
 			aimingAt.y = 0;
-			aimless = true;
+			//aimless = true;
 			// isWorldCoord = false;
 		}
 
 		if (!armsprite.isFlipX())
 			armsprite.flip(true, false);
 
-		boolean facingtarget = true;
+		//boolean facingtarget = true;
 		boolean flip = false;
 		boolean aimless = false;
 		currentFrame++;
@@ -806,14 +857,21 @@ public class PawnEntity {
 		}
 
 		if (velocity.x < 0) {
-			if (velocity.x < -minMove) {
+			//if (velocity.x < -minMove) {
+			
+			/*   
+			 *   movingdirection = "right" and movingdirection = "left", are the wrong way around
+			 */
+			
+			if (drawMoveLeft) {
 				movingdirection = "right";
 			}
 			if (aimless) {
 				aimingdirection = "right";
 			}
 		} else if (velocity.x > 0) {
-			if (velocity.x > minMove) {
+			//if (velocity.x > minMove) {
+			if (drawMoveRight) {
 				movingdirection = "left";
 			}
 			if (aimless) {
@@ -847,7 +905,8 @@ public class PawnEntity {
 		// float tx = targetWorldVec.x;
 		// float ty = targetWorldVec.y;
 
-		if (Math.abs(velocity.x) > minMove && velocity.y == 0 && isGrounded) {
+	//	if (Math.abs(velocity.x) > minMove && velocity.y == 0 && isGrounded) {
+		if ((drawMoveRight || drawMoveLeft) && velocity.y == 0 && isGrounded) {
 			state = "run";
 		}
 		if ((Math.abs(velocity.x) < minMove) && velocity.y == 0 && !isOnLadder) {
@@ -861,46 +920,47 @@ public class PawnEntity {
 			}
 		}
 		if (isOnLadder) {
-			if (velocity.y == 0) {
-				state = "ladderaim";
-			} else if (velocity.y > 0) {
+			/*if (velocity.y == 0) {
+				state = "ladderslide";
+			}*/ if (velocity.y > 0) {
 				state = "ladderclimb";
-			} else if (velocity.y < 0) {
+			} else if (velocity.y <= 0) {
 				state = "ladderslide";
 			}
 		}
 		if (Math.abs(velocity.x) > minMove
 				&& movingdirection == aimingdirection) {
 			state = "run";
-			if (isCrouching) {
+			/*if (isCrouching) {
 				state = "crouch";
-			}
+			}*/
 		} else if (Math.abs(velocity.x) > minMove
 				&& movingdirection != aimingdirection) {
 			state = "runback";
-			if (isCrouching) {
+			/*if (isCrouching) {
 				state = "crouchback";
-			}
+			}*/
 		} else if (Math.abs(velocity.x) < minMove && velocity.y == 0) {
 			state = "idle";
 			if (isLevelScrolling) {
 				state = "run";
 				movingdirection = "left";
 			}
-			if (isCrouching) {
+		/*	if (isCrouching) {
 				state = "crouchidle";
 				if (isLevelScrolling) {
 					state = "crouchrun";
 				}
-			}
+			}*/
 		}
 		if (!isGrounded && !isOnLadder && velocity.y != 0) {
 			state = "jumping";
 		}
-		if (isOnLadder && !aimless) {
+		
+		/*if (isOnLadder && !aimless) {
 			state = "ladderaim";
 			isShooting = true;
-		}
+		}*/
 		if (state == "run" || state == "ladderclimb" || state == "runback"
 				|| state == "crouch" || state == "crouchback" || !isAlive) {
 			if (currentFrame > 24) {
@@ -918,6 +978,9 @@ public class PawnEntity {
 					.findRegion(currentAtlasKey));
 		}
 		float armyadd = 0;
+		
+		
+		
 		if (state == "run") {
 			sprite = runsprite;
 			isOnLadder = false;
@@ -942,17 +1005,8 @@ public class PawnEntity {
 		} else if (state == "ladderslide") {
 			sprite = upladdersprite;
 			isGrounded = false;
-		} else if (state == "ladderaim") {
-			sprite = aimladdersprite;
-			isGrounded = false;
-		} else if (state == "crouch") {
-			sprite = crouchsprite;
-		} else if (state == "crouchback") {
-			sprite = crouchbacksprite;
-		} else if (state == "crouchidle") {
-			currentFrame = 0;
-			sprite = crouchsprite;
 		}
+		
 		if (!isAlive) {
 			currentFrame = deathanim;
 			sprite = deathsprite;
@@ -964,23 +1018,35 @@ public class PawnEntity {
 			deathsprite
 					.setRegion(deathTextureAtlas.findRegion(currentAtlasKey));
 		}
-		if (isCrouching && isGrounded) {
-			armyadd = -0.55f;
+		
+		if (!wantMove && pawnFoot.numFootMover > 0){
+			currentFrame = 0;
+			currentAtlasKey = String.format("%04d", currentFrame);
+			idlesprite.setRegion(idleTextureAtlas.findRegion(currentAtlasKey));
+			sprite = idlesprite;
+			//blue = true;
 		}
-		if (aimingdirection == "left" && !sprite.isFlipX()) {
-			flip = true;
-		}
-		if (flip && isAlive) {
-			sprite.flip(true, false);
-		}
-		if (aimingdirection == "right") {
-			if (armsprite.isFlipY())
-				armsprite.flip(false, true);
-		} else {
-			if (!armsprite.isFlipY())
-				armsprite.flip(false, true);
-			if (aimladdersprite.isFlipX())
-				aimladdersprite.flip(true, false);
+		
+		
+		if (!isOnLadder){
+			/*if (isCrouching && isGrounded) {
+				armyadd = -0.55f;
+			}*/
+			if (aimingdirection == "left" && !sprite.isFlipX() ) {
+				flip = true;
+			}
+			if (flip && isAlive) {
+				sprite.flip(true, false);
+			}
+			if (aimingdirection == "right") {
+				if (armsprite.isFlipY())
+					armsprite.flip(false, true);
+			} else {
+				if (!armsprite.isFlipY())
+					armsprite.flip(false, true);
+				if (aimladdersprite.isFlipX())
+					aimladdersprite.flip(true, false);
+			}
 		}
 		// Vector2 tmpAimVec = new Vector2(targetScreenVec.x,
 		// targetScreenVec.y);
@@ -1005,6 +1071,11 @@ public class PawnEntity {
 			armsprite = armshotgunsprite;
 			break;
 		}
+		
+		
+	
+		
+		
 		sprite.setSize(1f, 1f);
 		sprite.setOrigin(sprite.getWidth() / 2, 0);
 		sprite.setPosition(worldpos.x - 0.5f, worldpos.y - 1f);
@@ -1014,6 +1085,12 @@ public class PawnEntity {
 		armsprite.setRotation(aimAngle - 180);
 		armsprite.setPosition(worldpos.x - 1.76f, worldpos.y + armyadd);
 
+		//if (isGrounded){
+		//	blue = true;
+		//}else{
+		//	blue = false;
+		//}
+		
 		if (blue){
 			sprite.setColor(Color.BLUE);
 		}else{
@@ -1031,5 +1108,8 @@ public class PawnEntity {
 		} else {
 			isShooting = false;
 		}
+		
+		drawMoveLeft = false;
+		drawMoveRight = false;
 	}
 }

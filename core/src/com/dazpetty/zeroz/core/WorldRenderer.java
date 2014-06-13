@@ -269,11 +269,15 @@ public class WorldRenderer {
 		hud.healthsprite.draw(batch);
 		
 		
-		hud.dirbuttonssprite.draw(batch);
+		//hud.dirbuttonssprite.draw(batch);
 	
 		hud.shootbuttonsprite.draw(batch);
 
 		hud.jumpbuttonsprite.draw(batch);
+		
+		hud.rightbuttonsprite.draw(batch);
+		hud.leftbuttonsprite.draw(batch);
+		hud.downbuttonsprite.draw(batch);
 
 		batch.setColor(Color.RED);
 		for (int i = 0; i < scene.ENEMY_LIMIT; i++) {

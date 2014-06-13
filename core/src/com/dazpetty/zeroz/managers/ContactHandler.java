@@ -103,7 +103,7 @@ public class ContactHandler {
 				}
 				
 				if (objA instanceof String) {
-					if (((String) objA).equals("solid")) {
+					if (((String) objA).equals("solid") || ((String) objA).equals("mover")) {
 					
 						removeProj = true;
 						
@@ -150,7 +150,11 @@ public class ContactHandler {
 				}
 			}else{
 				if (objA instanceof PawnFoot && objB instanceof String){
-					if (((String)objB).equals("solid")){
+					if (((String)objB).equals("mover")){
+						((PawnFoot)objA).incMoverFootContact();
+						
+					}
+					if (((String)objB).equals("solid") || ((String)objB).equals("mover")){
 						((PawnFoot)objA).incFootContact();
 					}else if (((String)objB).equals("platform")){
 						((PawnFoot)objA).incFootContact();
@@ -204,11 +208,14 @@ public class ContactHandler {
 			if (((String)objB).equals("conveyerright")){
 				((PawnFoot)objA).decFootConveyer();
 			}
-			if (((String)objB).equals("solid") || ((String)objB).equals("conveyerleft") || ((String)objB).equals("conveyerright")){
+			if (((String)objB).equals("solid") || ((String)objB).equals("mover") || ((String)objB).equals("conveyerleft") || ((String)objB).equals("conveyerright")){
 				((PawnFoot)objA).decFootContact();
 			}else if (((String)objB).equals("platform")){
 				((PawnFoot)objA).decFootContact();
 				((PawnFoot)objA).isOnPlatform = true;
+			}
+			if (((String)objB).equals("mover")){
+				((PawnFoot)objA).decMoverFootContact();
 			}
 		}
 			objB = objA;

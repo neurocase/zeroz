@@ -43,6 +43,9 @@ public class ZeroAssetManager {
 	public static Texture dirbuttonstex;
 	public static Texture shootbuttontex;
 	public static Texture jumpbuttontex;
+	public static Texture leftbuttontex;
+	public static Texture rightbuttontex;
+	public static Texture downbuttontex;
 
 
 	
@@ -83,6 +86,17 @@ public class ZeroAssetManager {
 				Gdx.files.internal("data/gfx/hud/shootbutton.png"));
 		shootbuttontex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		
+		leftbuttontex = new Texture(
+				Gdx.files.internal("data/gfx/hud/left.png"));
+		leftbuttontex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		
+		rightbuttontex = new Texture(
+				Gdx.files.internal("data/gfx/hud/right.png"));
+		rightbuttontex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		
+		downbuttontex = new Texture(
+				Gdx.files.internal("data/gfx/hud/down.png"));
+		downbuttontex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		
 		jumpbuttontex = new Texture(
 				Gdx.files.internal("data/gfx/hud/jumpbutton.png"));

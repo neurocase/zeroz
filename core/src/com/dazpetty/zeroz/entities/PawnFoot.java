@@ -22,6 +22,7 @@ public class PawnFoot {
 	public Body body;
 	public int numFootContacts = 0;
 	public int numFootConveyer = 0;
+	public int numFootMover = 0;
 	
 	public void fallMode(){
 		for(Fixture fixture : body.getFixtureList()){
@@ -40,22 +41,20 @@ public class PawnFoot {
 	public void moveMode(){
 		
 		for(Fixture fixture : body.getFixtureList()){
-				fixture.setSensor(false);
+				//fixture.setSensor(false);
 				fixture.setFriction(1);
-				//fixture.refilter();
-			//	fixture.
+				fixture.setRestitution(100);
 			}
 	}
 	public void stopMode(){
 		for(Fixture fixture : body.getFixtureList()){
-				fixture.setSensor(false);
-			//	fixture.setFriction(500);
+				//fixture.setSensor(false);
 				fixture.setFriction(100);
-				
+				fixture.setRestitution(100);
 			}
 	}
 	
-	
+	//use still time to with friction
 	
 	
 	public PawnFoot(PawnEntity parentPawn, World world, Body body){
@@ -70,7 +69,7 @@ public class PawnFoot {
 		
 		CircleShape footBox = new CircleShape();
 		footBox.setRadius(0.27f);
-		footBox.setPosition(new Vector2(0, -0.8f));
+		footBox.setPosition(new Vector2(0, -0.7f));
 		footfixtureDef.shape = footBox;
 
 		footfixture = body.createFixture(footfixtureDef);
@@ -103,6 +102,16 @@ public class PawnFoot {
 
 	public void incFootConveyer() {
 		numFootConveyer++;
+	}
+
+	public void decMoverFootContact() {
+		numFootMover--;
+		
+	}
+
+	public void incMoverFootContact() {
+		numFootMover++;
+		
 	}
 
 

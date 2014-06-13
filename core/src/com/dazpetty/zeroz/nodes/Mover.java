@@ -80,7 +80,7 @@ public class Mover {
 		pBox.setAsBox(2f, 0.5f);
 		doorfixDef.shape = pBox;    
 		doorfix = body.createFixture(doorfixDef);
-		doorfix.setUserData("solid");	
+		doorfix.setUserData("mover");	
 		body.applyLinearImpulse(1, 1, 1, 1, true);
 		
 		doorfixDef.friction = 0;
