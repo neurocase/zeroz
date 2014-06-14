@@ -40,6 +40,7 @@ public class ZeroAssetManager {
 	 *  INPUT // HUD TEXTURES
 	 */
 	public static Texture healthtex;
+	public static Texture healthbartex;
 	public static Texture dirbuttonstex;
 	public static Texture shootbuttontex;
 	public static Texture jumpbuttontex;
@@ -74,6 +75,11 @@ public class ZeroAssetManager {
 				Gdx.files.internal("data/gfx/wallturret/turretbarrel.png"));
 		wallturretbarrel.setFilter(TextureFilter.Linear, TextureFilter.Linear); 
 		 
+		
+		healthbartex = new Texture(
+				Gdx.files.internal("data/gfx/hud/healthbar.png"));
+		healthbartex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		
 		healthtex = new Texture(
 				Gdx.files.internal("data/gfx/hud/health.png"));
 		healthtex.setFilter(TextureFilter.Linear, TextureFilter.Linear);

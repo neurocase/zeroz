@@ -3,6 +3,7 @@ package com.dazpetty.zeroz.entities;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector3;
 import com.dazpetty.zeroz.assets.ZeroAssetManager;
@@ -11,6 +12,7 @@ import com.dazpetty.zeroz.managers.InputHandler;
 public class HUD {
 
 	public Texture healthtex;
+	public  Sprite healthbarsprite;
 	public static Sprite healthsprite;
 	
 	public Texture dirbuttonstex;
@@ -43,6 +45,14 @@ public class HUD {
 		healthsprite.setSize(2f, 2f);
 		healthsprite.setOrigin(0, healthsprite.getHeight());
 		healthsprite.setPosition(30, 0);
+		
+		
+		TextureRegion healthbartexreg = new TextureRegion(ZeroAssetManager.healthbartex, 0, 0, 32,
+				 32);
+		 
+		healthbarsprite = new Sprite(healthbartexreg);
+		healthbarsprite.setSize(0.2f, 1f);
+		healthbarsprite.setPosition(30, 0);
 
 		 
 		 TextureRegion dirbuttontexreg = new TextureRegion(ZeroAssetManager.dirbuttonstex, 0, 0, 256,
@@ -133,5 +143,18 @@ public class HUD {
 		dirbuttonssprite.setPosition(camera.position.x - camera.viewportWidth/2,
 				tmpVec3.y);
 		
+	}
+	
+	
+	
+	public void drawHealth(SpriteBatch batch, int health){
+		if (health > 5){
+			Vector3 healthbarpos = new Vector3(inputHandler.getXInputPosition("right"),camera.position.y - camera.viewportHeight/8,0);
+	
+			healthbarsprite.setSize(health/20f, 0.4f);
+			healthbarsprite.setPosition(camera.position.x-camera.viewportWidth/3,camera.position.y+camera.viewportHeight/2.85f);
+			healthbarsprite.setColor(1, 0, 0, 0.5f);
+			healthbarsprite.draw(batch);
+		}
 	}
 }

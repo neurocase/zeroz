@@ -270,7 +270,8 @@ public class WorldRenderer {
 		
 		
 		//hud.dirbuttonssprite.draw(batch);
-	
+		hud.drawHealth(batch, entityMan.zplayer.health);
+		
 		hud.shootbuttonsprite.draw(batch);
 
 		hud.jumpbuttonsprite.draw(batch);
