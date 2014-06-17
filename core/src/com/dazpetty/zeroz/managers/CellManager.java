@@ -41,10 +41,13 @@ public class CellManager {
 	public String turretKey = "turret";
 	public String flamerturretKey = "flamerturret";
 	public String crusherKey = "crusher";
+	public String crateKey = "crate";
 	public String deathKey = "death";
 	public String animatedKey = "animated";
 	public String conveyerKey = "conveyer";
 	public String patrolKey = "enemypatrol";
+	public String chainKey = "chain";
+	
 	
 	
 	public String calltriggerKey = "triggercall";
@@ -130,6 +133,12 @@ public class CellManager {
 		Cell cell = nodeLayer.getCell((int) (x), (int) (y));
 		return cell != null && cell.getTile() != null
 				&& cell.getTile().getProperties().containsKey(countKey);
+
+	}
+	public boolean isCellCrate(float x, float y) {
+		Cell cell = nodeLayer.getCell((int) (x), (int) (y));
+		return cell != null && cell.getTile() != null
+				&& cell.getTile().getProperties().containsKey(crateKey);
 
 	}
 	
@@ -269,6 +278,12 @@ public class CellManager {
 				&& cell.getTile().getProperties().containsKey(patrolKey);
 	}
 	
+	public boolean isCellChain(float x, float y) {
+		Cell cell = nodeLayer.getCell((int) (x), (int) (y));
+		return cell != null && cell.getTile() != null
+				&& cell.getTile().getProperties().containsKey(chainKey);
+	}
+	
 
 	/*
 	 * 					GET PROPERTY FUNCTIONS
@@ -279,6 +294,17 @@ public class CellManager {
 		return cell != null && cell.getTile() != null
 				&& cell.getTile().getProperties().containsKey(patrolKey);
 	}*/
+	public String getCrateValue(float x, float y) {
+		String val = "wood";
+	
+		if (isCellCrate(x, y)){
+			Cell cell = nodeLayer.getCell((int) (x), (int) (y));
+			val = (String) cell.getTile().getProperties().get(crateKey);
+
+			return val;
+		}
+		return val;
+	}
 	
 	public int getEnemyPatrol(float x, float y) {
 		if (isEnemyPatrol(x, y)){
@@ -554,6 +580,8 @@ public class CellManager {
 		return trigary[trigcount-1];
 		
 	}
+
+
 
 
 

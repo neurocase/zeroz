@@ -274,8 +274,7 @@ public class PawnEntity {
 		collisionShape[3] = new Vector2(-0.15f, -0.18f - hadjust);
 		collisionShape[4] = new Vector2(-0.3f, (float) (1 - hadjust));
 		pBox.set(collisionShape);
-		// pBox.setPosition(new Vector2(0, -0.8f));
-		// pBox.setAsBox(0.3f, 0.8f);
+
 		fixtureDef.shape = pBox;
 
 		Filter pawnfilter = fixtureDef.filter;
@@ -492,23 +491,7 @@ public class PawnEntity {
 	
 	long stillTime = 0;
 
-	public void stopVelocity(boolean b) {
-	/*	if (b && stillTime > 0.2) {
-			//blue = true;
-			// mainbodyfixture.setFriction(1000);
-			fixtureDef.friction = 0;
-			pawnFoot.footfixtureDef.friction = 1000;
-			pawnFoot.stopMode();
-		} else {
-		//	blue = false;
-			stillTime = 0;
-			pawnFoot.moveMode();
-			mainbodyfixture.setFriction(1);
-			fixtureDef.friction = 1;
-			pawnFoot.footfixtureDef.friction = 1;
-		}*/
 
-	}
 	
 	public int getConveyerCheck(){
 		return pawnFoot.numFootConveyer;
@@ -523,7 +506,7 @@ public class PawnEntity {
 	}
 
 	boolean nextFall = false;
-
+	boolean wakeUpBody = false;
 	public void update(boolean isWorldCoord, Camera camera) {
 			//blue = true;
 		//pawnFoot.moveMode();
@@ -583,10 +566,12 @@ public class PawnEntity {
 		//blue = false;
 		//stopVelocity(false);
 		if (pressRight) {
+			
 			stillTime = 0;
 			goRight();
 			//blue = true;
 		} else if (pressLeft) {
+		
 			stillTime = 0;
 			goLeft();
 			
@@ -601,11 +586,11 @@ public class PawnEntity {
 		}
 		
 		if (getConveyerCheck() > 0){
-			stopVelocity(false);
+			//stopVelocity(false);
 			stillTime = 0;
 			conveyRight();
 		}else if (getConveyerCheck() < 0){
-			stopVelocity(false);
+			//stopVelocity(false);
 			stillTime = 0;
 			conveyLeft();
 		}
@@ -635,6 +620,18 @@ public class PawnEntity {
 		if (!wantMove && !pressUp && pawnFoot.numFootContacts > 0 && pawnFoot.numFootConveyer == 0){
 			xpulse = -mainbody.getLinearVelocity().x/2;
 			ypulse = 0;
+			
+			if (pawnFoot.numFootContacts > 0){
+				if (wakeUpBody){
+
+					wakeUpBody = false;
+
+				//	ypulse = 10;
+					//pawnFoot.footfixture.refilter();
+					mainbody.setAwake(true);
+					System.out.println("WAKE UP YA FUCKEN CUNT:" + pawnFoot.footfixture.getFriction());
+				}
+			}
 			if (pawnFoot.numFootMover > 0){
 				if (!landed){
 					//this is to try to prevent "bouncing" bug that occurs on movers moving upwards
@@ -645,6 +642,19 @@ public class PawnEntity {
 				ypulse = -5;
 			}else{
 				landed = false;
+			}
+			if (pawnFoot.numFootDynamic > 0){
+			
+				blue = true;
+	
+			}else{
+			
+				if (blue){
+					
+					wakeUpBody = true;
+				}
+				blue = false;
+			
 			}
 			
 			mainbody.applyLinearImpulse(xpulse, ypulse, 0, 0, true);

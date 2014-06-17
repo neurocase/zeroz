@@ -154,7 +154,11 @@ public class ContactHandler {
 						((PawnFoot)objA).incMoverFootContact();
 						
 					}
-					if (((String)objB).equals("solid") || ((String)objB).equals("mover")){
+					if (((String)objB).equals("dynamic")){
+						((PawnFoot)objA).incDynamicFootContact();
+						
+					}
+					if (((String)objB).equals("solid") || ((String)objB).equals("mover") || ((String)objB).equals("dynamic")){
 						((PawnFoot)objA).incFootContact();
 					}else if (((String)objB).equals("platform")){
 						((PawnFoot)objA).incFootContact();
@@ -208,7 +212,7 @@ public class ContactHandler {
 			if (((String)objB).equals("conveyerright")){
 				((PawnFoot)objA).decFootConveyer();
 			}
-			if (((String)objB).equals("solid") || ((String)objB).equals("mover") || ((String)objB).equals("conveyerleft") || ((String)objB).equals("conveyerright")){
+			if (((String)objB).equals("solid") ||  ((String)objB).equals("mover") || ((String)objB).equals("conveyerleft") || ((String)objB).equals("conveyerright") || ((String)objB).equals("dynamic")){
 				((PawnFoot)objA).decFootContact();
 			}else if (((String)objB).equals("platform")){
 				((PawnFoot)objA).decFootContact();
@@ -216,6 +220,9 @@ public class ContactHandler {
 			}
 			if (((String)objB).equals("mover")){
 				((PawnFoot)objA).decMoverFootContact();
+			}
+			if (((String)objB).equals("dynamic")){
+				((PawnFoot)objA).decDynamicFootContact();
 			}
 		}
 			objB = objA;

@@ -33,7 +33,7 @@ import com.dazpetty.zeroz.core.DazDebug;
  */
 
 
-public class Projectile implements Poolable {
+public class Projectile   {
 	public BodyDef bodyDef = new BodyDef();
 	public Body body;
 	public Sprite projsprite;
@@ -279,11 +279,11 @@ public class Projectile implements Poolable {
 	}
 
 
-	@Override
-	public void reset() {
+	
+	//public void reset() {
 		// TODO Auto-generated method stub
 		
-	}
+//	}
 
 
 	

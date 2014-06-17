@@ -23,6 +23,7 @@ public class PawnFoot {
 	public int numFootContacts = 0;
 	public int numFootConveyer = 0;
 	public int numFootMover = 0;
+	public int numFootDynamic =0;
 	
 	public void fallMode(){
 		for(Fixture fixture : body.getFixtureList()){
@@ -112,6 +113,13 @@ public class PawnFoot {
 	public void incMoverFootContact() {
 		numFootMover++;
 		
+	}
+
+	public void incDynamicFootContact() {
+		numFootDynamic++;
+	}
+	public void decDynamicFootContact() {
+		numFootDynamic--;
 	}
 
 

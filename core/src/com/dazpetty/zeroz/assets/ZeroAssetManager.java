@@ -47,6 +47,9 @@ public class ZeroAssetManager {
 	public static Texture leftbuttontex;
 	public static Texture rightbuttontex;
 	public static Texture downbuttontex;
+	
+	public static Texture cratetex;
+	public static Texture metalcratetex;
 
 
 	
@@ -58,6 +61,13 @@ public class ZeroAssetManager {
 		/*
 		 * 		TEXTURES
 		 */
+		cratetex = new Texture(
+				Gdx.files.internal("data/gfx/objects/crate.png"));
+		cratetex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		
+		metalcratetex = new Texture(
+				Gdx.files.internal("data/gfx/objects/metalcrate.png"));
+		metalcratetex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		
 		hazardcrusher = new Texture(
 				Gdx.files.internal("data/gfx/crusher/crusherhazard.png"));

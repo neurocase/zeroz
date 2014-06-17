@@ -202,6 +202,11 @@
     <property name="item" value="shotgun"/>
    </properties>
   </tile>
+  <tile id="244">
+   <properties>
+    <property name="crate" value=""/>
+   </properties>
+  </tile>
  </tileset>
  <tileset firstgid="257" name="greyscitiles" tilewidth="32" tileheight="32">
   <image source="greyscitiles.png" width="512" height="512"/>

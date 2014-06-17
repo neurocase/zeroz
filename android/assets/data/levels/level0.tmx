@@ -203,11 +203,26 @@
     <property name="item" value="shotgun"/>
    </properties>
   </tile>
+  <tile id="242">
+   <properties>
+    <property name="crate" value="metal"/>
+   </properties>
+  </tile>
+  <tile id="243">
+   <properties>
+    <property name="crate" value="wood"/>
+   </properties>
+  </tile>
+  <tile id="244">
+   <properties>
+    <property name="chain" value=""/>
+   </properties>
+  </tile>
  </tileset>
  <tileset firstgid="513" source="lights"/>
  <layer name="bricks" width="128" height="64">
   <data encoding="base64" compression="zlib">
-   eJzt2UtuwjAUQNEwou2gEkvoKmDeQQfsfz+loghjHPs9/55j7pE8qIpdJzfh12UBAAAAAAAAAAAAAGBe54YDMi0bMMZXa5+tjvvojJTPy/hxhmauZh/SQf9y9G+L/vp90P9u561D/9fqf/DWoT/93fV2TzN06H834meUVP/D0wwd+t9Zf5ZN9Q1dT637++ec/nb9Q0r717TWSPKcaPHcWmsP9L8quUfPK/Nj19DZmTvbuOnZP+c5ODW/Vv/Y2tat6L8+v0f/0/+4nbvThsZ74rz06v+x5O3fRf/0OHo/0/+qpL+7hvTvuftN+TvOfcbocf9/CfYv4fffrzzOPy6XVX//fWLO65jmdU5Ksm5p/xzfkRHq6qO/jL8vf4TW1b7/y0H/MPrn94+1k5i5v2bdHv1D/Nf/GPrL1Oyfuwcp+o/VXzK39vA/p0oemzrWEfuvXd+j95eu2XOkjpX+8XY+y/v/VfqXHKfvLfK7nHVH7h+z1mmW/prvd0vO6Yj9JWLtJEr6l/yfTTvoHxZqo/k+fiv9W5ul/6z3f6/ryLq5tv/iHBv92/cPPU4zv2X/nOdM+j+yvue31H9G1s0t+re4j7bKurm2/ys2asm6ee/7H4+sm9PflnXznP6ox7o5/QEAAAAAAAAA1n4Blj1LmQ==
+   eJzt2UtuwjAUQNEwou2gEkvoKmDeQQfsfz+logjzcOzn73PMPZIHVbHr5Cb8uiwAAAAAAAAAAAAAAMzr3HBAp2UDxvhq7bPVcR+dEfN5GT/OSJmbsg/toH85+rdF//R90P9uJ9ah/2v1P4h16E9/d73d04w09L8b8TNKrP/haUYa+t9Zf5aN9fVdT637y3NOf7v+PqX9a1prpHlOtHhurbUH+l+V3KPnlfmha+jszJ1t3PTsn/McHJtfq39obetW9F+f36P/6X/czt1pQ+M9cl569f9Y8vbvon98HMXP9L8q6e+uof177n5j/o5znzF63P9fiv1ryP77lcfJ43JZ9ZfvE3Nex1Je57Q065b2z/EdGL6uEv115L7k8K2b+v4vB/396J/fP9ROY+b+Kev26O8jX/9D6K9Ts3/uHrToP1Z/zdzaQ35O1Tw2dqwj9l+7vkfvr12z54gdK/3D7STL+/9V+pccp/QW+F3OuiP3D1nrNEv/lO93S87piP01Qu00SvqX/J8tddDfz9cm5fv4rfRvbZb+s97/va4j6+ap/Rfn2Ojfvr/vcSnzW/bPec6k/yPre35L/Wdk3dyif4v7aKusm6f2f8VGLVk3733/45F1c/rbsm6e0x/1hN4P9xzcvwAAAAAAAAAAK78quUvB
   </data>
  </layer>
  <layer name="Tile Layer 4" width="128" height="64">
@@ -242,12 +257,12 @@
  </layer>
  <layer name="collision" width="128" height="64" visible="0">
   <data encoding="base64" compression="zlib">
-   eJzt2QFygyAQheF4tByhR8gRcpQeoTftOIlTikBYXMFl/2+GSacqgi+gktsNAAAAAAAAAAAAAADgXM9Fp2jXN0OxQKOdcf5elPpq5TqQfzvy39dhpd8ayH9fh5V+a/Ce/33Z12Gl3xrIf1+HlX6fzcJ1aH2vebzL1/szl//9gtegV5ss5N8ile8z+CT/F4/5b3/H88MjmCdGlVSbatdtZl7/karJP94ebutdSm2qzaglS/IfP/97yX/EmFqRv+yY2eYE8pcdQ/59pN5L4m3x/0vIP22G/H8qypXyHz2nhsLrrPV+dGT/3LrUTOP/SP7fy/+ytUlaSut/OT3nvtL4D1nLP7WmUltK7ZSOt01q/i+dp5dZ81+NXr+0mn9qHJB/3mz5x2rvW7njW44h/z6Y/+U83f/D339qzJR/7fOeNP/W970zMP7T55bkkNs39y6dq+NsNd+5mr58OkdLuzTqiR3JX7q/lfxb9xmRv7VS6pfV/FvmwjPaZZEk/x4sjX/r4jFjKX/JM27LOTSOubrtGqbW/zXvMdI2Sds/y/w/+png6O9/vfPveY4Zx//K4vyvcY7e3+ur8pg//pC/b+TvG/n7Rv6+jXrn9PacDQAAAAAAAOD6fgEUZ1OQ
+   eJzt2YFtwyAQheFktIzQETJCRukI3bSyGqsUA+XwGbjj/ySUqrYx+AVsk9sNAAAAAAAAAAAAAADgWq+7TtGuz0OxQKOdcf6rKPXVynUg/3bkf6zDSr81kP+xDiv91rB6/o/7sQ4r/dZA/sc6rPT7ahauQ+t7zfNdPt6fufwfE16DXm2ykH+LVL6v4JP8f6yY//53PD88g3liVEm1qXbdxvP6j1RN/vH2cFvvUmpTbUYtWZL/+Pl/lfxHjKkN+cuO8TYnkL/sGPLvI/VeEm+L/19C/mke8v+qKDPlP3pODYXXWev96Mz+uXUpT+P/TP6f979lb5O0lNb/cnrOfaXxH7KWf2pNpbaU2ikdb7vU/F86Ty9e89+MXr+0mn9qHJB/nrf8Y7X3rdzxLceQfx/M/3Ir3f/D339qeMq/9nlPmn/r+94VGP/pc0tyyO2be5fO1XG1mu9cTV/+O0dLuzTqiZ3JX7q/lfxb9xmRv7VS6pfV/FvmwivaZZEk/x4sjX/r4jFjKX/JM27LOTSOmd1+DVPr/5r3GGmbpO33Mv+PfiY4+/tf7/x7nsPj+N9YnP81ztH7ez2rFfPHL/JfG/mvjfzXFj7bjM7f83PWrEa9c672nA0AAAAAAABgft98MVR0
   </data>
  </layer>
  <layer name="nodelayer" width="128" height="64" visible="0">
   <data encoding="base64" compression="zlib">
-   eJzt29FtwjAUQFHSTsIK7QZ0kzJZ6QYdjQlQpX5UVkAl2LWf3zlSfkAPEd/EEgJ2OwAAAAAAAACAtk5LvSOaz+XxI7pa3aL27zk/Av37zY9A/37zI9C/3/wI9O83P4Ky29PGc9I/prLb1o5Z+r/9mpmlf43P8a36f6287tpjf3mu9Gi/12J+P8H1sFWW+591+uemf25l/0OAtdW/Hvd/bvrnpn9u+uemf27656Z/bvrP4TzY9z8t3dv/I+A5/pcM/WtaAq7XLRF/E27/b0v/3CL0dw20M3r/b/q3o39uLwOv7fPPe9M/p5n+wwkwg/cr+/HRPg0AAAAAAABARxfS5FIv
+   eJzt29FNwzAUQNEGJmEF2KBsQicDNmA0KP+oEh+VFRCkdu3nd46Un1avSnITS1Xa3Q4AAAAAAAAAoK2Xpd4Wzety+RZdrW5R+/ecH4H+/eZHoH+/+RHo329+BPr3mx9B2e1m4zHpH1PZbWvHLP0fz2Zm6V/je3yr/m8rn7v22l/eK13a76GYv5vgetgqy/3POv1z0z+3sv8+wLnVvx73fxufAfbxRP/c9M9N/+v7KPb/2PF49M9N/9z036Zcw6PSfw7vgz3/aem//Z8DHuO1ZOhf0xLwfP0m4m/Crf9t6Z9bhP6ugXZG73+ifzv653Y/8Lm9/d43/XOa6T+cADN4+mE9PlinAUKY5bk2AAAAAABA6QvIr1b2
   </data>
  </layer>
  <layer name="lights" width="128" height="64">

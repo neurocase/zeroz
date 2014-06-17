@@ -36,29 +36,29 @@ import com.dazpetty.zeroz.nodes.EntitySpawner;
 
 public class WorldLogic {
 
-	
-	
+
+
 
 	//public ProjectileManager projMan = new ProjectileManager(PROJECTILE_LIMIT);
 	//public ProjectileManager aiProjMan = new ProjectileManager(PROJECTILE_LIMIT);
-	
-	public InputHandler inputHandler = new InputHandler();
-	
-	public EntityManager entityMan;
-	
-	
-	
-	//private TiledMapRenderer renderer;
-	
 
-	
+	public InputHandler inputHandler = new InputHandler();
+
+	public EntityManager entityMan;
+
+
+
+	//private TiledMapRenderer renderer;
+
+
+
 	public OrthographicCamera camera;
 	public World world;
 	public LevelManager levelMan;
 	public SceneManager scene;
 	public EventManager eventMan;
 	public DazDebug dazDebug;
-	
+
 	public WorldLogic(GameScreen gameScreen){
 		this.entityMan = gameScreen.entityMan;
 		this.camera = gameScreen.camera;
@@ -66,23 +66,23 @@ public class WorldLogic {
 		this.levelMan = gameScreen.levelMan;
 		this.scene = gameScreen.scene;
 		this.eventMan = gameScreen.eventMan;
-	
+
 		entityMan.zplayer = new PawnEntity(entityMan, levelMan.getPlayerSpawner(),0);
 		dazDebug.print("playerstart at x" + levelMan.playerstart.x + " y:" + levelMan.playerstart.y);
 		playerSpawned = true;
 		inputHandler.LoadInputHandler(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), camera, entityMan.zplayer);
 	}
-	
-	
-	
-	
-	
+
+
+
+
+
 	public boolean playerSpawned = false;
-	
+
 	public void update(){
-		
+
 		if (!playerSpawned){
-	
+
 		}
 		entityMan.zplayer.update(inputHandler.giveWorldPos, camera);
 		eventMan.PollActuators();
@@ -90,16 +90,16 @@ public class WorldLogic {
 		 * UPDATE PLAYER AND PROJECTILES
 		 */
 		//entityMan.createExplosion(7, 7, 0, 0);
-		
+
 		/*for (int i = 0; i < entityMan.TOTAL_EXPLOSIONS; i++){
 			if (entityMan.explosion[i] != null && entityMan.explosion[i].isAlive){
 				entityMan.explosion[i].update();
 			}
 		}*/
-		
+
 		scene.update();
 		levelMan.update();
-		
+
 		for (int i = 0; i < scene.MOVER_LIMIT; i++){
 			if (scene.mover[i] != null){
 				//DazDebug.print("UPDATE MOVER [" + i + "]" );
@@ -112,8 +112,8 @@ public class WorldLogic {
 				scene.crusher[i].update();
 			}
 		}
-		
-		
+
+
 		boolean noTimers = true;
 		for (int i = 0; i < scene.ZERO_TIMER_LIMIT; i++){
 			if (scene.zerotimer[i] != null){
@@ -124,7 +124,7 @@ public class WorldLogic {
 		}
 		if (noTimers){
 		//	DazDebug.print("THERE ARE NO TIMERS");
-	
+
 		}
 
 		for (int i = 0; i < scene.WALLTURRET_LIMIT; i++){
@@ -144,8 +144,8 @@ public class WorldLogic {
 		if (pollCheck(11)){
 		//	levelMan.checkSpawners();
 		}
-		
-			
+
+
 			/*
 			 * UPDATE ENEMY AI
 			 */
@@ -172,23 +172,23 @@ public class WorldLogic {
 					}
 				}
 			}
-		
+
 			entityMan.checkBodies();
 			huntClosestEnemy();
-			
-			
+
+
 		if (entityMan.zplayer.worldpos.y < -15) {
 			entityMan.zplayer.health = 0;
 		}
-		
+
 		if (Gdx.input.isTouched()) {
-			
+
 		}
-		
-		
-	
+
+
+
 	}
-	
+
 	public void huntClosestEnemy(){
 		entityMan.zplayer.setTargetToNull();
 		/*
@@ -324,16 +324,16 @@ public class WorldLogic {
 			}
 			*/ 
 	}
-	
+
 	public int loopcount = 0;
 	public boolean pollCheck(int v){
 		if (loopcount % v == 0){
 			return true;
 		}
 		return false;
-		
+
 	}
-	
-	
-	
+
+
+
 }

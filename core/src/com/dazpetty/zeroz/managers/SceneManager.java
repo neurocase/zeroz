@@ -5,6 +5,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.dazpetty.zeroz.assets.ZeroAssetManager;
 import com.dazpetty.zeroz.core.GameScreen;
 import com.dazpetty.zeroz.entities.CopterBoss;
+import com.dazpetty.zeroz.entities.Crate;
 import com.dazpetty.zeroz.entities.Destroyable;
 import com.dazpetty.zeroz.entities.Drone;
 import com.dazpetty.zeroz.entities.Explosion;
@@ -12,6 +13,7 @@ import com.dazpetty.zeroz.entities.FlamerTurret;
 import com.dazpetty.zeroz.entities.Item;
 import com.dazpetty.zeroz.entities.PawnEntity;
 import com.dazpetty.zeroz.entities.WallTurret;
+import com.dazpetty.zeroz.nodes.Chain;
 import com.dazpetty.zeroz.nodes.Crusher;
 import com.dazpetty.zeroz.nodes.Door;
 import com.dazpetty.zeroz.nodes.EntitySpawner;
@@ -59,6 +61,10 @@ public class SceneManager {
 	public final int WORLD_VOLUME_LIMIT = ACTUATOR_LIMIT;
 	public WorldVolume worldvolume[] = new WorldVolume[WORLD_VOLUME_LIMIT];
 	
+	public final int CRATE_LIMIT = ACTUATOR_LIMIT;
+	public Crate crate[] = new Crate[CRATE_LIMIT];
+	public int currentcrate = 0;
+	
 	public ProjectileManager projMan;
 	public ProjectileManager aiProjMan;
 	
@@ -86,6 +92,7 @@ public class SceneManager {
 	public int wallturretcount = 0;
 	public int zerotimercount = 0;
 	public int crushercount = 0;
+	public int cratecount = 0;
 	public int flamerturretcount = 0;
 
 	public CopterBoss copterBoss;
@@ -116,6 +123,11 @@ public class SceneManager {
 
 	public Crusher[] crusher = new Crusher[CRUSHER_LIMIT];
 	
+	
+	public int CHAIN_LIMIT = ACTUATOR_LIMIT;
+	public int chaincount = 0;
+	public Chain[] chain = new Chain[CHAIN_LIMIT];
+	
 	public SceneManager(World world, GameScreen gamescreen){
 		this.world = world;
 		this.gamescreen = gamescreen;
@@ -145,6 +157,11 @@ public class SceneManager {
 				flamerturret[i].flamessprite.draw(batch);
 			}
 		}
+		for (int i = 0; i < cratecount; i++){
+			if (crate[i] != null){
+				crate[i].sprite.draw(batch);
+			}
+		}
 	}
 	
 	public void update(){
@@ -153,6 +170,13 @@ public class SceneManager {
 				flamerturret[i].update();
 			}
 		}
+		for (int i = 0; i < cratecount; i++){
+			if (crate[i] != null){
+				crate[i].update();
+			}
+		}
+		
+		
 		
 	}
 	

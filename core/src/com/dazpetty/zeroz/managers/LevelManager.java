@@ -22,11 +22,13 @@ import com.badlogic.gdx.utils.Array;
 import com.dazpetty.zeroz.core.DazDebug;
 import com.dazpetty.zeroz.core.GameScreen;
 import com.dazpetty.zeroz.entities.CopterBoss;
+import com.dazpetty.zeroz.entities.Crate;
 import com.dazpetty.zeroz.entities.Destroyable;
 import com.dazpetty.zeroz.entities.FlamerTurret;
 import com.dazpetty.zeroz.entities.Item;
 import com.dazpetty.zeroz.entities.WallTurret;
 import com.dazpetty.zeroz.nodes.AnimatedTile;
+import com.dazpetty.zeroz.nodes.Chain;
 import com.dazpetty.zeroz.nodes.Crusher;
 import com.dazpetty.zeroz.nodes.Door;
 import com.dazpetty.zeroz.nodes.EntitySpawner;
@@ -51,6 +53,7 @@ public class LevelManager {
 	public TiledMapTileLayer animatedLayer;
 
 	public TiledMap map;
+	//	map = new TmxMapLoader().load("data/levels/level" + levelstr + ".tmx");
 
 	public int KEYS_LIMIT = 10;
 	public boolean[] keys = new boolean[KEYS_LIMIT];
@@ -458,6 +461,28 @@ public class LevelManager {
 					}
 					
 				}
+				if (cellMan.isCellCrate(w, h)) {
+
+				//	String type = cellMan.getFlamerTurretType(w, h);
+					//int angle = cellMan.getAngle(w, h);
+				//	DazDebug.print("++++FLAMERTURRET AT: X:" + w + " Y:" + h
+					//		+ " TYPE:" + type);
+					if (scene.cratecount < scene.CRATE_LIMIT) {
+						scene.crate[scene.cratecount] = new Crate(w,h,world, cellMan.getCrateValue(w, h));
+						scene.cratecount++;
+					}
+				}
+				if (cellMan.isCellChain(w, h)) {
+
+					//	String type = cellMan.getFlamerTurretType(w, h);
+						//int angle = cellMan.getAngle(w, h);
+					//	DazDebug.print("++++FLAMERTURRET AT: X:" + w + " Y:" + h
+						//		+ " TYPE:" + type);
+						if (scene.chaincount < scene.CHAIN_LIMIT) {
+							scene.chain[scene.chaincount] = new Chain(w, h, 3, world);
+							scene.chaincount++;
+						}
+					}
 			}
 		}
 		

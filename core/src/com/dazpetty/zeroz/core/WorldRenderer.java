@@ -30,7 +30,7 @@ import com.dazpetty.zeroz.managers.SceneManager;
 
 public class WorldRenderer {
 
-	
+
 	/*
 	 * TEXTURES AND SPRITES
 	 */
@@ -40,23 +40,23 @@ public class WorldRenderer {
 	private Sprite targetsprite;
 	private Sprite playersprite;
 	private Sprite bgCityBackSprite;
-	
+
 	Texture grentex;
 	private SpriteBatch batch;
 	private SpriteBatch bgbatch;
-	
+
 	private boolean showDebug = false;
-	
+
 	Box2DDebugRenderer debugRenderer;
 	private Texture levelCompleteTex;
 	private TextureRegion levelCompleteTexReg;
 	private Sprite levelcompletesprite;
-	
+
 	private OrthographicCamera camera;
 	private CameraInputController cameraController;
 	public ParralaxCamera pcamera;
 	public OrthoCamController pcamcontroller;
-	
+
 	public World world;
 	public EntityManager entityMan;
 	public OrthogonalTiledMapRenderer renderer;
@@ -68,16 +68,16 @@ public class WorldRenderer {
 	private float addextracamx = 0;
 	private HUD hud;
 	LevelManager levelMan;
-	
+
 	ShapeRenderer sr = new ShapeRenderer();
-	
+
 	public SceneManager scene;
-	
+
 	public WorldRenderer(GameScreen gameScreen){
-		
+
 		viewwidth = Gdx.graphics.getWidth();
 		viewheight = Gdx.graphics.getHeight();
-		
+
 		this.worldLogic = gameScreen.worldLogic;
 		this.levelMan = gameScreen.levelMan;
 		this.entityMan = gameScreen.entityMan;
@@ -85,11 +85,11 @@ public class WorldRenderer {
 		this.world = gameScreen.world;
 		this.scene = gameScreen.scene;
 		this.eventMan = gameScreen.eventMan;
-		
+
 		/*
 		 * SETUP SPRITES AND TEXTURES
 		 */
-		 
+
 
 		levelCompleteTex = new Texture(
 				Gdx.files.internal("data/gfx/hud/levelcomplete.png"));
@@ -97,7 +97,7 @@ public class WorldRenderer {
 		levelcompletesprite = new Sprite(levelCompleteTexReg);
 		levelcompletesprite.setSize(1f, 1f);
 		levelcompletesprite.setOrigin(0, 0);
-		
+
 		batch = new SpriteBatch();
 		bgCityBgTex = new Texture(
 				Gdx.files.internal("data/gfx/background/cityp1.png"));
@@ -119,26 +119,26 @@ public class WorldRenderer {
 		grentex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		TextureRegion grentexreg = new TextureRegion(grentex, 0, 0, 128, 128);
 		bgbatch = new SpriteBatch();
-		
-		
 
-		
+
+
+
 		renderer = new OrthogonalTiledMapRenderer(levelMan.map, 1f / 32f);
-		
-		
+
+
 		pcamera = new ParralaxCamera(viewheight * 2f, viewwidth * 0.5f);
 		pcamcontroller = new OrthoCamController(pcamera);
 		Gdx.input.setInputProcessor(pcamcontroller);
 		//}
-		
+
 		// BOX 2D DEBUG RENDERER
 				debugRenderer = new Box2DDebugRenderer();
-				
+
 				//explosion = new Explosion(7f,7f,1,0);
-				
-				
-		
-			
+
+
+
+
 			float camheight = 16;
 			camera.viewportWidth = 24;
 			int height = (int)Gdx.graphics.getHeight();
@@ -147,17 +147,17 @@ public class WorldRenderer {
 			int camh = (int) (camera.viewportWidth /2);
 			camera.viewportHeight = camera.viewportWidth * ratio;
 			hud = new HUD(camera, worldLogic.inputHandler);
-		
+
 	}
 	boolean dynamicCamera = false;
-	
+
 	public void Render(){
-		
-		
+
+
 		/*
 		 * SETUP PARRALAX CAMERA
 		 */
-		
+
 		boolean updatePCamera = false;
 		pcamera.position.x = camera.position.x;
 		pcamera.position.y = camera.position.y;
@@ -206,11 +206,11 @@ public class WorldRenderer {
 		batch.setProjectionMatrix(camera.combined);
 		sr.setProjectionMatrix(camera.combined);
 
-	
+
 		/*
 		 * ^^^^^^^^^^^^^^^^^^^^^ END BACKGROUND RENDER
 		 */
-		
+
 		/*
 		 * BEGIN CORE SPRITE BATCH RENDER LOOP
 		 */
@@ -221,27 +221,27 @@ public class WorldRenderer {
 		}
 		renderer.setView(camera);
 		renderer.render();
-		
+
 		batch.begin();
 		scene.Draw(batch);
-		
+
 		for (int i = 0; i < scene.WALLTURRET_LIMIT; i++){
 			if (scene.wallturret[i] != null){
 				scene.wallturret[i].draw(batch);
 			}
 		}
-		
+
 		for (int i = 0; i < scene.MOVER_LIMIT; i++){
 			if (scene.mover[i] != null){
 				scene.mover[i].sprite.draw(batch);
 			}
 		}
-		
-		
+
+
 		if (levelMan.isBossLevel){
 			scene.copterBoss.bossSprite.draw(batch);
 			scene.copterBoss.update();
-			
+
 			for (int i = 0; i < scene.copterBoss.copterTurret.length; i++){
 				if (scene.copterBoss.copterTurret[i] != null && scene.copterBoss.copterTurret[i].isAlive){
 					scene.copterBoss.copterTurret[i].baseSprite.draw(batch);
@@ -249,13 +249,13 @@ public class WorldRenderer {
 				}
 			}
 		}
-		
+
 		for (int i = 0; i < scene.EXPLOSION_LIMIT; i++) {
 			if (scene.explosion[i] != null && scene.explosion[i].isAlive) {
 				scene.explosion[i].sprite.draw(batch);
 			}
 		}
-		
+
 		for (int i = 0; i < scene.DRONE_LIMIT; i++) {
 			if (scene.drone[i] != null && scene.drone[i].isAlive) {
 				scene.drone[i].sprite.draw(batch);
@@ -263,19 +263,19 @@ public class WorldRenderer {
 		}
 		// drone[0].sprite.setPosition(actorMan.zplayer.screenpos.x,
 		// actorMan.zplayer.screenpos.y);
-		
+
 		hud.update(camera);
 		//dazdebug.print("camera.viewportHeight: " + camera.viewportHeight + 14);
 		hud.healthsprite.draw(batch);
-		
-		
+
+
 		//hud.dirbuttonssprite.draw(batch);
 		hud.drawHealth(batch, entityMan.zplayer.health);
-		
+
 		hud.shootbuttonsprite.draw(batch);
 
 		hud.jumpbuttonsprite.draw(batch);
-		
+
 		hud.rightbuttonsprite.draw(batch);
 		hud.leftbuttonsprite.draw(batch);
 		hud.downbuttonsprite.draw(batch);
@@ -333,9 +333,9 @@ public class WorldRenderer {
 		camera.position.set(entityMan.zplayer.worldpos.x + addextracamx / 200,
 				entityMan.zplayer.worldpos.y + 1.5f, 100);
 		//camera.rotate(1);
-		
+
 		}
-		
+
 		for (int i = 0; i < scene.DESTROYABLE_LIMIT; i++) {
 			if (scene.destroyable[i] != null) {
 				scene.destroyable[i].sprite.draw(batch);
@@ -360,7 +360,7 @@ public class WorldRenderer {
 		drawProjectile(scene.projMan);
 		drawProjectile(scene.aiProjMan);
 
-		
+
 		if (entityMan.hudtarget.canDraw()){
 			entityMan.hudtarget.sprite.draw(batch);
 		}
@@ -372,7 +372,7 @@ public class WorldRenderer {
 				levelcompletesprite.setSize(12f, 6f);
 			}
 		}
-		
+
 
 		if (levelMan.isLevelComplete) levelcompletesprite.draw(batch);	
 
@@ -380,16 +380,16 @@ public class WorldRenderer {
 		/*
 		 * ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ END CORE SPRITE BATCH RENDER LOOP
 		 */
-		
+
 		displayControls();
-	
+
 		box2DRender(showDebug);
 		camera.update();
-		
-		
+
+
 	}
-	
-	
+
+
 	public void displayControls() {
 		viewwidth = Gdx.graphics.getWidth();
 		viewheight = Gdx.graphics.getHeight();
@@ -400,12 +400,12 @@ public class WorldRenderer {
 			debugRenderer.render(world, camera.combined);
 		}
 		world.step(1 / 30f, 1, 1);
-		
+
 	}
 
 	public boolean debugOn = false;
-	
-	
+
+
 	public void drawProjectile(ProjectileManager projMan) {
 		for (int i = 0; i < projMan.PROJECTILE_LIMIT; i++) {
 			if (projMan.proj[i] != null) {

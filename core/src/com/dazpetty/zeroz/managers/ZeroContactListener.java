@@ -53,13 +53,25 @@ public class ZeroContactListener implements ContactListener {
 
 		if (fa.getUserData() == null || fb.getUserData() == null)
 			return;
-
+		
+		
+		
 
 		
 		Object objA = fa.getUserData();
 		Object objB = fb.getUserData();
-		
-	
+		/*if ((objB instanceof PawnFoot) || (objA instanceof PawnFoot)) {
+			if (objB instanceof String){
+				if (((String)objB).equals("dynamic")){
+					 contact.setFriction(10000f);
+				 }
+			}
+			if (objA instanceof String){
+				if (((String)objA).equals("dynamic")){
+					 contact.setFriction(10000f);
+				 }
+			}
+		}*/
 		
 		ch.handleCollision(objA, objB);
 	
