@@ -61,6 +61,7 @@ public class CellManager {
 
 	public TiledMapTileLayer collisionLayer;
 	public TiledMapTileLayer nodeLayer;
+	
 	public TiledMapTileLayer animatedLayer;
 	
 	public CellManager(TiledMapTileLayer nodeLayer, TiledMapTileLayer collisionLayer,TiledMapTileLayer animatedLayer){

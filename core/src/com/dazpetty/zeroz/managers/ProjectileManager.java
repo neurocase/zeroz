@@ -85,8 +85,8 @@ public class ProjectileManager {
 			}
 			for (int i = 0; i < entityShooting.weapon.shots; i++) {
 
-				DazDebug.print("shooting, " + entityShooting.weapon.weaponName + "," + entityShooting.weapon.shots
-						+ " shots, weaponid: " + entityShooting.weapon.weaponid);
+			//	DazDebug.print("shooting, " + entityShooting.weapon.weaponName + "," + entityShooting.weapon.shots
+			//			+ " shots, weaponid: " + entityShooting.weapon.weaponid);
 				activeproj++;
 				if (activeproj == PROJECTILE_LIMIT - 1)
 					activeproj = 0;
@@ -105,7 +105,7 @@ public class ProjectileManager {
 		
 		
 		if (wallTurret.weapon.ready()) {
-			DazDebug.print("WALLTURRET READY AND SHOOTING");
+			//DazDebug.print("WALLTURRET READY AND SHOOTING");
 			createMuzzFlash(wallTurret);
 			long soundId = 1;
 			if (SoundManager.soundOn){
@@ -127,8 +127,8 @@ public class ProjectileManager {
 			}
 			for (int i = 0; i < wallTurret.weapon.shots; i++) {
 
-				DazDebug.print("shooting, " + wallTurret.weapon.weaponName + "," + wallTurret.weapon.shots
-						+ " shots, weaponid: " + wallTurret.weapon.weaponid);
+			/*	DazDebug.print("shooting, " + wallTurret.weapon.weaponName + "," + wallTurret.weapon.shots
+						+ " shots, weaponid: " + wallTurret.weapon.weaponid);*/
 				activeproj++;
 				if (activeproj == PROJECTILE_LIMIT - 1)
 					activeproj = 0;

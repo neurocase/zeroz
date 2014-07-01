@@ -137,7 +137,7 @@ public class EntityManager {
 		if (projToRemove != null) {
 			for (int i = 0; i < projToRemove.size; i++) {
 				Projectile proj = (Projectile) projToRemove.get(i);
-				DazDebug.print("Kill Projectile:" + proj.id);
+				//DazDebug.print("Kill Projectile:" + proj.id);
 				createExplosion(proj.getBody().getPosition().x, proj.getBody()
 						.getPosition().y, 0, (float) (Math.toDegrees(proj
 						.getBody().getAngle())));

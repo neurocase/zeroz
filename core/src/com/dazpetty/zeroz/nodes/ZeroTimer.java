@@ -30,7 +30,7 @@ public class ZeroTimer {
 	
 	public ZeroTimer(int triggervalue, int triggercallvalue,int delay, String type, EventManager eventMan){
 		DazDebug.print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		DazDebug.print("CREATING TRIGGER, VALUE:" + triggervalue + " Call Value:" + triggercallvalue + " delay:" + delay + " type:" + type);
+		DazDebug.print("CREATING TIMER, TRIG VALUE:" + triggervalue + " Call Value:" + triggercallvalue + " delay:" + delay + " type:" + type);
 		DazDebug.print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		
 		
@@ -41,6 +41,11 @@ public class ZeroTimer {
 		this.delay = delay * 100;
 		this.type = type;
 		this.eventMan = eventMan;
+		
+		if (type.equals("repeat")){
+			System.out.println("REPEATING");
+			started = true;
+		}
 	}
 	
 	public boolean checkTrigger(int triggertestvalue){

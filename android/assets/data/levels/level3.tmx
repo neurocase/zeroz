@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="128" height="64" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="nodes" tilewidth="32" tileheight="32">
+  <image source="nodes.png" width="512" height="512"/>
+  <tile id="0">
+   <properties>
+    <property name="playerstart" value=""/>
+   </properties>
+  </tile>
+  <tile id="1">
+   <properties>
+    <property name="destroyable" value=""/>
+    <property name="powercable" value=""/>
+    <property name="triggervalue" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2">
+   <properties>
+    <property name="destroyable" value=""/>
+    <property name="triggervalue" value="3"/>
+   </properties>
+  </tile>
+  <tile id="3">
+   <properties>
+    <property name="destroyable" value=""/>
+    <property name="triggervalue" value="3"/>
+   </properties>
+  </tile>
+  <tile id="17">
+   <properties>
+    <property name="instancetype" value="once"/>
+    <property name="triggervalue" value="1"/>
+    <property name="worldvolume" value=""/>
+   </properties>
+  </tile>
+  <tile id="32">
+   <properties>
+    <property name="levelcomplete" value=""/>
+   </properties>
+  </tile>
+  <tile id="49">
+   <properties>
+    <property name="delay" value="0"/>
+    <property name="door" value="open"/>
+    <property name="instancetype" value="once"/>
+    <property name="triggervalue" value="1"/>
+   </properties>
+  </tile>
+  <tile id="50">
+   <properties>
+    <property name="delay" value="0"/>
+    <property name="door" value="open"/>
+    <property name="instancetype" value="repeat"/>
+    <property name="triggervalue" value="2"/>
+   </properties>
+  </tile>
+  <tile id="64">
+   <properties>
+    <property name="ladder" value=""/>
+   </properties>
+  </tile>
+  <tile id="65">
+   <properties>
+    <property name="count" value="1"/>
+    <property name="delay" value="0"/>
+    <property name="enemyspawn" value="footsoldier"/>
+    <property name="triggervalue" value="1"/>
+   </properties>
+  </tile>
+  <tile id="80">
+   <properties>
+    <property name="ladder" value=""/>
+    <property name="platform" value=""/>
+   </properties>
+  </tile>
+  <tile id="96">
+   <properties>
+    <property name="platform" value=""/>
+   </properties>
+  </tile>
+  <tile id="97">
+   <properties>
+    <property name="mover" value="backward"/>
+    <property name="movex" value="0"/>
+    <property name="movey" value="27"/>
+    <property name="speed" value="5"/>
+    <property name="triggervalue" value="0"/>
+   </properties>
+  </tile>
+  <tile id="98">
+   <properties>
+    <property name="mover" value="backward"/>
+    <property name="movex" value="22"/>
+    <property name="movey" value="0"/>
+    <property name="speed" value="2"/>
+    <property name="triggervalue" value="0"/>
+   </properties>
+  </tile>
+  <tile id="112">
+   <properties>
+    <property name="solid" value=""/>
+   </properties>
+  </tile>
+  <tile id="113">
+   <properties>
+    <property name="mover" value="backward"/>
+    <property name="movex" value="8"/>
+    <property name="movey" value="0"/>
+    <property name="speed" value="2"/>
+    <property name="triggervalue" value="0"/>
+   </properties>
+  </tile>
+  <tile id="114">
+   <properties>
+    <property name="mover" value=""/>
+    <property name="movex" value="8"/>
+    <property name="movey" value="0"/>
+    <property name="speed" value="2"/>
+    <property name="triggervalue" value="0"/>
+   </properties>
+  </tile>
+  <tile id="115">
+   <properties>
+    <property name="mover" value=""/>
+    <property name="movex" value="0"/>
+    <property name="movey" value="36"/>
+    <property name="speed" value="4"/>
+    <property name="triggervalue" value="3"/>
+   </properties>
+  </tile>
+  <tile id="128">
+   <properties>
+    <property name="conveyer" value="right"/>
+   </properties>
+  </tile>
+  <tile id="129">
+   <properties>
+    <property name="flamerangle" value="0"/>
+    <property name="flamerturret" value="left"/>
+   </properties>
+  </tile>
+  <tile id="130">
+   <properties>
+    <property name="angle" value="180"/>
+    <property name="turret" value="wallturretfixed"/>
+   </properties>
+  </tile>
+  <tile id="131">
+   <properties>
+    <property name="flamerturret" value="right"/>
+   </properties>
+  </tile>
+  <tile id="132">
+   <properties>
+    <property name="angle" value="0"/>
+    <property name="turret" value="wallturret"/>
+   </properties>
+  </tile>
+  <tile id="144">
+   <properties>
+    <property name="conveyer" value="left"/>
+   </properties>
+  </tile>
+  <tile id="146">
+   <properties>
+    <property name="delay" value="11"/>
+    <property name="instancetype" value="repeat"/>
+    <property name="timer" value="repeat"/>
+    <property name="triggercall" value="2"/>
+    <property name="triggervalue" value="3"/>
+   </properties>
+  </tile>
+  <tile id="160">
+   <properties>
+    <property name="death" value=""/>
+   </properties>
+  </tile>
+  <tile id="161">
+   <properties>
+    <property name="powercable" value=""/>
+    <property name="triggervalue" value="1"/>
+   </properties>
+  </tile>
+  <tile id="162">
+   <properties>
+    <property name="powercable" value=""/>
+    <property name="triggervalue" value="2"/>
+   </properties>
+  </tile>
+  <tile id="176">
+   <properties>
+    <property name="diagonal" value=""/>
+   </properties>
+  </tile>
+  <tile id="177">
+   <properties>
+    <property name="crusher" value="hazard"/>
+    <property name="delay" value="0"/>
+    <property name="movex" value="0"/>
+    <property name="movey" value="5"/>
+    <property name="speed" value="0"/>
+   </properties>
+  </tile>
+  <tile id="192">
+   <properties>
+    <property name="diagonal" value="left"/>
+   </properties>
+  </tile>
+  <tile id="241">
+   <properties>
+    <property name="item" value="shotgun"/>
+   </properties>
+  </tile>
+  <tile id="242">
+   <properties>
+    <property name="crate" value="wood"/>
+   </properties>
+  </tile>
+  <tile id="244">
+   <properties>
+    <property name="crate" value=""/>
+   </properties>
+  </tile>
+ </tileset>
+ <tileset firstgid="257" name="greyscitiles" tilewidth="32" tileheight="32">
+  <image source="greyscitiles.png" width="512" height="512"/>
+  <tile id="80">
+   <properties>
+    <property name="animated" value="2"/>
+   </properties>
+  </tile>
+  <tile id="86">
+   <properties>
+    <property name="animated" value="2"/>
+   </properties>
+  </tile>
+  <tile id="88">
+   <properties>
+    <property name="animated" value="2"/>
+   </properties>
+  </tile>
+  <tile id="96">
+   <properties>
+    <property name="animated" value="2"/>
+   </properties>
+  </tile>
+  <tile id="102">
+   <properties>
+    <property name="animated" value="2"/>
+   </properties>
+  </tile>
+  <tile id="104">
+   <properties>
+    <property name="animated" value="2"/>
+   </properties>
+  </tile>
+  <tile id="112">
+   <properties>
+    <property name="animated" value="2"/>
+   </properties>
+  </tile>
+  <tile id="114">
+   <properties>
+    <property name="" value=""/>
+   </properties>
+  </tile>
+  <tile id="116">
+   <properties>
+    <property name="" value=""/>
+   </properties>
+  </tile>
+  <tile id="118">
+   <properties>
+    <property name="animated" value="2"/>
+   </properties>
+  </tile>
+  <tile id="120">
+   <properties>
+    <property name="animated" value="2"/>
+   </properties>
+  </tile>
+  <tile id="142">
+   <properties>
+    <property name="animated" value="2"/>
+   </properties>
+  </tile>
+ </tileset>
+ <tileset firstgid="513" source="lights.tsx"/>
+ <layer name="Tile Layer 10" width="128" height="64">
+  <data encoding="base64" compression="zlib">
+   eJzt1tEJgCAUhlGdqiGqDWqD2v+1VgihS/3ngI+C+F3E1gAAAAAAAAAAAAAAAAAAAAAgx9JbW3v1Kaiy3e13/UtNfWyNOO79p/6lKvtTT/9s+mfTP5v+2fTPpn+m0e7m4Nv05y1mJZv3Ipv+z80/uiP9s/k7ZtMfAAAAAACAChdDTS7m
+  </data>
+ </layer>
+ <layer name="Tile Layer 7" width="128" height="64">
+  <data encoding="base64" compression="zlib">
+   eJzt2l0yA0EUgNFkCVkCe1DsASvADtj/q1HxoDpJ65Fp/XPPqbpVeJhEf0Mql90OAAAAAAAAAIDIHvfbDmPRPzb9Y9M/trTf/ZXDWPSPTf/Y9I9N/9j0j630fd1LMt7/zWGk/jX3FPug927ujJ6Wef7++KFwWj3XnvZUI91LuTN6XeZt0v53yRzOfC2d0vvpMEn/92U+Ju2fKmkWrf/P0V//Gfpfor/+1zz+2mv1YsT+Neivf+nj6x+zf4tr1ZZr3uv+pwb9T6fX/U8N+p9Or/ufGrZsdjNJf6//p2b7m7f+RyX9Z/y/h5H617S2/7nPR6T/Ufqafe5+8POfn/QcftuTbPG8as2l3wcztf9Sq/+l69wWjv7/o0b/1u30L7d1/9bdavefTe4M1u5/WzfTf73cGazZ/7bupf/f5M6gdP/bulWNmUHJ99H6nHudKFqfc68DAAAAANDaJ93VjDc=
+  </data>
+ </layer>
+ <layer name="Tile Layer 8" width="128" height="64">
+  <data encoding="base64" compression="zlib">
+   eJzt2kFuwjAQQFG8pLuuuQZplz0AIC5A1Qu0Z+mVG6mKiBw7iZ1M4vH8J1mKKkhsf0BR4XAAAAAAAAAAAAAAAAAAAADAWi5ufGjxEpjrUdH890L/fFN7t3RsoYQ5rIH+MmvQgv4ya9CC/jJr0IL+MmtAHP1tq2G/au7fff5/CK1Der9O3vleBdZhof9daX9fI/D6on++Uvfr2s7j5obHfWf3/3qif75S9+vRzuPTDY9D6J9Par+Wnuu7fe6PGx6PXYv+6aT7b7H/Fvp/KevfP3fjjbeV12Khv5Qt+kujf74S+6e2pH8++peN/vSXRP+ybfX7v9L6Tx2HrkP/5Urof4w0D/0+on8d+uvjAutL6T/V3mL/34TnpDx2jP897xKxNfv957S32F8T/3+DXTP/73O+56N/Hcbu8969Qf/60P8p1F/7mqaEOnetY/1jj9e+Vxbf/32nSNs5g/760X/vGcjKvae3cv9fO/rbRn8AAAAAAAAAe/sDojzI1A==
+  </data>
+ </layer>
+ <layer name="boundary guide" width="128" height="64" visible="0">
+  <data encoding="base64" compression="zlib">
+   eJzt0YEAAAAIwLBCy18qkG8Kux3Czn+a/zb/bf7b/Lf5b/Pf5r/Nf5v/Nv9t/tv8t/lv89/mv81/m/82/23+2/y3+W/z3+a/zX+b/zb/bf7b/Lf5b/Pf5r/Nf5v/Nv9t/tv8t/lv89/mv81/m/82/23+2/y3+W/z3+a/zX+b/zb/bf7b/Lf5b/Pf5r/Nf5v/Nv9t/tv8t/lv89/2Pp8QgQ==
+  </data>
+ </layer>
+ <layer name="animlayer" width="128" height="64" visible="0">
+  <data encoding="base64" compression="zlib">
+   eJzt1LENgDAAA8FkSsQEiAkQ20OXgp7m7xoPYOnHAAAAAAAAAAAAAICvbY6xz7W0HO/n51xLy/V+fs+1tOh/m/636X+b/rfpf5v+t+l/m/636X+b/rfpf5v+t+l/m/636X+b/rfpf5v+t+l/m/636X+b/rfpf5v+t+l/m/636X+b/gMAAAAAAPzjAQQ5Mp0=
+  </data>
+ </layer>
+ <layer name="nodelayer" width="128" height="64" visible="0">
+  <data encoding="base64" compression="zlib">
+   eJzt2rEJgDAQQNG4ghu4gm7gKK7ixrqAjYWkCyRece9BIBwpfpniSgEAAAAAAAAAAAAAACCjKToAAALd0QEAAHTlfwcAAJDD3jgnt/M99R2AcdbG9/OQCgBqV3QAAL/ItjuxNc6/lp4hEOSIDgAAAAAAgAQe6OkHig==
+  </data>
+ </layer>
+ <layer name="collision" width="128" height="64" visible="0">
+  <data encoding="base64" compression="zlib">
+   eJztmduNwyAQAN1aSkgJV8KVdJ2e7sM6C2EDYRf2MSMhJchhF4aXleMAAAAAAAAAAAAAAAAAAAAAgMx8Cxfwy6w//PsG/7mRPgs4E3yh5Yr54YNdLrT2HebcGJbGRTMX5lkdS/lq+1+BpfHswVK++F+PpXzxv56Rc0z7vMO/Haz417yXvQRzv+YbgR39ePI/226tHUn/Z1v4l40p6f+rKO9KXVl695OXUK5WiOi/pGf938Uu68+5hH/ZmF78s//rxNx9/7PoP0qMnpiS/j+5/+F/HVr7/7Wd2v1vNKdaPf51Ykr7v8L63xujJ6YF/yNnSRQ3+P//XU89/nViWvDP+l9DbWzxX88pQoyn2K1390/bvDK6/999vnteiygxWljwX7Yh8cwsUWLspvTfmg+tMZGaqy2ixNCiN/dR/62Y+J87u5/uWivK+6j/9zvzv7AGVmPU+v/3/aez7L5z1tb/yD0vs/+7vo+uwV1I+tfumyX/FtxJoL3+I/uPwJ3/8pmZ9qWw4j/Cuj/B/1iMKPv+yYr3C8lctfFwZ5PEUz885eoFT2PqKVeQB/+5wX9u8J8b/OcG/7nBf27wnxv85wb/ufkFBZkGEA==
+  </data>
+ </layer>
+ <layer name="lights" width="128" height="64">
+  <data encoding="base64" compression="zlib">
+   eJzt1yEOgDAMBdAxFKAABdz/nlQgkKAg63tJXcWSnzVtKQAAAAAAAAAAAAAAAAAAAABARl0tpUb19euX8IUhch+jJvmnNEfuS9T6o/zNpNzMpNz+OJMAgHfs87nZ59vw5h/fe+Xfhi3y2x/eZfPVe8gcAAAAAAAAAABo2AlxpQHd
+  </data>
+ </layer>
+ <layer name="Tile Layer 10" width="128" height="64">
+  <data encoding="base64" compression="zlib">
+   eJzt1jENACAMRUFQggQksLMgAf8uUEEK6Z2CJu8PLQUAAAAAAAAAAAAAAAAAAAAAAN4wavQFRFr6p7b1BwCAbzX/fGpdfwJN+wMAAAAAAAAAAC449AQBjA==
+  </data>
+ </layer>
+ <layer name="Tile Layer 9" width="128" height="64">
+  <data encoding="base64" compression="zlib">
+   eJzt1LENACAQA7GnZf+BmQEairMniHRSZgAAAAAAAAAAAADgzV6/F/CT/m36t+nfpn+b/gBN/r9N/zb92/Rv079N/zb92/Rv079N/zb92/Rv079N/zb92/Rv079N/zb9AQAAAAAAAADuHUM0ARQ=
+  </data>
+ </layer>
+</map>

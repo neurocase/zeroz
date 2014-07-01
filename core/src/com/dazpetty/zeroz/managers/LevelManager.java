@@ -97,8 +97,7 @@ public class LevelManager {
 		this.scene = gameScreen.scene;
 		this.world = world;
 		
-		
-		
+	
 		
 		String levelstr = Integer.toString(level);
 		map = new TmxMapLoader().load("data/levels/level" + levelstr + ".tmx");

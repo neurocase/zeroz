@@ -45,7 +45,7 @@ public class WorldRenderer {
 	private SpriteBatch batch;
 	private SpriteBatch bgbatch;
 
-	private boolean showDebug = false;
+	private boolean showDebug = true;
 
 	Box2DDebugRenderer debugRenderer;
 	private Texture levelCompleteTex;
@@ -423,13 +423,13 @@ public class WorldRenderer {
 				}
 			}
 		}
-		for (int i = 0; i < projMan.MUZZLE_FLASH_LIMIT; i++) {
+		/*for (int i = 0; i < projMan.MUZZLE_FLASH_LIMIT; i++) {
 			if (projMan.muzzleflash[i] != null) {
 				if (projMan.muzzleflash[i].isAlive) {
 					projMan.muzzleflash[i].sprite.draw(batch);
 				}
 			}
-		}
+		}*/
 		dazdebug.tick();
 	}
 	DazDebug dazdebug = new DazDebug();

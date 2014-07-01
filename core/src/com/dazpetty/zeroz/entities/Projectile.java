@@ -94,7 +94,7 @@ public class Projectile   {
 		isAlive = true;
 		isDead = false;
 		
-		DazDebug.print("PROJECTILE:" + weapon.weaponName + "is firing");
+		//DazDebug.print("PROJECTILE:" + weapon.weaponName + "is firing");
 		
 		//weapon.
 		float scatterammount = (float) (weapon.accuracyscatter * Math.random());

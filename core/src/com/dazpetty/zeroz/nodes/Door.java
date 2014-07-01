@@ -132,6 +132,7 @@ public class Door {
 			}
 		}
 		if (instancetype.equals("once")){
+			System.out.println("DOOR FINISHED");
 			finished = true;
 		}
 		

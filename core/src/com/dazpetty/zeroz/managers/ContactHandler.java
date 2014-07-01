@@ -103,7 +103,7 @@ public class ContactHandler {
 				}
 				
 				if (objA instanceof String) {
-					if (((String) objA).equals("solid") || ((String) objA).equals("mover")) {
+					if (((String) objA).equals("solid") || ((String) objA).equals("mover") || ((String) objA).equals("dynamic")) {
 					
 						removeProj = true;
 						

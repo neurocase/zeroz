@@ -50,7 +50,7 @@ public class Crate {
 	    
 
 	    Fixture fixture = body.createFixture(fixtureDef);
-	    fixture.setUserData("solid");
+	    fixture.setUserData("dynamic");
 	    texture = ZeroAssetManager.cratetex;
 	    if (type.equals("metal")){
 	    	texture = ZeroAssetManager.metalcratetex;

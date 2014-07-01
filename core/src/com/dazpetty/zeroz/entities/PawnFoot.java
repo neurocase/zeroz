@@ -78,7 +78,7 @@ public class PawnFoot {
 		//footfixtureDef.friction = 10000;
 		footfixtureDef.restitution = 0;
 
-		body.createFixture(footfixtureDef);
+		//body.createFixture(footfixtureDef);
 
 	}
 	public void incFootContact(){
